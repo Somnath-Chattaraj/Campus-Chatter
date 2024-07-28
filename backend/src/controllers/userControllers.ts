@@ -110,7 +110,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const exp = Date.now() + 1000 * 60 * 5;
     // @ts-ignore
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
-    const url = `https://localhost:3000/api/user/verify/${token}`;
+    const url = `http://localhost:3000/api/user/verify/${token}`;
     const htmlContent = `<a href="${url}">Verify using this link</a>`;
     // @ts-ignore
     await sendMail(email, htmlContent);
@@ -155,4 +155,35 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({ message: "User verified" });
 });
 
-export { registerUser };
+const loginUser = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400).json({ message: "Please provide all fields" });
+    return;
+  }
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    res.status(401).json({ message: "Invalid credentials" });
+    return;
+  }
+  const exp = Date.now() + 1000 * 60 * 5;
+  // @ts-ignore
+  const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
+  res.cookie("Authorization", token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+  res.status(200).json({ message: "User logged in" });
+});
+
+export { registerUser, loginUser, verifyUser };
