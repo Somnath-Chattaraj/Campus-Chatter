@@ -8,4 +8,4 @@ Run `npm start` in the backend directory
 
 ## To start only frontend
 
-Run `npm run dev` in the frontent directory
+Run `npm run dev` in the frontend directory
