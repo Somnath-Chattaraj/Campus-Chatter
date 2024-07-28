@@ -117,4 +117,42 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     res.status(201).json({ message: "User created" });
   }
 });
+
+const verifyUser = asyncHandler(async (req: Request, res: Response) => {
+  const token = req.params.token;
+  if (!token) {
+    res.status(400).json({ message: "Invalid token" });
+    return;
+  }
+  // @ts-ignore
+  const { sub, exp } = jwt.verify(token, process.env.SECRET);
+  // @ts-ignore
+  if (exp < Date.now()) {
+    res.status(400).json({ message: "Token expired" });
+    return;
+  }
+  const user = await prisma.user.findUnique({
+    where: {
+      user_id: sub,
+    },
+  });
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+  if (user.emailVerified) {
+    res.status(400).json({ message: "User already verified" });
+    return;
+  }
+  await prisma.user.update({
+    where: {
+      user_id: sub,
+    },
+    data: {
+      emailVerified: true,
+    },
+  });
+  res.status(200).json({ message: "User verified" });
+});
+
 export { registerUser };
