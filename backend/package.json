@@ -11,6 +11,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/jsonwebtoken": "^9.0.6",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "prisma": "^5.17.0",
     "tsc": "^2.0.4",
