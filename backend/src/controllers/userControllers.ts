@@ -3,47 +3,118 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import axios from "axios";
+import sendMail from "../mail/sendMail";
+import { Verifier } from "academic-email-verifier";
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
-    const { email, name, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 8);
-    if(!email || !name || !password) {
-        res.status(400).json({ message: "Please provide all fields" });
-        return;
+  let { email, name, password, collegeName, courseName, isOnline, location } =
+    req.body;
+  const hashedPassword = await bcrypt.hash(password, 8);
+  if (!email || !name || !password) {
+    res.status(400).json({ message: "Please provide all fields" });
+    return;
+  }
+  const userExists = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  if (userExists) {
+    res.status(409).json({ message: "User already exists" });
+    return;
+  }
+
+  const regex = /@jadavpuruniversity\.in$/;
+  let isCollegeEmail;
+
+  if (regex.test(email)) {
+    isCollegeEmail = true;
+  } else {
+    isCollegeEmail = await Verifier.isAcademic(email);
+  }
+
+  if (isCollegeEmail == true) {
+    if (!collegeName || !courseName || !isOnline || !location) {
+      res.status(400).json({ message: "Please provide all fields" });
+      return;
     }
-    const userExists = await prisma.user.findUnique({
-        where: {
-            email,
-        },
+    if (isOnline === "true") {
+      isOnline = true;
+    } else {
+      isOnline = false;
+    }
+    let college = await prisma.college.findFirst({
+      where: {
+        name: collegeName,
+      },
     });
-    if(userExists) {
-        res.status(409).json({ message: "User already exists" });
-        return;
-    }
 
-    const response = await axios.post(
-        'https://api.apyhub.com/validate/email/academic',
-        { email },
-        {
-          headers: {
-            'apy-token': process.env.APY_TOKEN, // Read token from environment variables
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-    let isCollegeEmail = response.data.data;
-
-    const user = await prisma.user.create({
+    if (!college) {
+      college = await prisma.college.create({
         data: {
+          name: collegeName,
+          location,
+        },
+      });
+    }
+    const college_id = college.college_id;
+    let course = await prisma.course.findFirst({
+      where: {
+        name: courseName,
+      },
+    });
+    let course_id;
+    if (course) {
+      course_id = course.course_id;
+    } else {
+      course = await prisma.course.create({
+        data: {
+          name: courseName,
+          college_id,
+          isOnline,
+        },
+      });
+      course_id = course.course_id;
+    }
+    const user = await prisma.user.create({
+      data: {
         email,
         password: hashedPassword,
         name,
-        collegeEmailVerified: isCollegeEmail,
-        emailVerified:true,
-        },
+        collegeEmailVerified: true,
+      },
     });
-    res.status(201).json(user);
+    const userCourse = await prisma.userCourse.create({
+      data: {
+        user_id: user.user_id,
+        course_id,
+      },
+    });
+    const exp = Date.now() + 1000 * 60 * 5;
+    // @ts-ignore
+    const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
+    const url = `https://localhost:3000/api/user/verify/${token}`;
+    const htmlContent = `<a href="${url}">Verify using this link</a>`;
+    // @ts-ignore
+    await sendMail(email, htmlContent);
+    res.status(201).json({ message: "User created" });
+  } else {
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+        collegeEmailVerified: false,
+      },
+    });
+    const exp = Date.now() + 1000 * 60 * 5;
+    // @ts-ignore
+    const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
+    const url = `https://localhost:3000/api/user/verify/${token}`;
+    const htmlContent = `<a href="${url}">Verify using this link</a>`;
+    // @ts-ignore
+    await sendMail(email, htmlContent);
+    res.status(201).json({ message: "User created" });
+  }
 });
-
 export { registerUser };
