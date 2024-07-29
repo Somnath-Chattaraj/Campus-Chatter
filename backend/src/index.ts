@@ -4,6 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import "dotenv/config";
 import userRoutes from './routes/userRoutes';
+import reviewRoutes from './routes/reviewRoutes';
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(cookieParser());
 
 
 app.use("/api/user", userRoutes);
+app.use("/api/review", reviewRoutes)
 
 
 
