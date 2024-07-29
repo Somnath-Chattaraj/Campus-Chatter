@@ -3,10 +3,10 @@ name: Build and Migrate
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -22,23 +22,20 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Navigate to backend directory
-        run: cd backend
-
       - name: Install dependencies
         run: npm install
-        working-directory: backend
+        working-directory: ./backend
 
       - name: Build code
         run: npm run build
-        working-directory: backend
+        working-directory: ./backend
 
       - name: Set up Prisma
         run: npx prisma generate
-        working-directory: backend
+        working-directory: ./backend
 
       - name: Run Prisma Migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npx prisma migrate deploy
-        working-directory: backend
+        working-directory: ./backend
