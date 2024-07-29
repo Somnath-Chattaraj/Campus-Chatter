@@ -1,0 +1,44 @@
+name: Build and Migrate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Navigate to backend directory
+        run: cd backend
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: backend
+
+      - name: Build code
+        run: npm run build
+        working-directory: backend
+
+      - name: Set up Prisma
+        run: npx prisma generate
+        working-directory: backend
+
+      - name: Run Prisma Migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma migrate deploy
+        working-directory: backend
