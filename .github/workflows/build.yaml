@@ -1,9 +1,6 @@
-name: Build and Migrate
+name: CI Build
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
@@ -22,29 +19,44 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Cache Node modules
+      - name: Cache Node modules (frontend)
         uses: actions/cache@v3
         with:
-          path: |
-            ./backend/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('backend/package-lock.json') }}
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-frontend-
 
-      - name: Install dependencies
+      - name: Cache Node modules (backend)
+        uses: actions/cache@v3
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-backend-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-backend-
+
+      - name: Install dependencies (frontend)
         run: npm install
-        working-directory: ./backend
+        working-directory: frontend
 
-      - name: Build code
+      - name: Install dependencies (backend)
+        run: npm install
+        working-directory: backend
+
+      - name: Build frontend
         run: npm run build
-        working-directory: ./backend
+        working-directory: frontend
+
+      - name: Build backend
+        run: npm run build
+        working-directory: backend
 
       - name: Set up Prisma
         run: npx prisma generate
-        working-directory: ./backend
+        working-directory: backend
 
       - name: Run Prisma Migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npx prisma migrate deploy
-        working-directory: ./backend
+        working-directory: backend
