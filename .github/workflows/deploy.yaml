@@ -29,3 +29,18 @@ jobs:
 
       - name: Verify Pushed Image
         run: docker pull somnath910/statuscode1:latest  # Replace with your Docker Hub username and repository
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo docker pull somnath910/statuscode1:latest
+            sudo docker stop web-app || true
+            sudo docker rm web-app || true
+            sudo docker run -d --name web-app -e DATABASE_URL ${{ secrets.DATABASE_URL }} PORT ${{secrets.PORT}} SECRET ${{ secrets.SECRET }} BREVO_USER ${{ secrets.BREVO_USER }} BREVO_PASSWORD ${{ secrets.BREVO_PASSWORD }} BREVO_HOST ${{ secrets.BREVO_HOST }} BREVO_PORT ${{ secrets.BREVO_PORT }} -p 3005:3000 somnath910/statuscode1:latest
+
+
+
