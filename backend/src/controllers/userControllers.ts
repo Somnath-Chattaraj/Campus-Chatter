@@ -26,7 +26,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   let isCollegeEmail;
-  
+
   if (checkCollegeEmail(email)) {
     isCollegeEmail = true;
   } else {
@@ -175,7 +175,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     res.status(401).json({ message: "Invalid credentials" });
     return;
   }
-  const exp = Date.now() + 1000 * 60 * 5;
+  const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
   // @ts-ignore
   const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
   res.cookie("Authorization", token, {
