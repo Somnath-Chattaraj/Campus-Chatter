@@ -8,6 +8,7 @@ import userRoutes from './routes/userRoutes';
 import moderationRouter from './routes/mRuote';
 
 import reviewRoutes from './routes/reviewRoutes';
+import ratingRoutes from './routes/ratingRoute';
 
 
 const app = express();
@@ -26,7 +27,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin",moderationRouter);
 
 app.use("/api/review", reviewRoutes)
-
+app.use("/api/rating", ratingRoutes)
 
 
 
