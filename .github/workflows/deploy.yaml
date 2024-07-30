@@ -45,4 +45,13 @@ jobs:
             sudo docker pull somnath910/statuscode1:latest
             sudo docker stop web-app || true
             sudo docker rm web-app || true
-            sudo docker run -d --name web-app -e DATABASE_URL=${{ secrets.DATABASE_URL }} PORT=${{secrets.PORT}} SECRET=${{ secrets.SECRET }} BREVO_USER=${{ secrets.BREVO_USER }} BREVO_PASSWORD=${{ secrets.BREVO_PASSWORD }} BREVO_HOST=${{ secrets.BREVO_HOST }} BREVO_PORT=${{ secrets.BREVO_PORT }} -p 3005:3000 somnath910/statuscode1:latest
+            sudo docker run -d --name web-app \
+              -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+              -e PORT=${{ secrets.PORT }} \
+              -e SECRET=${{ secrets.SECRET }} \
+              -e BREVO_USER=${{ secrets.BREVO_USER }} \
+              -e BREVO_PASSWORD=${{ secrets.BREVO_PASSWORD }} \
+              -e BREVO_HOST=${{ secrets.BREVO_HOST }} \
+              -e BREVO_PORT=${{ secrets.BREVO_PORT }} \
+              -p 3005:3000 \
+              somnath910/statuscode1:latest
