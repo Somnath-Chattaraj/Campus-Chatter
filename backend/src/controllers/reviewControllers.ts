@@ -128,6 +128,21 @@ const postReview = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // @ts-ignore
+const getBulkReviews = asyncHandler(async (req: Request, res: Response) => {
+  const { reviewIds } = req.body;
+  if (!reviewIds || typeof reviewIds !== "string") {
+    return res.status(400).json({ message: "Invalid request" });
+  }
+  try {
+    const reviews = await prisma.review.findMany({});
+    return res.status(200).json(reviews);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// @ts-ignore
 const filterReviews = asyncHandler(async (req: Request, res: Response) => {
   const { keyword } = req.query;
 
@@ -259,4 +274,4 @@ const editReview = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export { postReview, filterReviews, getFullReview, deleteReview, editReview };
+export { postReview, filterReviews,getBulkReviews, getFullReview, deleteReview, editReview };
