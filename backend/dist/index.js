@@ -14,7 +14,7 @@ const ratingRoute_1 = __importDefault(require("./routes/ratingRoute"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 const corsOptions = {
-    origin: 'http://localhost:3001',
+    origin: "http://localhost:3001",
     credentials: true,
 };
 app.use((0, cors_1.default)(corsOptions));
@@ -25,6 +25,9 @@ app.use("/api/user", userRoutes_1.default);
 app.use("/api/admin", mRuote_1.default);
 app.use("/api/review", reviewRoutes_1.default);
 app.use("/api/rating", ratingRoute_1.default);
+app.get("/", (req, res) => {
+    res.send("Backend is running");
+});
 app.listen(process.env.PORT, () => {
     console.log(`Server is listening on port ${process.env.PORT}`);
 });
