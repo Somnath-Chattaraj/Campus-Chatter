@@ -19,7 +19,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Cache Node modules (frontend)
+      - name: Cache frontend node modules
         uses: actions/cache@v3
         with:
           path: frontend/node_modules
@@ -27,7 +27,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-frontend-
 
-      - name: Cache Node modules (backend)
+      - name: Cache backend node modules
         uses: actions/cache@v3
         with:
           path: backend/node_modules
