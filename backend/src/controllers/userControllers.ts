@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import sendMail from "../mail/sendMail";
 import { Verifier } from "academic-email-verifier";
+import checkCollegeEmail from "../mail/checkAcademic";
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   let { email, name, password, collegeName, courseName, isOnline, location } =
@@ -24,10 +25,9 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  const regex = /@jadavpuruniversity\.in$/;
   let isCollegeEmail;
-
-  if (regex.test(email)) {
+  
+  if (checkCollegeEmail(email)) {
     isCollegeEmail = true;
   } else {
     isCollegeEmail = await Verifier.isAcademic(email);
