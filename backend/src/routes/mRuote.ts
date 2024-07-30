@@ -1,5 +1,5 @@
 import express from "express";
-import moderation from "../middleware/moderation.js"
+import {checkModeration} from "../middleware/moderation.js"
 const router = express.Router();
-router.post("/reviews/approve",moderation);
+router.post("/reviews/approve",checkModeration);
 export default router;

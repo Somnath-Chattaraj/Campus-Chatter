@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
-
+import { checkModerationForString } from "../middleware/moderation";
 // @ts-ignore
 const postReview = asyncHandler(async (req: Request, res: Response) => {
   const {
@@ -62,14 +62,27 @@ const postReview = asyncHandler(async (req: Request, res: Response) => {
     };
 
     const createReview = async (reviewData: any) => {
-      await prisma.review.create({
-        data: reviewData,
+      const content = reviewData.review;
+      checkModerationForString(content, async(err, isClean) => {
+        if (err) {
+          console.error("Error checking moderation:", err);
+          return res.status(500).json({ message: "Internal server error" });
+        }
+      
+        if (isClean) {
+          console.log("The content is clean.");
+          await prisma.review.create({
+            data: reviewData,
+          });
+          return res.status(201).json({ message: "Review written for course" });
+        }
+        return res.status(400).json({ message: "Content is not clean" });
       });
     };
 
     if (reviewForCollege && college) {
       const course = findCourse(
-        (course) => course.Course.College?.name === college
+        (course) => course.Course.College?.name.toLowerCase() === college.toLowerCase()
       );
 
       if (course) {
@@ -88,7 +101,7 @@ const postReview = asyncHandler(async (req: Request, res: Response) => {
           .json({ message: "You were never enrolled in this college" });
       }
     } else if (!reviewForCollege && Ucourse) {
-      const course = findCourse((course) => course.Course.name === Ucourse);
+      const course = findCourse((course) => course.Course.name.toLowerCase() === Ucourse.toLowerCase());
 
       if (course) {
         const courseId = course.Course.course_id;
