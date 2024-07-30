@@ -4,7 +4,11 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import "dotenv/config";
 import userRoutes from './routes/userRoutes';
+
 import moderationRouter from './routes/mRuote';
+
+import reviewRoutes from './routes/reviewRoutes';
+
 
 const app = express();
 app.use(express.json());
@@ -20,6 +24,9 @@ app.use("/api/user", userRoutes);
 //actual path (/api/admin/reviews/approve)
 // body :-> {"content":"....."}
 app.use("/api/admin",moderationRouter);
+
+app.use("/api/review", reviewRoutes)
+
 
 
 
