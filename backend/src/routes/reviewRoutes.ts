@@ -9,6 +9,7 @@ import {
   getBulkReviews,
 } from "../controllers/reviewControllers";
 import checkAuth from "../middleware/checkAuth";
+import { checkModeration } from "../middleware/moderation";
 
 const reviewRoute = express.Router();
 

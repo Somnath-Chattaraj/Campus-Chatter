@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import { checkModerationForString } from "../middleware/moderation";
 // @ts-ignore
-const postReview = asyncHandler(async (req: Request, res: Response) => {
+const postReview = asyncHandler(async (req: Request, res: Response, next) => {
   const {
     review,
     rating,
@@ -63,26 +63,30 @@ const postReview = asyncHandler(async (req: Request, res: Response) => {
 
     const createReview = async (reviewData: any) => {
       const content = reviewData.review;
-      checkModerationForString(content, async(err, isClean) => {
-        if (err) {
-          console.error("Error checking moderation:", err);
-          return res.status(500).json({ message: "Internal server error" });
-        }
-      
+      try {
+        // @ts-ignore
+        const isClean = await checkModerationForString(content);
+        // @ts-ignore
         if (isClean) {
-          console.log("The content is clean.");
           await prisma.review.create({
             data: reviewData,
           });
-          return res.status(201).json({ message: "Review written for course" });
+          return res
+            .status(201)
+            .json({ message: "Review written successfully" });
+        } else {
+          return res.status(400).json({ message: "Content is not clean" });
         }
-        return res.status(400).json({ message: "Content is not clean" });
-      });
+      } catch (err) {
+        console.error("Error checking moderation:", err);
+        return res.status(500).json({ message: "Internal server error" });
+      }
     };
 
     if (reviewForCollege && college) {
       const course = findCourse(
-        (course) => course.Course.College?.name.toLowerCase() === college.toLowerCase()
+        (course) =>
+          course.Course.College?.name.toLowerCase() === college.toLowerCase()
       );
 
       if (course) {
@@ -101,7 +105,9 @@ const postReview = asyncHandler(async (req: Request, res: Response) => {
           .json({ message: "You were never enrolled in this college" });
       }
     } else if (!reviewForCollege && Ucourse) {
-      const course = findCourse((course) => course.Course.name.toLowerCase() === Ucourse.toLowerCase());
+      const course = findCourse(
+        (course) => course.Course.name.toLowerCase() === Ucourse.toLowerCase()
+      );
 
       if (course) {
         const courseId = course.Course.course_id;
@@ -274,4 +280,11 @@ const editReview = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export { postReview, filterReviews,getBulkReviews, getFullReview, deleteReview, editReview };
+export {
+  postReview,
+  filterReviews,
+  getBulkReviews,
+  getFullReview,
+  deleteReview,
+  editReview,
+};
