@@ -13,6 +13,7 @@ const postReview = asyncHandler(async (req: Request, res: Response, next) => {
   } = req.body;
   // @ts-ignore
   const user_id = req.user.user_id;
+
   if (!review || !rating || (!college && !Ucourse)) {
     return res.status(400).json({ message: "Required fields are missing" });
   }
@@ -62,23 +63,13 @@ const postReview = asyncHandler(async (req: Request, res: Response, next) => {
     };
 
     const createReview = async (reviewData: any) => {
-      const content = reviewData.review;
       try {
-        // @ts-ignore
-        const isClean = await checkModerationForString(content);
-        // @ts-ignore
-        if (isClean) {
-          await prisma.review.create({
-            data: reviewData,
-          });
-          return res
-            .status(201)
-            .json({ message: "Review written successfully" });
-        } else {
-          return res.status(400).json({ message: "Content is not clean" });
-        }
+        await prisma.review.create({
+          data: reviewData,
+        });
+        return res.status(201).json({ message: "Review written successfully" });
       } catch (err) {
-        console.error("Error checking moderation:", err);
+        console.error("Error creating review:", err);
         return res.status(500).json({ message: "Internal server error" });
       }
     };
