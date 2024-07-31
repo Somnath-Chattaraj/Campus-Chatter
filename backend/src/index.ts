@@ -13,7 +13,10 @@ import ratingRoutes from "./routes/ratingRoute";
 const app = express();
 app.use(express.json());
 const corsOptions = {
-  origin: "http://localhost:3001",
+  origin: [
+    "http://localhost:3001",
+    "https://app-statuscode1.wedevelopers.online",
+  ],
   credentials: true,
 };
 app.use(cors(corsOptions));
