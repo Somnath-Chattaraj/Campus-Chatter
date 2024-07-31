@@ -34,7 +34,9 @@ const calAvgRating = asyncHandler(async (req: Request, res: Response) => {
         }
 
         avgRating /= count;
-
+        if (avgRating === null) {
+            res.status(404).json({ message: "No reviews found for this college" });
+        }
         res.status(200).json({ avgRating });
     } catch (error) {
         console.error(error);

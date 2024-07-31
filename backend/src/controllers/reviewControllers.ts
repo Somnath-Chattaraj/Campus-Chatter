@@ -126,10 +126,6 @@ const postReview = asyncHandler(async (req: Request, res: Response, next) => {
 
 // @ts-ignore
 const getBulkReviews = asyncHandler(async (req: Request, res: Response) => {
-  const { reviewIds } = req.body;
-  if (!reviewIds || typeof reviewIds !== "string") {
-    return res.status(400).json({ message: "Invalid request" });
-  }
   try {
     const reviews = await prisma.review.findMany({});
     return res.status(200).json(reviews);
