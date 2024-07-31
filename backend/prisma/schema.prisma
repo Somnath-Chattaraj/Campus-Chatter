@@ -8,47 +8,53 @@ datasource db {
 }
 
 model User {
-  user_id               String   @id @default(cuid())
-  email                 String   @unique
-  name                  String?
-  password              String
-  createdAt             DateTime  @default(now())
-  emailVerified         Boolean   @default(false)
-  collegeEmailVerified  Boolean   @default(false)
-  userCourses           UserCourse[]
-  reviews               Review[]
+  user_id              String       @id @default(cuid())
+  email                String       @unique
+  name                 String?
+  password             String
+  createdAt            DateTime     @default(now())
+  emailVerified        Boolean      @default(false)
+  collegeEmailVerified Boolean      @default(false)
+  userCourses          UserCourse[]
+  reviews              Review[]
+  Post                 Post[]
+  Comment              Comment[]
 }
 
 model College {
-  college_id   String   @id @default(uuid())
-  name         String
-  location     String
-  courses      Course[]
-  reviews      Review[]
+  college_id String    @id @default(uuid())
+  name       String
+  location   String
+  courses    Course[]
+  reviews    Review[]
+  Post       Post[]
+  Comment    Comment[]
 }
 
 model Course {
-  course_id   String   @id @default(uuid())
+  course_id   String       @id @default(uuid())
   name        String
   college_id  String?
-  isOnline    Boolean   @default(false)
-  College     College?  @relation(fields: [college_id], references: [college_id])
+  isOnline    Boolean      @default(false)
+  College     College?     @relation(fields: [college_id], references: [college_id])
   reviews     Review[]
   userCourses UserCourse[]
+  Post        Post[]
+  Comment     Comment[]
 }
 
 model Review {
-  review_id   String   @id @default(cuid())
-  user_id     String
-  college_id  String?
-  course_id   String?
-  rating      Int
-  review      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  User        User     @relation(fields: [user_id], references: [user_id])
-  College     College? @relation(fields: [college_id], references: [college_id])
-  Course      Course?  @relation(fields: [course_id], references: [course_id])
+  review_id  String   @id @default(cuid())
+  user_id    String
+  college_id String?
+  course_id  String?
+  rating     Int
+  review     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  User       User     @relation(fields: [user_id], references: [user_id])
+  College    College? @relation(fields: [college_id], references: [college_id])
+  Course     Course?  @relation(fields: [course_id], references: [course_id])
 }
 
 model UserCourse {
@@ -57,4 +63,34 @@ model UserCourse {
   course_id     String
   User          User   @relation(fields: [user_id], references: [user_id])
   Course        Course @relation(fields: [course_id], references: [course_id])
+}
+
+model Post {
+  post_id    String    @id @default(cuid())
+  user_id    String
+  college_id String
+  course_id  String
+  title      String
+  content    String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  User       User      @relation(fields: [user_id], references: [user_id])
+  College    College   @relation(fields: [college_id], references: [college_id])
+  Course     Course    @relation(fields: [course_id], references: [course_id])
+  Comments   Comment[]
+}
+
+model Comment {
+  comment_id String   @id @default(cuid())
+  post_id    String
+  user_id    String
+  college_id String
+  course_id  String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  User       User     @relation(fields: [user_id], references: [user_id])
+  College    College  @relation(fields: [college_id], references: [college_id])
+  Course     Course   @relation(fields: [course_id], references: [course_id])
+  Post       Post     @relation(fields: [post_id], references: [post_id])
 }
