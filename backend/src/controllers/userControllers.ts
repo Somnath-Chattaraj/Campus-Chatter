@@ -93,7 +93,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const exp = Date.now() + 1000 * 60 * 5;
     // @ts-ignore
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
-    const url = `https://localhost:3000/api/user/verify/${token}`;
+    const url = `https://api-statuscode1.wedevelopers.online/api/user/verify/${token}`;
     const htmlContent = `<a href="${url}">Verify using this link</a>`;
     // @ts-ignore
     await sendMail(email, htmlContent);
@@ -110,7 +110,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const exp = Date.now() + 1000 * 60 * 5;
     // @ts-ignore
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
-    const url = `http://localhost:3000/api/user/verify/${token}`;
+    const url = `https://api-statuscode1.wedevelopers.online/api/user/verify/${token}`;
     const htmlContent = `<a href="${url}">Verify using this link</a>`;
     // @ts-ignore
     await sendMail(email, htmlContent);

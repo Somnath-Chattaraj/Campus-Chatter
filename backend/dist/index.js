@@ -14,7 +14,10 @@ const ratingRoute_1 = __importDefault(require("./routes/ratingRoute"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 const corsOptions = {
-    origin: "http://localhost:3001",
+    origin: [
+        "http://localhost:3001",
+        "https://app-statuscode1.wedevelopers.online",
+    ],
     credentials: true,
 };
 app.use((0, cors_1.default)(corsOptions));
