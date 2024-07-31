@@ -123,10 +123,6 @@ const postReview = (0, express_async_handler_1.default)((req, res, next) => __aw
 exports.postReview = postReview;
 // @ts-ignore
 const getBulkReviews = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { reviewIds } = req.body;
-    if (!reviewIds || typeof reviewIds !== "string") {
-        return res.status(400).json({ message: "Invalid request" });
-    }
     try {
         const reviews = yield prisma_1.default.review.findMany({});
         return res.status(200).json(reviews);

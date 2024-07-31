@@ -43,6 +43,9 @@ const calAvgRating = (0, express_async_handler_1.default)((req, res) => __awaite
             count++;
         }
         avgRating /= count;
+        if (avgRating === null) {
+            res.status(404).json({ message: "No reviews found for this college" });
+        }
         res.status(200).json({ avgRating });
     }
     catch (error) {
