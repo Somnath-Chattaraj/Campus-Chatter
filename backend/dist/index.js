@@ -9,6 +9,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 require("dotenv/config");
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const mRuote_1 = __importDefault(require("./routes/mRuote"));
+const chatRoutes_1 = __importDefault(require("./routes/chatRoutes"));
 const reviewRoutes_1 = __importDefault(require("./routes/reviewRoutes"));
 const ratingRoute_1 = __importDefault(require("./routes/ratingRoute"));
 const app = (0, express_1.default)();
@@ -28,6 +29,7 @@ app.use("/api/user", userRoutes_1.default);
 app.use("/api/admin", mRuote_1.default);
 app.use("/api/review", reviewRoutes_1.default);
 app.use("/api/rating", ratingRoute_1.default);
+app.use('/api/chat', chatRoutes_1.default); // Use the chat routes
 app.get("/", (req, res) => {
     res.send("Backend is running");
 });

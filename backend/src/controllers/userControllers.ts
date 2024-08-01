@@ -186,4 +186,73 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({ message: "User logged in" });
 });
 
-export { registerUser, loginUser, verifyUser };
+const getCurrentUserDetails = asyncHandler(async (req: Request, res: Response) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      // @ts-ignore
+      user_id: req.user.user_id,
+    },
+    select: {
+      user_id: true,
+      email: true,
+      name: true,
+      userCourses: {
+        select: {
+          Course: {
+            select: {
+              name: true,
+              College: {
+                select: {
+                  name: true,
+                },
+              },
+            }
+          }
+        },
+      },
+      reviews: true,
+      chatRooms: true,
+    }
+  });
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+  res.status(200).json(user);
+});
+
+const getUserDetailsById = asyncHandler(async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const user = await prisma.user.findUnique({
+    where: {
+      user_id: userId,
+    },
+    select: {
+      email: true,
+      name: true,
+      userCourses: {
+        select: {
+          Course: {
+            select: {
+              name: true,
+              College: {
+                select: {
+                  name: true,
+                },
+              },
+            }
+          }
+        },
+      },
+      reviews: true,
+      chatRooms: true,
+    }
+  });
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+  res.status(200).json(user);
+});
+
+export { registerUser, loginUser, verifyUser, getCurrentUserDetails, getUserDetailsById };

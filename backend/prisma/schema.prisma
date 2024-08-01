@@ -17,6 +17,8 @@ model User {
   collegeEmailVerified  Boolean   @default(false)
   userCourses           UserCourse[]
   reviews               Review[]
+  chatRooms             ChatRoom[] @relation("UserChatRooms")
+  sentMessages          Message[] @relation("SentMessages")
 }
 
 model College {
@@ -57,4 +59,20 @@ model UserCourse {
   course_id     String
   User          User   @relation(fields: [user_id], references: [user_id])
   Course        Course @relation(fields: [course_id], references: [course_id])
+}
+
+model ChatRoom {
+  id       String   @id @default(uuid())
+  users    User[]   @relation("UserChatRooms")
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  timestamp DateTime @default(now())
+  senderId  String
+  chatRoomId String
+  sender    User     @relation("SentMessages", fields: [senderId], references: [user_id])
+  chatRoom  ChatRoom @relation(fields: [chatRoomId], references: [id])
 }

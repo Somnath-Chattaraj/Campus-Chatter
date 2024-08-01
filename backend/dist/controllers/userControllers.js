@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyUser = exports.loginUser = exports.registerUser = void 0;
+exports.getUserDetailsById = exports.getCurrentUserDetails = exports.verifyUser = exports.loginUser = exports.registerUser = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -198,3 +198,72 @@ const loginUser = (0, express_async_handler_1.default)((req, res) => __awaiter(v
     res.status(200).json({ message: "User logged in" });
 }));
 exports.loginUser = loginUser;
+const getCurrentUserDetails = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma_1.default.user.findUnique({
+        where: {
+            // @ts-ignore
+            user_id: req.user.user_id,
+        },
+        select: {
+            user_id: true,
+            email: true,
+            name: true,
+            userCourses: {
+                select: {
+                    Course: {
+                        select: {
+                            name: true,
+                            College: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                        }
+                    }
+                },
+            },
+            reviews: true,
+            chatRooms: true,
+        }
+    });
+    if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+    }
+    res.status(200).json(user);
+}));
+exports.getCurrentUserDetails = getCurrentUserDetails;
+const getUserDetailsById = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    const user = yield prisma_1.default.user.findUnique({
+        where: {
+            user_id: userId,
+        },
+        select: {
+            email: true,
+            name: true,
+            userCourses: {
+                select: {
+                    Course: {
+                        select: {
+                            name: true,
+                            College: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                        }
+                    }
+                },
+            },
+            reviews: true,
+            chatRooms: true,
+        }
+    });
+    if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+    }
+    res.status(200).json(user);
+}));
+exports.getUserDetailsById = getUserDetailsById;
