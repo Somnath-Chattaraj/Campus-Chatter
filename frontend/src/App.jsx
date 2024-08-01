@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LiveblocksProvider, RoomProvider } from "@liveblocks/react";
 import PostBox from "./components/Posts";
 import Room from "./components/Room";
+import ProfilePage from './components/ProfilePage';
+import ChatRoom from './components/ChatRoom';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
                 </RoomProvider>
               }
             />
+            <Route path="/profile/:userId" component={ProfilePage} />
+            <Route path="/chat/:roomId" component={ChatRoom} />
           </Routes>
         </BrowserRouter>
       </LiveblocksProvider>

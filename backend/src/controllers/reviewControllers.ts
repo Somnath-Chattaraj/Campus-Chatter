@@ -127,7 +127,38 @@ const postReview = asyncHandler(async (req: Request, res: Response, next) => {
 // @ts-ignore
 const getBulkReviews = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const reviews = await prisma.review.findMany({});
+    const reviews = await prisma.review.findMany({
+      select: {
+        review_id: true,
+        review: true,
+        rating: true,
+        createdAt: true,
+        updatedAt: true,
+        College: true,
+        Course: true,
+        User: {
+          select: {
+            email: true,
+            name: true,
+            userCourses: {
+              select: {
+                Course: {
+                  select: {
+                    name: true,
+                    College: {
+                      select: {
+                        name: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            user_id: true,
+          },
+        },
+      },
+    });
     return res.status(200).json(reviews);
   } catch (error) {
     console.error(error);
@@ -193,6 +224,36 @@ const getFullReview = asyncHandler(async (req: Request, res: Response) => {
     where: {
       review_id: reviewId,
     },
+    select: {
+      review_id: true,
+      review: true,
+      rating: true,
+      createdAt: true,
+      updatedAt: true,
+      College: true,
+      Course: true,
+      User: {
+        select: {
+          email: true,
+          name: true,
+          userCourses: {
+            select: {
+              Course: {
+                select: {
+                  name: true,
+                  College: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          reviews: true,
+        },
+      },
+    }
   });
   if (!review) {
     return res.status(404).json({ message: "Review not found" });

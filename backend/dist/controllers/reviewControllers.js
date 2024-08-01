@@ -124,7 +124,38 @@ exports.postReview = postReview;
 // @ts-ignore
 const getBulkReviews = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const reviews = yield prisma_1.default.review.findMany({});
+        const reviews = yield prisma_1.default.review.findMany({
+            select: {
+                review_id: true,
+                review: true,
+                rating: true,
+                createdAt: true,
+                updatedAt: true,
+                College: true,
+                Course: true,
+                User: {
+                    select: {
+                        email: true,
+                        name: true,
+                        userCourses: {
+                            select: {
+                                Course: {
+                                    select: {
+                                        name: true,
+                                        College: {
+                                            select: {
+                                                name: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        user_id: true,
+                    },
+                },
+            },
+        });
         return res.status(200).json(reviews);
     }
     catch (error) {
@@ -189,6 +220,36 @@ const getFullReview = (0, express_async_handler_1.default)((req, res) => __await
         where: {
             review_id: reviewId,
         },
+        select: {
+            review_id: true,
+            review: true,
+            rating: true,
+            createdAt: true,
+            updatedAt: true,
+            College: true,
+            Course: true,
+            User: {
+                select: {
+                    email: true,
+                    name: true,
+                    userCourses: {
+                        select: {
+                            Course: {
+                                select: {
+                                    name: true,
+                                    College: {
+                                        select: {
+                                            name: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    reviews: true,
+                },
+            },
+        }
     });
     if (!review) {
         return res.status(404).json({ message: "Review not found" });

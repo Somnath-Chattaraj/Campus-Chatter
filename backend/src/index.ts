@@ -6,6 +6,7 @@ import "dotenv/config";
 import userRoutes from "./routes/userRoutes";
 
 import moderationRouter from "./routes/mRuote";
+import chatRoutes from "./routes/chatRoutes";
 
 import reviewRoutes from "./routes/reviewRoutes";
 import ratingRoutes from "./routes/ratingRoute";
@@ -29,6 +30,7 @@ app.use("/api/admin", moderationRouter);
 
 app.use("/api/review", reviewRoutes);
 app.use("/api/rating", ratingRoutes);
+app.use('/api/chat', chatRoutes); // Use the chat routes
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Backend is running");
