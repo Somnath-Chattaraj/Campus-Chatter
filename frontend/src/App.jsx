@@ -4,7 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LiveblocksProvider, RoomProvider } from "@liveblocks/react";
 import PostBox from "./components/Posts";
 import Room from "./components/Room";
-
+import Mainbuttons from "./components/chatroomui/main";
+/*
 function App() {
   return (
     <ChakraProvider>
@@ -26,5 +27,20 @@ function App() {
     </ChakraProvider>
   );
 }
-
+*/
+const App = ()=>{
+  return (
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/chatroom"
+            element={
+              <Mainbuttons></Mainbuttons>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  )
+}
 export default App;
