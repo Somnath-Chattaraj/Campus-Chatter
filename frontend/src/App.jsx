@@ -1,46 +1,20 @@
-import React from "react";
-import { ChakraProvider } from "@chakra-ui/react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { LiveblocksProvider, RoomProvider } from "@liveblocks/react";
-import PostBox from "./components/Posts";
-import Room from "./components/Room";
-import Mainbuttons from "./components/chatroomui/main";
-/*
-function App() {
-  return (
-    <ChakraProvider>
-      <LiveblocksProvider publicApiKey={import.meta.env.VITE_API_KEY}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<PostBox />} />
-            <Route
-              path="/room"
-              element={
-                <RoomProvider id="my-room">
-                  <Room />
-                </RoomProvider>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
-      </LiveblocksProvider>
-    </ChakraProvider>
-  );
-}
-*/
+import { chatRoomApi } from "./components/contexts/chatRoomApi";
+import { RouterProvider } from "react-router-dom";
+import Mainrouter from "./mainroute.jsx"
+
 const App = ()=>{
+  const [user1,setUser1] = useState("");
+  const [user2,setUser2] = useState("");
+  const [roomId,setRoomId] = useState("");
   return (
-    <div>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/chatroom"
-            element={
-              <Mainbuttons></Mainbuttons>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <>
+    <RouterProvider
+    router = {Mainrouter}
+    />
+    </>
   )
 }
+
 export default App;
