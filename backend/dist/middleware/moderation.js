@@ -12,7 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkModeration = exports.checkModerationForString = void 0;
+exports.checkModerationForString = checkModerationForString;
+exports.checkModeration = checkModeration;
 const promises_1 = __importDefault(require("fs/promises"));
 function binarySearch(items, value) {
     var startIndex = 0, stopIndex = items.length - 1, middle = Math.floor((stopIndex + startIndex) / 2);
@@ -51,7 +52,6 @@ function checkModerationForString(content) {
         }
     });
 }
-exports.checkModerationForString = checkModerationForString;
 function checkModeration(req, res, next) {
     const fs = require("fs");
     //for some reason it is taking backend folder as the root folder
@@ -79,4 +79,3 @@ function checkModeration(req, res, next) {
         }
     });
 }
-exports.checkModeration = checkModeration;
