@@ -1,7 +1,8 @@
 import React from 'react';
 
-const Testimonials = () => (
-  <section className="testimonials">
+const Testimonials = () => {
+  return (
+    <section className="testimonials">
     <h2>Join Our Community Today</h2>
     <div className="testimonial-grid">
       <div className="testimonial">
@@ -18,6 +19,9 @@ const Testimonials = () => (
       </div>
     </div>
   </section>
-);
+  )
+}
 
-export default Testimonials;
+export default Testimonials
+
+

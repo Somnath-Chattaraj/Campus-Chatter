@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { chatRoomApi } from "./components/contexts/chatRoomApi";
 import { RouterProvider } from "react-router-dom";
+import { ChakraProvider } from '@chakra-ui/react'
 import Mainrouter from "./components/routes/mainroute";
 
 const App = () => {
