@@ -3,8 +3,10 @@ import serviceImage1 from '../images/image2.jpg';
 import serviceImage2 from '../images/image3.jpg';
 import serviceImage3 from '../images/image4.jpg';
 
-const Services = () => (
-  <section className="services">
+
+const Services = () => {
+  return (
+    <section className="services">
     <h2>Our Services</h2>
     <div className="services-grid">
       <div className="service">
@@ -24,6 +26,9 @@ const Services = () => (
       </div>
     </div>
   </section>
-);
+  )
+}
+
+
 
 export default Services;

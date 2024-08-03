@@ -5,6 +5,13 @@ import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { chatRoomApi } from "../contexts/chatRoomApi";
 import { useState } from "react";
+import Header from "../Header";
+import Discover from "../Discover";
+import Services from "../Services";
+import Explore from "../Explore";
+import Testimonials from "../Testimonials";
+import Footer from "../Footer";
+import "../../styles.css"
 const Test = () =>{
   const [userId, setUserId] = useState("");
   const [roomId,setRoomId] = useState("");
@@ -17,21 +24,23 @@ const Test = () =>{
     </>
   )
 }
-const Header = ()=>{
+const Header2 = ()=>{
   const navigate = useNavigate();
   return(
     <div>
-      <h1>Welcome to you application</h1>
-      <button onClick={()=>{
-        navigate("/room");
-      }}>room</button>
+      <Header />
+      <Discover />
+      <Services />
+      <Explore />
+      <Testimonials />
+      <Footer />
     </div>
   )
 }
 const Mainrouter = createBrowserRouter([
   {
     path :"/",
-    element:<Header/>,
+    element:<Header2/>,
   },
   {
     path: "/room",

@@ -1,8 +1,9 @@
 import React from 'react';
 import discoverImage from '../images/image1.jpg'; 
 
-const Discover = () => (
-  <section className="discover">
+const Discover = () => {
+  return (
+    <section className="discover">
     <img src={discoverImage} alt="Students studying" />
     <div className="discover-text">
       <h2>Discover Honest Reviews</h2>
@@ -11,6 +12,10 @@ const Discover = () => (
       </p>
     </div>
   </section>
-);
+  )
+}
+
+
+
 
 export default Discover;

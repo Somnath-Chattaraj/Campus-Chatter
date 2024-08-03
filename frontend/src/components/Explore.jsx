@@ -1,9 +1,9 @@
 import React from 'react';
 import exploreImage from '../images/image5.jpg';
 
-const Explore = () => (
-  
-  <section className="explore">
+const Explore = () => {
+  return (
+    <section className="explore">
     
     <div>
     <h2>Anonymous College Reviews</h2>
@@ -14,6 +14,9 @@ const Explore = () => (
     <img src={exploreImage} alt="College building" />
     
   </section>
-);
+  )
+}
+
+
 
 export default Explore;
