@@ -1,13 +1,16 @@
+import React from "react";
 import { chatRoomApi } from "../contexts/chatRoomApi";
 import { useContext,useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket"
 import { ReadyState } from "react-use-websocket";
-const Joiningchat = ()=>{
+import { Navigate } from "react-router-dom";
+const Chatroom = ()=>{
   const { roomId,userId } = useContext(chatRoomApi);
-  //making the connections
-  const { sendJsonMessage, lastMessage, lastJsonMessage, readyState } = useWebSocket('ws://localhost:8080')
   const [allMsg, setAllMsg] = useState([]);
   const [myMsg,setMyMsg] = useState("");
+  //making the connections
+  const { sendJsonMessage, lastMessage, lastJsonMessage, readyState } = useWebSocket('ws://localhost:8080')
+  //initial query to join the room
   useEffect(() => {
     console.log(roomId);
     const tosend = {
@@ -18,9 +21,16 @@ const Joiningchat = ()=>{
       }
     }
     sendJsonMessage(tosend);
+    return ()=>{
+
+    }
   },[]);
+  //checking on last message
   useEffect(() => {
     if (lastJsonMessage != null) {
+      if (lastJsonMessage.type == "error") {
+        alert("Room not connected...")
+      }
       if (lastJsonMessage.type == "newMessage") {
         if(lastJsonMessage.data.roomId == roomId)
         {
@@ -46,6 +56,7 @@ const Joiningchat = ()=>{
     [ReadyState.CLOSED]: 'Closed',
     [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
   }[readyState];
+
   const submit = ()=>{
     const tosend = {
     type:"sendMessage",
@@ -54,8 +65,15 @@ const Joiningchat = ()=>{
         userId:userId,
         message:myMsg
     }}
-    console.log(tosend)
-    sendJsonMessage(tosend);
+    sendJsonMessage(tosend,true);
+    setAllMsg(prev => {
+      return prev.concat(
+        {
+          senderId: "you",
+          message: tosend.data.message,
+          at: Date().toString(),
+        }
+      );})
   }
   
   return (
@@ -64,7 +82,7 @@ const Joiningchat = ()=>{
         <h4>
           connection status {constatus}
           <div>
-            room id : {roomId ? roomId : "nothing to show"}
+            room id : {roomId? roomId : "null"}
           </div>
         </h4>
       </div>
@@ -75,7 +93,7 @@ const Joiningchat = ()=>{
         <h1>Messages:</h1>
         {allMsg.length? allMsg.map((data,index)=>{
           return (
-            <div id={index}>
+            <div id={index.toString()}>
               <div>senderId : <b>{data.senderId}</b></div>
               <div>massage: <b>{data.message}</b></div>
               <div>at : {data.at}</div>
@@ -90,4 +108,4 @@ const Joiningchat = ()=>{
     </div>
   )
 }
-export default Joiningchat;
+export default Chatroom;
