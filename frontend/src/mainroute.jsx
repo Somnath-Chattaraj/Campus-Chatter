@@ -1,14 +1,15 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Mainbuttons ,Createroom,Joinroom} from "./components/chatroomui/main";
+import Chatting from "./components/chatroomui/chatting";
 //import Testing from "./testing"
 import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { chatRoomApi } from "./components/contexts/chatRoomApi";
 import { useState } from "react";
 const Test = () =>{
-  const [user1, setUser1] = useState("");
+  const [user1, setUser1] = useState("clzcjoajo0000uwdjfgu4a0c9");
   const [roomId,setRoomId] = useState("");
-  const [user2, setUser2] = useState("");
+  const [user2, setUser2] = useState("clzcjp30d0001uwdjgrx2sn5m");
   return (
     <>
     <chatRoomApi.Provider value={{user1,setUser1,user2,setUser2,roomId,setRoomId}}>
@@ -49,6 +50,10 @@ const Mainrouter = createBrowserRouter([
       {
         path: "/room/joinroom",
         element:  <Joinroom/> ,
+      },
+      {
+        path: "/room/chatting",
+        element:  <Chatting/> ,
       }
     ]
   }

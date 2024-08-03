@@ -6,8 +6,9 @@ import { chatRoomApi } from "../contexts/chatRoomApi";
 function Createroom(){
   //@ts-ignore
   const {user1,setUser1,user2,setUser2,roomId,setRoomId} = useContext(chatRoomApi);
+  const navigate = useNavigate();
   const submit = ()=>{
-    console.log(user1,"\n",user2)
+    navigate("/room/chatting");
   }
   return (
     <div>
@@ -29,7 +30,9 @@ function Createroom(){
 function Joinroom(){
   //@ts-ignore
   const {roomId,setRoomId,user1,setUser1} = useContext(chatRoomApi);
+  const navigate = useNavigate ();
   const submit = ()=>{
+    navigate("/room/chatting");
   }
   return (
     <div>
