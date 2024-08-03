@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {useNavigate} from "react-router-dom"
 import { useContext } from "react";
 import { chatRoomApi } from "../contexts/chatRoomApi";
@@ -6,9 +6,32 @@ import { chatRoomApi } from "../contexts/chatRoomApi";
 function Createroom(){
   //@ts-ignore
   const {userId,setUserId,targetUserId,setTargetUserId,roomId,setRoomId} = useContext(chatRoomApi);
+  const [tempRoomId,setTempRoomId] = useState("");
   const navigate = useNavigate();
   const submit = ()=>{
-    navigate("/room/chatting");
+    const socket = new WebSocket("ws://localhost:8080");
+    // Connection opened
+    socket.addEventListener("open", (event) => {
+      socket.send(JSON.stringify(
+        {
+          type:"createRoom",
+          data:{
+            userId:userId,
+            targetUserId:targetUserId
+          }
+        }
+      ));
+    });
+
+    // Listen for messages
+    socket.addEventListener("message", (event) => {
+      console.log("Message from server ", event.data);
+      const data = JSON.parse(event.data);
+      if(data.type == "roomJoined"){
+        setTempRoomId(data.data.roomId);
+      }
+    });
+
   }
   return (
     <div>
@@ -23,6 +46,11 @@ function Createroom(){
       placeholder="userid2"
       />
       <button onClick={submit}>creatroom</button>
+      <div>
+        {tempRoomId? <div>
+            new room id : <b>{tempRoomId}</b>
+        </div>:""}
+      </div>
     </div>
   )
 }
