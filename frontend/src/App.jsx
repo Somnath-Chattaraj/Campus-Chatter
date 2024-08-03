@@ -1,22 +1,23 @@
-import React from "react";
-import { ChakraProvider } from "@chakra-ui/react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import PostBox from "./components/Posts";
-import ProfilePage from "./components/ProfilePage";
-import ChatRoom from "./components/ChatRoom";
+import { chatRoomApi } from "./components/contexts/chatRoomApi";
+import { RouterProvider } from "react-router-dom";
+import Mainrouter from "./components/routes/mainroute"
 
-function App() {
+
+const App = ()=>{
+  const [user1,setUser1] = useState("");
+  const [user2,setUser2] = useState("");
+  const [roomId,setRoomId] = useState("");
   return (
+
     <ChakraProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<PostBox />} />
-          <Route path="/profile/:userId" component={ProfilePage} />
-          <Route path="/chat/:roomId" component={ChatRoom} />
-        </Routes>
-      </BrowserRouter>
+    <RouterProvider
+    router = {Mainrouter}
+    />
     </ChakraProvider>
-  );
+  )
+
 }
 
 export default App;

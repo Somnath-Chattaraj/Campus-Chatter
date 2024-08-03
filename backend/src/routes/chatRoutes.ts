@@ -4,8 +4,11 @@ import { listChatRooms, getChatRoomDetails, getChatHistory } from '../controller
 import checkAuth from "../middleware/checkAuth";
 const router = express.Router();
 
-router.get('/rooms', checkAuth, listChatRooms);
-router.get('/rooms/:roomId', checkAuth, getChatRoomDetails);
-router.get('/history/:roomId', checkAuth, getChatHistory);
+//router.get('/rooms', checkAuth, listChatRooms);
+//router.get('/rooms/:roomId', checkAuth, getChatRoomDetails);
+//router.get('/history/:roomId', checkAuth, getChatHistory);
+router.get('/history/:roomId',  getChatHistory);
+router.get('/rooms/:roomId',  getChatRoomDetails);
+router.get('/rooms',  listChatRooms);
 
 export default router;
