@@ -5,7 +5,7 @@ import { chatRoomApi } from "../contexts/chatRoomApi";
 
 function Createroom(){
   //@ts-ignore
-  const {user1,setUser1,user2,setUser2,roomId,setRoomId} = useContext(chatRoomApi);
+  const {userId,setUserId,targetUserId,setTargetUserId,roomId,setRoomId} = useContext(chatRoomApi);
   const navigate = useNavigate();
   const submit = ()=>{
     navigate("/room/chatting");
@@ -13,13 +13,13 @@ function Createroom(){
   return (
     <div>
       <input type="text" 
-      value={user1}
-      onChange={e=>setUser1(e.target.value)}
+      value={userId}
+      onChange={e=>setUserId(e.target.value)}
       placeholder="userid1"
       />
       <input type="text" 
-      value={user2}
-      onChange={e=>setUser2(e.target.value)}
+      value={targetUserId}
+      onChange={e=>setTargetUserId(e.target.value)}
       placeholder="userid2"
       />
       <button onClick={submit}>creatroom</button>
@@ -29,24 +29,30 @@ function Createroom(){
 
 function Joinroom(){
   //@ts-ignore
-  const {roomId,setRoomId,user1,setUser1} = useContext(chatRoomApi);
+  const {roomId,setRoomId,userId,setUserId} = useContext(chatRoomApi);
   const navigate = useNavigate ();
   const submit = ()=>{
     navigate("/room/chatting");
   }
   return (
     <div>
+      <div>
+        roomid:
       <input type="text" 
       value={roomId}
       onChange={e=>setRoomId(e.target.value)}
       placeholder="room Id"
       />
+      </div>
+      <div>
+        userid:
       <input type="text" 
-      value={user1}
-      onChange={e=>setUser1(e.target.value)}
+      value={userId}
+      onChange={e=>setUserId(e.target.value)}
       placeholder="user id"
       />
-      <button onClick={submit}>creatroom</button>
+      </div>
+      <button onClick={submit}>Joinroom</button>
     </div>
   )
 }

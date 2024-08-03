@@ -27,7 +27,7 @@ export const getChatHistory = async (req: Request, res: Response) => {
 export const listChatRooms = async (req: Request, res: Response) => {
 
   // @ts-ignore
-  const userId = req.user.user_id;
+  const userId = req.body;
 
   try {
     const chatRooms = await prisma.chatRoom.findMany({

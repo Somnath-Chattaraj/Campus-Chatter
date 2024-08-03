@@ -3,15 +3,15 @@ import { useContext,useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket"
 import { ReadyState } from "react-use-websocket";
 const Chatting = ()=>{
-  const { roomId,setRoomId, user1, user2 } = useContext(chatRoomApi);
+  const { roomId,setRoomId, userId, targetUserId } = useContext(chatRoomApi);
   const { sendJsonMessage, lastMessage, lastJsonMessage, readyState } = useWebSocket('ws://localhost:8080')
   const [allMsg, setAllMsg] = useState(["no messages yet"]);
   const [curMsg,setCurMsg] = useState("");
   const test = {
     type: "createRoom",
     data: {
-      userId: user1,
-      targetUserId: user2
+      userId: userId,
+      targetUserId: targetUserId
     }
   }
   useEffect(() => {
@@ -43,7 +43,7 @@ const Chatting = ()=>{
       type: "sendMessage",
       data :{
         roomid:roomId,
-        userId:user1,
+        userId:userId,
         message:curMsg
       }
     }
