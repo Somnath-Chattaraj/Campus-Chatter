@@ -12,6 +12,8 @@ const mRuote_1 = __importDefault(require("./routes/mRuote"));
 const chatRoutes_1 = __importDefault(require("./routes/chatRoutes"));
 const reviewRoutes_1 = __importDefault(require("./routes/reviewRoutes"));
 const ratingRoute_1 = __importDefault(require("./routes/ratingRoute"));
+const postsRoutes_1 = __importDefault(require("./routes/postsRoutes"));
+// import { getCommunities } from "./controllers/postController";
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 const corsOptions = {
@@ -29,7 +31,9 @@ app.use("/api/user", userRoutes_1.default);
 app.use("/api/admin", mRuote_1.default);
 app.use("/api/review", reviewRoutes_1.default);
 app.use("/api/rating", ratingRoute_1.default);
-app.use('/api/chat', chatRoutes_1.default); // Use the chat routes
+app.use("/api/chat", chatRoutes_1.default); // Use the chat routes
+app.use("/api/post", postsRoutes_1.default);
+// app.get("/api/post/communities", getCommunities);
 app.get("/", (req, res) => {
     res.send("Backend is running");
 });

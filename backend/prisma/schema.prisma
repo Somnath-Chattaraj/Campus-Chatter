@@ -30,7 +30,6 @@ model College {
   courses    Course[]
   reviews    Review[]
   Post       Post[]
-  Comment    Comment[]
   UserCourse UserCourse[]
 }
 
@@ -88,7 +87,6 @@ model Post {
   post_id    String    @id @default(cuid())
   user_id    String
   college_id String
-  course_id  String
   title      String
   content    String
   likes      Int       @default(0)
@@ -103,12 +101,9 @@ model Comment {
   comment_id String   @id @default(cuid())
   post_id    String
   user_id    String
-  college_id String
-  course_id  String
   content    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   User       User     @relation(fields: [user_id], references: [user_id])
-  College    College  @relation(fields: [college_id], references: [college_id])
   Post       Post     @relation(fields: [post_id], references: [post_id])
 }
