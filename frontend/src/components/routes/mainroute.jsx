@@ -4,6 +4,7 @@ import Chatroom from "../chatroomui/chatroom";
 import { Outlet } from "react-router-dom";
 import { chatRoomApi } from "../contexts/chatRoomApi";
 import { useState } from "react";
+import Posts from "../../components/Posts";
 import HomePage from "../../pages/HomePage";
 const Test = () => {
   const [userId, setUserId] = useState("");
@@ -43,6 +44,10 @@ const Mainrouter = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
+  },
+  {
+    path: "/posts",
+    element: <Posts />,
   },
   {
     path: "/room",

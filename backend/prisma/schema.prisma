@@ -8,7 +8,6 @@ datasource db {
 }
 
 model User {
-
   user_id              String       @id @default(cuid())
   email                String       @unique
   name                 String?
@@ -20,9 +19,8 @@ model User {
   reviews              Review[]
   Post                 Post[]
   Comment              Comment[]
-  chatRooms             ChatRoom[] @relation("UserChatRooms")
-  sentMessages          Message[] @relation("SentMessages")
-
+  chatRooms            ChatRoom[]   @relation("UserChatRooms")
+  sentMessages         Message[]    @relation("SentMessages")
 }
 
 model College {
@@ -69,23 +67,21 @@ model UserCourse {
   Course        Course @relation(fields: [course_id], references: [course_id])
 }
 
-
 model ChatRoom {
-  id       String   @id @default(uuid())
-  users    User[]   @relation("UserChatRooms")
+  id       String    @id @default(uuid())
+  users    User[]    @relation("UserChatRooms")
   messages Message[]
 }
 
 model Message {
-  id        String   @id @default(uuid())
-  content   String
-  timestamp DateTime @default(now())
-  senderId  String
+  id         String   @id @default(uuid())
+  content    String
+  timestamp  DateTime @default(now())
+  senderId   String
   chatRoomId String
-  sender    User     @relation("SentMessages", fields: [senderId], references: [user_id])
-  chatRoom  ChatRoom @relation(fields: [chatRoomId], references: [id])
-  
- }
+  sender     User     @relation("SentMessages", fields: [senderId], references: [user_id])
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+}
 
 model Post {
   post_id    String    @id @default(cuid())
@@ -94,6 +90,7 @@ model Post {
   course_id  String
   title      String
   content    String
+  likes      Int       @default(0)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   User       User      @relation(fields: [user_id], references: [user_id])
@@ -115,5 +112,4 @@ model Comment {
   College    College  @relation(fields: [college_id], references: [college_id])
   Course     Course   @relation(fields: [course_id], references: [course_id])
   Post       Post     @relation(fields: [post_id], references: [post_id])
-
 }

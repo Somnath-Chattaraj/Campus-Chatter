@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
-import { checkModerationForString } from "../middleware/moderation";
+// import { checkModerationForString } from "../middleware/moderation";
 // @ts-ignore
 const postReview = asyncHandler(async (req: Request, res: Response, next) => {
   const {
