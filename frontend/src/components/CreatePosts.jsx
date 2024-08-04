@@ -11,15 +11,22 @@ import {
 } from "@chakra-ui/react";
 
 const CreatePost = ({ communities, onSubmit }) => {
+  const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
   const [selectedCommunity, setSelectedCommunity] = useState("");
 
+  const handleTitleChange = (e) => setPostTitle(e.target.value);
   const handlePostChange = (e) => setPostContent(e.target.value);
   const handleCommunityChange = (e) => setSelectedCommunity(e.target.value);
 
   const handleSubmit = () => {
-    if (postContent && selectedCommunity) {
-      onSubmit({ content: postContent, community: selectedCommunity });
+    if (postTitle && postContent && selectedCommunity) {
+      onSubmit({
+        title: postTitle,
+        content: postContent,
+        community: selectedCommunity,
+      });
+      setPostTitle("");
       setPostContent("");
       setSelectedCommunity("");
     }
@@ -36,11 +43,19 @@ const CreatePost = ({ communities, onSubmit }) => {
             onChange={handleCommunityChange}
           >
             {communities.map((community) => (
-              <option key={community} value={community}>
-                {community}
+              <option key={community.college_id} value={community.college_id}>
+                {community.name}
               </option>
             ))}
           </Select>
+        </FormControl>
+        <FormControl id="title">
+          <FormLabel>Post Title</FormLabel>
+          <Input
+            value={postTitle}
+            onChange={handleTitleChange}
+            placeholder="Enter post title"
+          />
         </FormControl>
         <FormControl id="post">
           <FormLabel>Create Post</FormLabel>

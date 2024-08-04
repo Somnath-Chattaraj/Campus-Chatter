@@ -10,6 +10,9 @@ import chatRoutes from "./routes/chatRoutes";
 
 import reviewRoutes from "./routes/reviewRoutes";
 import ratingRoutes from "./routes/ratingRoute";
+import postsRoutes from "./routes/postsRoutes";
+
+// import { getCommunities } from "./controllers/postController";
 
 const app = express();
 app.use(express.json());
@@ -17,6 +20,7 @@ const corsOptions = {
   origin: [
     "http://localhost:3001",
     "https://app-statuscode1.wedevelopers.online",
+    "http://localhost:5173",
   ],
   credentials: true,
 };
@@ -30,7 +34,10 @@ app.use("/api/admin", moderationRouter);
 
 app.use("/api/review", reviewRoutes);
 app.use("/api/rating", ratingRoutes);
-app.use('/api/chat', chatRoutes); // Use the chat routes
+app.use("/api/chat", chatRoutes); // Use the chat routes
+app.use("/api/post", postsRoutes);
+
+// app.get("/api/post/communities", getCommunities);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Backend is running");

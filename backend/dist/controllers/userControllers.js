@@ -20,6 +20,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const sendMail_1 = __importDefault(require("../mail/sendMail"));
 const academic_email_verifier_1 = require("academic-email-verifier");
 const checkAcademic_1 = __importDefault(require("../mail/checkAcademic"));
+// @ts-ignore
 const registerUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, name, password, collegeName, courseName, isOnline, location } = req.body;
     const hashedPassword = yield bcrypt_1.default.hash(password, 8);
@@ -44,9 +45,8 @@ const registerUser = (0, express_async_handler_1.default)((req, res) => __awaite
         isCollegeEmail = yield academic_email_verifier_1.Verifier.isAcademic(email);
     }
     if (isCollegeEmail == true) {
-        if (!collegeName || !courseName || !isOnline || !location) {
-            res.status(400).json({ message: "Please provide all fields" });
-            return;
+        if (!courseName || !collegeName || !location || isOnline === undefined) {
+            return res.status(400).json({ message: "Please provide all fields" });
         }
         let college = yield prisma_1.default.college.findFirst({
             where: {
@@ -93,6 +93,7 @@ const registerUser = (0, express_async_handler_1.default)((req, res) => __awaite
             data: {
                 user_id: user.user_id,
                 course_id,
+                college_id,
             },
         });
         const exp = Date.now() + 1000 * 60 * 5;
@@ -212,13 +213,13 @@ const getCurrentUserDetails = (0, express_async_handler_1.default)((req, res) =>
                                     name: true,
                                 },
                             },
-                        }
-                    }
+                        },
+                    },
                 },
             },
             reviews: true,
             chatRooms: true,
-        }
+        },
     });
     if (!user) {
         res.status(404).json({ message: "User not found" });
@@ -246,13 +247,13 @@ const getUserDetailsById = (0, express_async_handler_1.default)((req, res) => __
                                     name: true,
                                 },
                             },
-                        }
-                    }
+                        },
+                    },
                 },
             },
             reviews: true,
             chatRooms: true,
-        }
+        },
     });
     if (!user) {
         res.status(404).json({ message: "User not found" });
@@ -261,11 +262,11 @@ const getUserDetailsById = (0, express_async_handler_1.default)((req, res) => __
     res.status(200).json(user);
 }));
 exports.getUserDetailsById = getUserDetailsById;
+// @ts-ignore
 const addCourseToUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { courseName, collegeName, isOnline, location } = req.body;
-    if (!courseName || !collegeName || !isOnline || !location) {
-        res.status(400).json(req.body);
-        return;
+    if (!courseName || !collegeName || !location || isOnline === undefined) {
+        return res.status(400).json({ message: "Please provide all fields" });
     }
     // @ts-ignore
     const userId = req.user.user_id;
@@ -306,6 +307,7 @@ const addCourseToUser = (0, express_async_handler_1.default)((req, res) => __awa
         data: {
             user_id: userId,
             course_id,
+            college_id,
         },
     });
     res.status(201).json({ message: "Course added to user" });
