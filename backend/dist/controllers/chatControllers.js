@@ -33,7 +33,7 @@ const getChatHistory = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.getChatHistory = getChatHistory;
 const listChatRooms = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // @ts-ignore
-    const userId = req.user.user_id;
+    const userId = req.body;
     try {
         const chatRooms = yield prisma.chatRoom.findMany({
             where: {

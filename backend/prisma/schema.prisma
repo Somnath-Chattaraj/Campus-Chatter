@@ -8,7 +8,6 @@ datasource db {
 }
 
 model User {
-
   user_id              String       @id @default(cuid())
   email                String       @unique
   name                 String?
