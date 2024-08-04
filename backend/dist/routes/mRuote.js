@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const moderation_js_1 = require("../middleware/moderation.js");
+const moderation_1 = require("../middleware/moderation");
 const router = express_1.default.Router();
-router.post("/reviews/approve", moderation_js_1.checkModeration);
+router.post("/reviews/approve", moderation_1.checkModeration);
 exports.default = router;

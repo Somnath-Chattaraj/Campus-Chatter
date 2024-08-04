@@ -24,13 +24,14 @@ model User {
 }
 
 model College {
-  college_id String    @id @default(uuid())
+  college_id String       @id @default(uuid())
   name       String
   location   String
   courses    Course[]
   reviews    Review[]
   Post       Post[]
   Comment    Comment[]
+  UserCourse UserCourse[]
 }
 
 model Course {
@@ -41,8 +42,6 @@ model Course {
   College     College?     @relation(fields: [college_id], references: [college_id])
   reviews     Review[]
   userCourses UserCourse[]
-  Post        Post[]
-  Comment     Comment[]
 }
 
 model Review {
@@ -60,11 +59,13 @@ model Review {
 }
 
 model UserCourse {
-  userCourse_id String @id @default(cuid())
+  userCourse_id String  @id @default(cuid())
   user_id       String
   course_id     String
-  User          User   @relation(fields: [user_id], references: [user_id])
-  Course        Course @relation(fields: [course_id], references: [course_id])
+  college_id    String
+  User          User    @relation(fields: [user_id], references: [user_id])
+  Course        Course  @relation(fields: [course_id], references: [course_id])
+  College       College @relation(fields: [college_id], references: [college_id])
 }
 
 model ChatRoom {
@@ -95,7 +96,6 @@ model Post {
   updatedAt  DateTime  @updatedAt
   User       User      @relation(fields: [user_id], references: [user_id])
   College    College   @relation(fields: [college_id], references: [college_id])
-  Course     Course    @relation(fields: [course_id], references: [course_id])
   Comments   Comment[]
 }
 
@@ -110,6 +110,5 @@ model Comment {
   updatedAt  DateTime @updatedAt
   User       User     @relation(fields: [user_id], references: [user_id])
   College    College  @relation(fields: [college_id], references: [college_id])
-  Course     Course   @relation(fields: [course_id], references: [course_id])
   Post       Post     @relation(fields: [post_id], references: [post_id])
 }
