@@ -21,7 +21,9 @@ const getCommunities = asyncHandler(async (req: Request, res: Response) => {
     },
     distinct: ["college_id"],
   });
+  // @ts-ignore
   const communityIds = communities.map((community) => community.college_id);
+  // @ts-ignore
   if (communityIds.length === 0) {
     return res.status(200).json({ communityIds: [] });
   }
