@@ -45,41 +45,24 @@ wss.on('connection', (ws) => {
     // Initialize client-room mapping
     clientRoomMap.set(ws, new Set());
     ws.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
+        var _a;
         const { type, data } = JSON.parse(message.toString()); // data will contain roomId, userId, targetUserId, and message
         // type will contain 'createRoom', 'joinRoom', 'sendMessage'
         switch (type) {
             case 'createRoom':
                 try {
-                    // Check if a chat room already exists between these users
-                    const existingRoom = yield prisma.chatRoom.findFirst({
-                        where: {
-                            AND: [
-                                { users: { some: { user_id: data.userId } } },
-                                { users: { some: { user_id: data.targetUserId } } }
-                            ]
+                    // Create a new chat room
+                    const newRoom = yield prisma.chatRoom.create({
+                        data: {
+                            users: {
+                                connect: [{ user_id: data.userId }, { user_id: data.targetUserId }]
+                            }
                         }
                     });
-                    if (existingRoom) {
-                        // Update client-room mapping for existing room
-                        // @ts-ignore
-                        (_a = clientRoomMap.get(ws)) === null || _a === void 0 ? void 0 : _a.add(existingRoom.id);
-                        ws.send(JSON.stringify({ type: 'roomJoined', data: { roomId: existingRoom.id } }));
-                    }
-                    else {
-                        // Create a new chat room
-                        const newRoom = yield prisma.chatRoom.create({
-                            data: {
-                                users: {
-                                    connect: [{ user_id: data.userId }, { user_id: data.targetUserId }]
-                                }
-                            }
-                        });
-                        // Update client-room mapping for new room
-                        // @ts-ignore
-                        (_b = clientRoomMap.get(ws)) === null || _b === void 0 ? void 0 : _b.add(newRoom.id);
-                        ws.send(JSON.stringify({ type: 'roomCreated', data: { roomId: newRoom.id } }));
-                    }
+                    // Update client-room mapping for new room
+                    // @ts-ignore: clientRoomMap is a Map<WebSocket, Set<number>>
+                    (_a = clientRoomMap.get(ws)) === null || _a === void 0 ? void 0 : _a.add(newRoom.id);
+                    ws.send(JSON.stringify({ type: 'roomCreated', data: { roomId: newRoom.id } }));
                 }
                 catch (error) {
                     ws.send(JSON.stringify({ type: 'error', data: { message: 'Failed to create or join chat room' } }));
@@ -99,6 +82,15 @@ wss.on('connection', (ws) => {
                     const rooms = clientRoomMap.get(ws);
                     rooms === null || rooms === void 0 ? void 0 : rooms.add(data.roomId);
                     ws.send(JSON.stringify({ type: 'roomJoined', data: { roomId: data.roomId } }));
+                    // Notify other clients in the room about the new join
+                    wss.clients.forEach(client => {
+                        if (client.readyState === ws_1.default.OPEN && client !== ws) {
+                            const clientRooms = clientRoomMap.get(client);
+                            if (clientRooms === null || clientRooms === void 0 ? void 0 : clientRooms.has(data.roomId)) {
+                                client.send(JSON.stringify({ type: 'newClientJoined', data: { roomId: data.roomId, message: `Client${clientId} joined` } }));
+                            }
+                        }
+                    });
                 }
                 catch (error) {
                     ws.send(JSON.stringify({ type: 'error', data: { message: 'Failed to join chat room' } }));
@@ -113,9 +105,9 @@ wss.on('connection', (ws) => {
                             chatRoom: { connect: { id: data.roomId } },
                         }
                     });
-                    // Broadcast the message to all clients in the room, except the sender
+                    // Broadcast the message to all clients in the room
                     wss.clients.forEach(client => {
-                        if (client.readyState === ws_1.default.OPEN && client !== ws) {
+                        if (client.readyState === ws_1.default.OPEN) {
                             const rooms = clientRoomMap.get(client);
                             if (rooms === null || rooms === void 0 ? void 0 : rooms.has(data.roomId)) {
                                 client.send(JSON.stringify({ type: 'newMessage', data: { roomId: data.roomId, message: newMessage } }));
@@ -133,7 +125,22 @@ wss.on('connection', (ws) => {
         }
     }));
     ws.on('close', () => {
-        console.log('Client disconnected');
+        console.log(`Client${clientId} disconnected`);
+        // Retrieve the rooms the client was part of
+        const rooms = clientRoomMap.get(ws);
+        if (rooms) {
+            rooms.forEach(roomId => {
+                // Broadcast the disconnect message to all clients in the room
+                wss.clients.forEach(client => {
+                    if (client.readyState === ws_1.default.OPEN && client !== ws) {
+                        const clientRooms = clientRoomMap.get(client);
+                        if (clientRooms === null || clientRooms === void 0 ? void 0 : clientRooms.has(roomId)) {
+                            client.send(JSON.stringify({ type: 'clientDisconnected', data: { roomId, message: `Client${clientId} disconnected` } }));
+                        }
+                    }
+                });
+            });
+        }
         // Remove client from all rooms
         clientRoomMap.delete(ws);
     });

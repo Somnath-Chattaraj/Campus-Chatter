@@ -22,36 +22,19 @@ wss.on('connection', (ws) => {
     switch (type) {
       case 'createRoom':
         try {
-          // Check if a chat room already exists between these users
-          const existingRoom = await prisma.chatRoom.findFirst({
-            where: {
-              AND: [
-                { users: { some: { user_id: data.userId } } },
-                { users: { some: { user_id: data.targetUserId } } }
-              ]
+          // Create a new chat room
+          const newRoom = await prisma.chatRoom.create({
+            data: {
+              users: {
+                connect: [{ user_id: data.userId }, { user_id: data.targetUserId }]
+              }
             }
           });
 
-          if (existingRoom) {
-            // Update client-room mapping for existing room
-            // @ts-ignore
-            clientRoomMap.get(ws)?.add(existingRoom.id);
-            ws.send(JSON.stringify({ type: 'roomJoined', data: { roomId: existingRoom.id } }));
-          } else {
-            // Create a new chat room
-            const newRoom = await prisma.chatRoom.create({
-              data: {
-                users: {
-                  connect: [{ user_id: data.userId }, { user_id: data.targetUserId }]
-                }
-              }
-            });
-
-            // Update client-room mapping for new room
-            // @ts-ignore
-            clientRoomMap.get(ws)?.add(newRoom.id);
-            ws.send(JSON.stringify({ type: 'roomCreated', data: { roomId: newRoom.id } }));
-          }
+          // Update client-room mapping for new room
+          // @ts-ignore: clientRoomMap is a Map<WebSocket, Set<number>>
+          clientRoomMap.get(ws)?.add(newRoom.id);
+          ws.send(JSON.stringify({ type: 'roomCreated', data: { roomId: newRoom.id } }));
         } catch (error) {
           ws.send(JSON.stringify({ type: 'error', data: { message: 'Failed to create or join chat room' } }));
         }
@@ -72,6 +55,16 @@ wss.on('connection', (ws) => {
           const rooms = clientRoomMap.get(ws);
           rooms?.add(data.roomId);
           ws.send(JSON.stringify({ type: 'roomJoined', data: { roomId: data.roomId } }));
+
+          // Notify other clients in the room about the new join
+          wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN && client !== ws) {
+              const clientRooms = clientRoomMap.get(client);
+              if (clientRooms?.has(data.roomId)) {
+                client.send(JSON.stringify({ type: 'newClientJoined', data: { roomId: data.roomId, message: `Client${clientId} joined` } }));
+              }
+            }
+          });
         } catch (error) {
           ws.send(JSON.stringify({ type: 'error', data: { message: 'Failed to join chat room' } }));
         }
@@ -87,9 +80,9 @@ wss.on('connection', (ws) => {
             }
           });
 
-          // Broadcast the message to all clients in the room, except the sender
+          // Broadcast the message to all clients in the room
           wss.clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN && client !== ws) {
+            if (client.readyState === WebSocket.OPEN) {
               const rooms = clientRoomMap.get(client);
               if (rooms?.has(data.roomId)) {
                 client.send(JSON.stringify({ type: 'newMessage', data: { roomId: data.roomId, message: newMessage } }));
@@ -108,7 +101,24 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {
-    console.log('Client disconnected');
+    console.log(`Client${clientId} disconnected`);
+
+    // Retrieve the rooms the client was part of
+    const rooms = clientRoomMap.get(ws);
+    if (rooms) {
+      rooms.forEach(roomId => {
+        // Broadcast the disconnect message to all clients in the room
+        wss.clients.forEach(client => {
+          if (client.readyState === WebSocket.OPEN && client !== ws) {
+            const clientRooms = clientRoomMap.get(client);
+            if (clientRooms?.has(roomId)) {
+              client.send(JSON.stringify({ type: 'clientDisconnected', data: { roomId, message: `Client${clientId} disconnected` } }));
+            }
+          }
+        });
+      });
+    }
+
     // Remove client from all rooms
     clientRoomMap.delete(ws);
   });
