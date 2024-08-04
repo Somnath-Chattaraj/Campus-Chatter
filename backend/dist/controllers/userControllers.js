@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserDetailsById = exports.getCurrentUserDetails = exports.verifyUser = exports.loginUser = exports.registerUser = void 0;
+exports.addCourseToUser = exports.getUserDetailsById = exports.getCurrentUserDetails = exports.verifyUser = exports.loginUser = exports.registerUser = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -21,7 +21,7 @@ const sendMail_1 = __importDefault(require("../mail/sendMail"));
 const academic_email_verifier_1 = require("academic-email-verifier");
 const checkAcademic_1 = __importDefault(require("../mail/checkAcademic"));
 const registerUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { email, name, password, collegeName, courseName, isOnline, location } = req.body;
+    const { email, name, password, collegeName, courseName, isOnline, location } = req.body;
     const hashedPassword = yield bcrypt_1.default.hash(password, 8);
     if (!email || !name || !password) {
         res.status(400).json({ message: "Please provide all fields" });
@@ -47,12 +47,6 @@ const registerUser = (0, express_async_handler_1.default)((req, res) => __awaite
         if (!collegeName || !courseName || !isOnline || !location) {
             res.status(400).json({ message: "Please provide all fields" });
             return;
-        }
-        if (isOnline === "true") {
-            isOnline = true;
-        }
-        else {
-            isOnline = false;
         }
         let college = yield prisma_1.default.college.findFirst({
             where: {
@@ -267,3 +261,53 @@ const getUserDetailsById = (0, express_async_handler_1.default)((req, res) => __
     res.status(200).json(user);
 }));
 exports.getUserDetailsById = getUserDetailsById;
+const addCourseToUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { courseName, collegeName, isOnline, location } = req.body;
+    if (!courseName || !collegeName || !isOnline || !location) {
+        res.status(400).json(req.body);
+        return;
+    }
+    // @ts-ignore
+    const userId = req.user.user_id;
+    let college = yield prisma_1.default.college.findFirst({
+        where: {
+            name: collegeName,
+        },
+    });
+    if (!college) {
+        college = yield prisma_1.default.college.create({
+            data: {
+                name: collegeName,
+                location,
+            },
+        });
+    }
+    const college_id = college.college_id;
+    let course = yield prisma_1.default.course.findFirst({
+        where: {
+            name: courseName,
+        },
+    });
+    let course_id;
+    if (course) {
+        course_id = course.course_id;
+    }
+    else {
+        course = yield prisma_1.default.course.create({
+            data: {
+                name: courseName,
+                college_id,
+                isOnline,
+            },
+        });
+        course_id = course.course_id;
+    }
+    yield prisma_1.default.userCourse.create({
+        data: {
+            user_id: userId,
+            course_id,
+        },
+    });
+    res.status(201).json({ message: "Course added to user" });
+}));
+exports.addCourseToUser = addCourseToUser;

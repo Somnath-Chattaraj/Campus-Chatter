@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.editReview = exports.deleteReview = exports.getFullReview = exports.getBulkReviews = exports.filterReviews = exports.postReview = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const prisma_1 = __importDefault(require("../lib/prisma"));
+// import { checkModerationForString } from "../middleware/moderation";
 // @ts-ignore
 const postReview = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;

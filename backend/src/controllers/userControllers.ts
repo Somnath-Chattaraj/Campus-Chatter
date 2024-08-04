@@ -7,6 +7,7 @@ import sendMail from "../mail/sendMail";
 import { Verifier } from "academic-email-verifier";
 import checkCollegeEmail from "../mail/checkAcademic";
 
+// @ts-ignore
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, name, password, collegeName, courseName, isOnline, location } =
     req.body;
@@ -34,9 +35,8 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   if (isCollegeEmail == true) {
-    if (!collegeName || !courseName || !isOnline || !location) {
-      res.status(400).json({ message: "Please provide all fields" });
-      return;
+    if (!courseName || !collegeName || !location || isOnline === undefined) {
+      return res.status(400).json({ message: "Please provide all fields" });
     }
     let college = await prisma.college.findFirst({
       where: {
@@ -83,6 +83,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       data: {
         user_id: user.user_id,
         course_id,
+        college_id,
       },
     });
     const exp = Date.now() + 1000 * 60 * 5;
@@ -181,40 +182,42 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({ message: "User logged in" });
 });
 
-const getCurrentUserDetails = asyncHandler(async (req: Request, res: Response) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      // @ts-ignore
-      user_id: req.user.user_id,
-    },
-    select: {
-      user_id: true,
-      email: true,
-      name: true,
-      userCourses: {
-        select: {
-          Course: {
-            select: {
-              name: true,
-              College: {
-                select: {
-                  name: true,
+const getCurrentUserDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = await prisma.user.findUnique({
+      where: {
+        // @ts-ignore
+        user_id: req.user.user_id,
+      },
+      select: {
+        user_id: true,
+        email: true,
+        name: true,
+        userCourses: {
+          select: {
+            Course: {
+              select: {
+                name: true,
+                College: {
+                  select: {
+                    name: true,
+                  },
                 },
               },
-            }
-          }
+            },
+          },
         },
+        reviews: true,
+        chatRooms: true,
       },
-      reviews: true,
-      chatRooms: true,
+    });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
     }
-  });
-  if (!user) {
-    res.status(404).json({ message: "User not found" });
-    return;
+    res.status(200).json(user);
   }
-  res.status(200).json(user);
-});
+);
 
 const getUserDetailsById = asyncHandler(async (req: Request, res: Response) => {
   const { userId } = req.params;
@@ -235,13 +238,13 @@ const getUserDetailsById = asyncHandler(async (req: Request, res: Response) => {
                   name: true,
                 },
               },
-            }
-          }
+            },
+          },
         },
       },
       reviews: true,
       chatRooms: true,
-    }
+    },
   });
   if (!user) {
     res.status(404).json({ message: "User not found" });
@@ -250,14 +253,14 @@ const getUserDetailsById = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(user);
 });
 
+// @ts-ignore
 const addCourseToUser = asyncHandler(async (req: Request, res: Response) => {
   const { courseName, collegeName, isOnline, location } = req.body;
-  if (!courseName || !collegeName || !isOnline || !location) {
-    res.status(400).json({ message: "Please provide all fields" });
-    return;
+  if (!courseName || !collegeName || !location || isOnline === undefined) {
+    return res.status(400).json({ message: "Please provide all fields" });
   }
   // @ts-ignore
-  const userId= req.user.user_id;
+  const userId = req.user.user_id;
   let college = await prisma.college.findFirst({
     where: {
       name: collegeName,
@@ -294,9 +297,17 @@ const addCourseToUser = asyncHandler(async (req: Request, res: Response) => {
     data: {
       user_id: userId,
       course_id,
+      college_id,
     },
   });
   res.status(201).json({ message: "Course added to user" });
 });
 
-export { registerUser, loginUser, verifyUser, getCurrentUserDetails, getUserDetailsById, addCourseToUser };
+export {
+  registerUser,
+  loginUser,
+  verifyUser,
+  getCurrentUserDetails,
+  getUserDetailsById,
+  addCourseToUser,
+};
