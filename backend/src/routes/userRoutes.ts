@@ -5,7 +5,8 @@ import {
   loginUser,
   verifyUser,
   getCurrentUserDetails,
-  getUserDetailsById
+  getUserDetailsById,
+  addCourseToUser
 } from "../controllers/userControllers";
 import checkAuth from "../middleware/checkAuth";
 
@@ -16,4 +17,6 @@ router.route("/login").post(loginUser);
 router.route("/verify/:token").get(verifyUser);
 router.get("/me", checkAuth, getCurrentUserDetails); // get the user details of the current user
 router.get("/get/:userId", checkAuth, getUserDetailsById); // get the user details of a specific user
+router.post("/addCourse", checkAuth, addCourseToUser); // add a course to the current user
+
 export default router;

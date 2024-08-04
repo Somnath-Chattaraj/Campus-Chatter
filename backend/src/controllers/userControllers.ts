@@ -8,7 +8,7 @@ import { Verifier } from "academic-email-verifier";
 import checkCollegeEmail from "../mail/checkAcademic";
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
-  let { email, name, password, collegeName, courseName, isOnline, location } =
+  const { email, name, password, collegeName, courseName, isOnline, location } =
     req.body;
   const hashedPassword = await bcrypt.hash(password, 8);
   if (!email || !name || !password) {
@@ -37,11 +37,6 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     if (!collegeName || !courseName || !isOnline || !location) {
       res.status(400).json({ message: "Please provide all fields" });
       return;
-    }
-    if (isOnline === "true") {
-      isOnline = true;
-    } else {
-      isOnline = false;
     }
     let college = await prisma.college.findFirst({
       where: {
@@ -255,4 +250,53 @@ const getUserDetailsById = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(user);
 });
 
-export { registerUser, loginUser, verifyUser, getCurrentUserDetails, getUserDetailsById };
+const addCourseToUser = asyncHandler(async (req: Request, res: Response) => {
+  const { courseName, collegeName, isOnline, location } = req.body;
+  if (!courseName || !collegeName || !isOnline || !location) {
+    res.status(400).json({ message: "Please provide all fields" });
+    return;
+  }
+  // @ts-ignore
+  const userId= req.user.user_id;
+  let college = await prisma.college.findFirst({
+    where: {
+      name: collegeName,
+    },
+  });
+  if (!college) {
+    college = await prisma.college.create({
+      data: {
+        name: collegeName,
+        location,
+      },
+    });
+  }
+  const college_id = college.college_id;
+  let course = await prisma.course.findFirst({
+    where: {
+      name: courseName,
+    },
+  });
+  let course_id;
+  if (course) {
+    course_id = course.course_id;
+  } else {
+    course = await prisma.course.create({
+      data: {
+        name: courseName,
+        college_id,
+        isOnline,
+      },
+    });
+    course_id = course.course_id;
+  }
+  await prisma.userCourse.create({
+    data: {
+      user_id: userId,
+      course_id,
+    },
+  });
+  res.status(201).json({ message: "Course added to user" });
+});
+
+export { registerUser, loginUser, verifyUser, getCurrentUserDetails, getUserDetailsById, addCourseToUser };
