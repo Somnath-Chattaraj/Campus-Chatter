@@ -75,6 +75,12 @@ const createPost = asyncHandler(async (req: Request, res: Response, next) => {
 
 // @ts-ignore
 const fetchPosts = asyncHandler(async (req: Request, res: Response) => {
+  const { page } = req.body;
+  const pageNumber = page;
+
+  const postsPerPage = 3;
+  const offset = (pageNumber - 1) * postsPerPage;
+
   const posts = await prisma.post.findMany({
     orderBy: {
       createdAt: "desc",
@@ -90,9 +96,41 @@ const fetchPosts = asyncHandler(async (req: Request, res: Response) => {
         },
       },
     },
-    take: 10,
+    take: postsPerPage,
+    skip: offset,
   });
-  return res.status(200).json({ posts });
+
+  const totalPosts = await prisma.post.count();
+  const isOver = offset + postsPerPage >= totalPosts;
+
+  return res.status(200).json({ posts, isOver });
 });
 
-export { getCommunities, createPost, fetchPosts };
+// @ts-ignore
+const likePost = asyncHandler(async (req: Request, res: Response) => {
+  const { postId } = req.body;
+  // @ts-ignore
+  const post = await prisma.post.findUnique({
+    where: { post_id: postId },
+    select: {
+      likes: true,
+    },
+  });
+
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+
+  const likes = post.likes + 1;
+
+  const updatedPost = await prisma.post.update({
+    where: { post_id: postId },
+    data: {
+      likes,
+    },
+  });
+
+  return res.status(200).json({ updatedPost });
+});
+
+export { getCommunities, createPost, fetchPosts, likePost };
