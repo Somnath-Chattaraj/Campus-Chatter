@@ -12,26 +12,14 @@ import {
 import axios from "axios";
 import CreatePost from "./CreatePosts";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { set } from "lodash";
-
-// const initialPosts = [
-//   {
-//     id: 1,
-//     title: "Post Title 1",
-//     content: "Post content 1",
-//     likes: 23,
-//     profilePic:
-//       "https://i.scdn.co/image/ab67616d0000b27377a3afdbf4d24dd545105177",
-//     community: "Community 1",
-//   },
-// ];
-
+import { useNavigate } from "react-router-dom";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const navigate = useNavigate();
 
   const fetchPosts = async () => {
     try {
@@ -88,6 +76,10 @@ const Posts = () => {
     fetchPosts();
   }, []);
 
+  const handlePostClick = (postId) => {
+    navigate(`/posts/${postId}`);
+  };
+
   const handleLike = async (postId) => {
     try {
       await axios.post("/post/like", { postId }, { withCredentials: true });
@@ -134,6 +126,8 @@ const Posts = () => {
               borderWidth={1}
               borderRadius="lg"
               width="100%"
+              marginTop={3}
+              onClick={() => handlePostClick(post.post_id)}
             >
               <Flex align="center" mb={2}>
                 <Avatar
