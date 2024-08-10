@@ -133,4 +133,77 @@ const likePost = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({ updatedPost });
 });
 
-export { getCommunities, createPost, fetchPosts, likePost };
+// @ts-ignore
+const fetchSinglePost = asyncHandler(async (req: Request, res: Response) => {
+  const postId = req.params.id;
+  const post = await prisma.post.findUnique({
+    where: { post_id: postId },
+    select: {
+      post_id: true,
+      title: true,
+      content: true,
+      likes: true,
+      College: {
+        select: {
+          name: true,
+        },
+      },
+      Comments: {
+        select: {
+          comment_id: true,
+          content: true,
+          user_id: true,
+          User: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+
+  return res.status(200).json({ post });
+});
+
+// @ts-ignore
+const createComment = asyncHandler(async (req: Request, res: Response) => {
+  const { postId, content } = req.body;
+  // @ts-ignore
+  const user_id = req.user.user_id;
+
+  if (!postId || !content) {
+    return res.status(400).json({ message: "Required fields are missing" });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { user_id },
+  });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not recognized" });
+  }
+
+  const comment = await prisma.comment.create({
+    data: {
+      content,
+      user_id,
+      post_id: postId,
+    },
+  });
+
+  return res.status(201).json({ comment });
+});
+
+export {
+  getCommunities,
+  createPost,
+  fetchPosts,
+  likePost,
+  fetchSinglePost,
+  createComment,
+};
