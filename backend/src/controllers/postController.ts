@@ -116,6 +116,19 @@ const likePost = asyncHandler(async (req: Request, res: Response) => {
       likes: true,
     },
   });
+  // @ts-ignore
+  const user_id = req.user.user_id;
+
+  const like = await prisma.like.findFirst({
+    where: {
+      post_id: postId,
+      user_id: user_id,
+    },
+  });
+
+  if (like) {
+    return res.status(400).json({ message: "Post already liked" });
+  }
 
   if (!post) {
     return res.status(404).json({ message: "Post not found" });
@@ -127,6 +140,13 @@ const likePost = asyncHandler(async (req: Request, res: Response) => {
     where: { post_id: postId },
     data: {
       likes,
+    },
+  });
+
+  await prisma.like.create({
+    data: {
+      post_id: postId,
+      user_id,
     },
   });
 
@@ -199,6 +219,69 @@ const createComment = asyncHandler(async (req: Request, res: Response) => {
   return res.status(201).json({ comment });
 });
 
+// @ts-ignore
+const postLiked = asyncHandler(async (req: Request, res: Response) => {
+  const { postId } = req.body;
+  // @ts-ignore
+  const user_id = req.user.user_id;
+  const likes = await prisma.like.findFirst({
+    where: {
+      post_id: postId,
+      user_id: user_id,
+    },
+  });
+  if (likes) {
+    return res.status(200).json({ postLiked: true });
+  }
+  return res.status(200).json({ postLiked: false });
+});
+
+// @ts-ignore
+const unlikePost = asyncHandler(async (req: Request, res: Response) => {
+  const { postId } = req.body;
+  // @ts-ignore
+  const user_id = req.user.user_id;
+
+  const like = await prisma.like.findFirst({
+    where: {
+      post_id: postId,
+      user_id: user_id,
+    },
+  });
+
+  const post = await prisma.post.findUnique({
+    where: { post_id: postId },
+    select: {
+      likes: true,
+    },
+  });
+
+  if (!like) {
+    return res.status(400).json({ message: "Post not liked" });
+  }
+
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+
+  const likes = post.likes - 1;
+
+  const updatedPost = await prisma.post.update({
+    where: { post_id: postId },
+    data: {
+      likes,
+    },
+  });
+
+  await prisma.like.delete({
+    where: {
+      like_id: like.like_id,
+    },
+  });
+
+  return res.status(200).json({ updatedPost });
+});
+
 export {
   getCommunities,
   createPost,
@@ -206,4 +289,6 @@ export {
   likePost,
   fetchSinglePost,
   createComment,
+  postLiked,
+  unlikePost,
 };

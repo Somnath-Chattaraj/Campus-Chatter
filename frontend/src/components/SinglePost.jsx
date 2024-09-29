@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { GrLike } from "react-icons/gr";
+import { AiFillLike } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 import {
   Box,
@@ -19,6 +21,8 @@ const SinglePost = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [postLiked, setPostLiked] = useState(false);
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -33,15 +37,38 @@ const SinglePost = () => {
       }
     };
 
+    const checkIfLiked = async () => {
+      try {
+        const response = await axios.post(
+          `/post/liked`,
+          { postId: id },
+          { withCredentials: true }
+        );
+        if (response.data.postLiked) {
+          setPostLiked(true);
+        }
+      } catch (error) {
+        console.error("Error checking if post is liked:", error);
+      }
+    };
+
     fetchPost();
+    checkIfLiked();
   }, [id]);
 
   const handleLike = async (postId) => {
     try {
       await axios.post("/post/like", { postId }, { withCredentials: true });
       setPost((prevPost) => ({ ...prevPost, likes: prevPost.likes + 1 }));
+      setPostLiked(true);
     } catch (error) {
-      console.error("Error liking post:", error);
+      try {
+        await axios.post("/post/unlike", { postId }, { withCredentials: true });
+        setPost((prevPost) => ({ ...prevPost, likes: prevPost.likes - 1 }));
+        setPostLiked(false);
+      } catch (error) {
+        console.error("Error liking post:", error);
+      }
     }
   };
 
@@ -102,8 +129,9 @@ const SinglePost = () => {
               size="sm"
               variant="outline"
               onClick={() => handleLike(post.post_id)}
+              leftIcon={postLiked ? <AiFillLike /> : <GrLike />}
             >
-              Like
+              {postLiked ? "Liked" : "Like"}
             </Button>
             <Text ml={2} color="gray.600">
               {post.likes} {post.likes === 1 ? "like" : "likes"}

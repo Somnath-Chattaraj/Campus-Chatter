@@ -21,6 +21,7 @@ model User {
   Comment              Comment[]
   chatRooms            ChatRoom[]   @relation("UserChatRooms")
   sentMessages         Message[]    @relation("SentMessages")
+  Like                 Like[]
 }
 
 model College {
@@ -95,6 +96,7 @@ model Post {
   User       User      @relation(fields: [user_id], references: [user_id])
   College    College   @relation(fields: [college_id], references: [college_id])
   Comments   Comment[]
+  Like       Like[]
 }
 
 model Comment {
@@ -106,4 +108,12 @@ model Comment {
   updatedAt  DateTime @updatedAt
   User       User     @relation(fields: [user_id], references: [user_id])
   Post       Post     @relation(fields: [post_id], references: [post_id])
+}
+
+model Like {
+  like_id String @id @default(cuid())
+  user_id String
+  post_id String
+  User    User   @relation(fields: [user_id], references: [user_id])
+  Post    Post   @relation(fields: [post_id], references: [post_id])
 }
