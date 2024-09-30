@@ -57,15 +57,19 @@ const SinglePost = () => {
   }, [id]);
 
   const handleLike = async (postId) => {
-    try {
-      await axios.post("/post/like", { postId }, { withCredentials: true });
-      setPost((prevPost) => ({ ...prevPost, likes: prevPost.likes + 1 }));
-      setPostLiked(true);
-    } catch (error) {
+    if (postLiked) {
       try {
         await axios.post("/post/unlike", { postId }, { withCredentials: true });
         setPost((prevPost) => ({ ...prevPost, likes: prevPost.likes - 1 }));
         setPostLiked(false);
+      } catch (error) {
+        console.error("Error unliking post:", error);
+      }
+    } else {
+      try {
+        await axios.post("/post/like", { postId }, { withCredentials: true });
+        setPost((prevPost) => ({ ...prevPost, likes: prevPost.likes + 1 }));
+        setPostLiked(true);
       } catch (error) {
         console.error("Error liking post:", error);
       }
