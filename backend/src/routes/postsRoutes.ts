@@ -8,6 +8,7 @@ import {
   createComment,
   postLiked,
   unlikePost,
+  searchPosts,
 } from "../controllers/postController";
 import checkAuth from "../middleware/checkAuth";
 
@@ -21,5 +22,6 @@ postsRoutes.get("/fetch/:id", checkAuth, fetchSinglePost);
 postsRoutes.post("/comment", checkAuth, createComment);
 postsRoutes.post("/liked", checkAuth, postLiked);
 postsRoutes.post("/unlike", checkAuth, unlikePost);
+postsRoutes.post("/search", checkAuth, searchPosts);
 
 export default postsRoutes;
