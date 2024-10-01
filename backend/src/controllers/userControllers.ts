@@ -92,7 +92,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const url = `https://api-statuscode1.wedevelopers.online/api/user/verify/${token}`;
     const htmlContent = `<a href="${url}">Verify using this link</a>`;
     // @ts-ignore
-    await sendMail(email, htmlContent);
+    sendMail();
     res.status(201).json({ message: "User created" });
   } else {
     const user = await prisma.user.create({
