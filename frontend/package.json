@@ -25,7 +25,8 @@
     "react-router-dom": "^6.26.0",
     "react-use-websocket": "^4.8.1",
     "socket.io-client": "^4.7.5",
-    "use-history": "^1.4.1"
+    "use-history": "^1.4.1",
+    "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
