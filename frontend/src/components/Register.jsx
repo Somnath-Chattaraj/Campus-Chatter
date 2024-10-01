@@ -128,7 +128,7 @@ const RegisterForm = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("/register", formData, {
+      const response = await axios.post("/user/register", formData, {
         withCredentials: true,
       });
       setLoading(false);
