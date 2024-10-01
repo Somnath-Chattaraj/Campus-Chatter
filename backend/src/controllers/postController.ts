@@ -1,6 +1,37 @@
 import asyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
+import Fuse from "fuse.js";
+
+// @ts-ignore
+const searchPosts = asyncHandler(async (req: Request, res: Response) => {
+  const { query } = req.body;
+
+  if (!query) {
+    return res.status(400).json({ message: "Search query is required" });
+  }
+  const posts = await prisma.post.findMany({
+    select: {
+      post_id: true,
+      title: true,
+      content: true,
+      College: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  const fuse = new Fuse(posts, {
+    keys: ["title", "content"],
+    threshold: 0.3,
+  });
+
+  const searchResults = fuse.search(query).map((result) => result.item);
+
+  return res.status(200).json({ posts: searchResults });
+});
 
 // @ts-ignore
 const getCommunities = asyncHandler(async (req: Request, res: Response) => {
@@ -291,4 +322,5 @@ export {
   createComment,
   postLiked,
   unlikePost,
+  searchPosts,
 };
