@@ -24,7 +24,7 @@ const searchPosts = asyncHandler(async (req: Request, res: Response) => {
   });
 
   const fuse = new Fuse(posts, {
-    keys: ["title", "content"],
+    keys: ["title", "content", "College.name"],
     threshold: 0.3,
   });
 
