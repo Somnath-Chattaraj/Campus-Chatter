@@ -25,7 +25,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/user/login",
+        "/user/login",
         { email, password },
         { withCredentials: true }
       );
