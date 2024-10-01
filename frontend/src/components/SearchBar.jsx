@@ -32,7 +32,7 @@ const SearchBar = () => {
   };
 
   const onSuggestionsFetchRequested = ({ value }) => {
-    if (value.length >= 3) {
+    if (value.length >= 1) {
       fetchSuggestions(value);
     } else {
       setSuggestions([]);
