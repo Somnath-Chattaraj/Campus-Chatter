@@ -13,6 +13,7 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
+    "@types/react-autosuggest": "^10.1.11",
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.3.19",
