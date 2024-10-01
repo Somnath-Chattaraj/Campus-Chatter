@@ -13,6 +13,7 @@ import axios from "axios";
 import CreatePost from "./CreatePosts";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useNavigate } from "react-router-dom";
+import SearchBar from "./SearchBar";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [communities, setCommunities] = useState([]);
@@ -111,6 +112,7 @@ const Posts = () => {
 
   return (
     <Container centerContent>
+      <SearchBar />
       <CreatePost communities={communities} onSubmit={handleCreatePost} />
       <VStack spacing={4} align="stretch" width="100%" mt={4}>
         <InfiniteScroll
