@@ -113,7 +113,7 @@ const Posts = () => {
 
   return (
     <Container centerContent>
-      <SearchBar />x
+      <SearchBar />
       {communities.length>0 && (
         <CreatePost communities={communities} onSubmit={handleCreatePost} />
       )}
