@@ -20,7 +20,6 @@ const SinglePost = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [postLiked, setPostLiked] = useState(false);
 
   useEffect(() => {
@@ -76,14 +75,6 @@ const SinglePost = () => {
     }
   };
 
-  //   const handleCommentAdded = () => {
-  //     // Refresh the comments after a new comment is added
-  //     axios
-  //       .get(`/post/fetch/${id}`, { withCredentials: true })
-  //       .then((response) => setPost(response.data.post))
-  //       .catch((error) => console.error("Error refreshing comments:", error));
-  //   };
-
   if (loading)
     return (
       <Center h="100vh">
@@ -104,10 +95,11 @@ const SinglePost = () => {
       maxW="3xl"
       mx="auto"
       mt={8}
-      bg="white"
+      bg="gray.900" // Dark background for the post box
       borderRadius="md"
       boxShadow="lg"
       borderWidth={1}
+      color="whiteAlpha.900" // White text for contrast
     >
       <VStack spacing={4} align="start">
         <Flex align="center" w="full">
@@ -117,13 +109,15 @@ const SinglePost = () => {
             mr={4}
           />
           <Box>
-            <Heading size="lg">{post.title}</Heading>
-            <Text fontSize="sm" color="gray.500">
+            <Heading size="lg" color="whiteAlpha.900">
+              {post.title}
+            </Heading>
+            <Text fontSize="sm" color="gray.400">
               {post.College.name}
             </Text>
           </Box>
         </Flex>
-        <Text fontSize="md" mt={4} color="gray.700">
+        <Text fontSize="md" mt={4} color="gray.300">
           {post.content}
         </Text>
         <Flex w="full" justify="space-between" align="center" mt={4}>
@@ -137,7 +131,7 @@ const SinglePost = () => {
             >
               {postLiked ? "Liked" : "Like"}
             </Button>
-            <Text ml={2} color="gray.600">
+            <Text ml={2} color="gray.400">
               {post.likes} {post.likes === 1 ? "like" : "likes"}
             </Text>
           </Flex>
@@ -146,7 +140,7 @@ const SinglePost = () => {
           </Button>
         </Flex>
         <Box mt={6} w="full">
-          <Heading size="md" mb={4}>
+          <Heading size="md" mb={4} color="whiteAlpha.900">
             Comments
           </Heading>
           <Box w="full" mt={4}>
@@ -160,7 +154,8 @@ const SinglePost = () => {
                 key={comment.comment_id}
                 p={4}
                 mb={4}
-                bg="gray.50"
+                bg="gray.800" // Darker background for comments
+                color="whiteAlpha.900" // White text for comments
                 borderRadius="md"
                 boxShadow="sm"
                 borderWidth={1}
@@ -171,9 +166,11 @@ const SinglePost = () => {
                     size="sm"
                     mr={2}
                   />
-                  <Text fontWeight="bold">{comment.User.name}</Text>
+                  <Text fontWeight="bold" color="whiteAlpha.900">
+                    {comment.User.name}
+                  </Text>
                 </Flex>
-                <Text fontSize="large" color="gray.700">
+                <Text fontSize="large" color="gray.300">
                   {comment.content}
                 </Text>
               </Box>
