@@ -7,6 +7,45 @@ import sendMail from "../mail/sendMail";
 import { Verifier } from "academic-email-verifier";
 import checkCollegeEmail from "../mail/checkAcademic";
 
+//@ts-ignore
+const googleSignInOrSignUp = asyncHandler(async (req: Request, res: Response) => {
+  const{email,displayName}=req.body;
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  if (!user) {
+    const user = await prisma.user.create({
+      data: {
+        email,
+        name:displayName,
+        collegeEmailVerified: false,
+        emailVerified:true,
+      },
+    });
+    const exp = Date.now() + 1000 * 60 *60*24*30;
+    // @ts-ignore
+    const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
+    res.cookie("Authorization", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    return res.status(201).json({ message: "User created" });
+  }
+  const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
+  // @ts-ignore
+  const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
+  res.cookie("Authorization", token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+  res.status(200).json({ message: "User logged in" });
+});
+
+
 // @ts-ignore
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, name, password, collegeName, courseName, isOnline, location } =
@@ -166,6 +205,10 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     res.status(404).json({ message: "User not found" });
     return;
   }
+  if(!user.password){
+    res.status(401).json({ message: "Logged in with Google Or Github" });
+    return;
+  }
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
     res.status(401).json({ message: "Invalid credentials" });
@@ -310,4 +353,5 @@ export {
   getCurrentUserDetails,
   getUserDetailsById,
   addCourseToUser,
+  googleSignInOrSignUp,
 };

@@ -53,10 +53,11 @@ const Posts = () => {
           withCredentials: true,
         });
         setCommunities(response.data.college);
+        console.log(response.data.college);
         setLoading(false);
       } catch (err) {
         setLoading(false);
-        alert("Error fetching communities");
+        console.error("Error fetching communities:", err);
       }
     };
     // const fetchPosts = async () => {
@@ -113,7 +114,10 @@ const Posts = () => {
   return (
     <Container centerContent>
       <SearchBar />
-      <CreatePost communities={communities} onSubmit={handleCreatePost} />
+      {communities.length>0 && (
+        <CreatePost communities={communities} onSubmit={handleCreatePost} />
+      )}
+      
       <VStack spacing={4} align="stretch" width="100%" mt={4}>
         <InfiniteScroll
           dataLength={posts.length}

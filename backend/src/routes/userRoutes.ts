@@ -6,7 +6,8 @@ import {
   verifyUser,
   getCurrentUserDetails,
   getUserDetailsById,
-  addCourseToUser
+  addCourseToUser,
+  googleSignInOrSignUp
 } from "../controllers/userControllers";
 import checkAuth from "../middleware/checkAuth";
 
@@ -18,5 +19,6 @@ router.route("/verify/:token").get(verifyUser);
 router.get("/me", checkAuth, getCurrentUserDetails); // get the user details of the current user
 router.get("/get/:userId", checkAuth, getUserDetailsById); // get the user details of a specific user
 router.post("/addcourse", checkAuth, addCourseToUser); // add a course to the current user
+router.post("/google", googleSignInOrSignUp); // sign in or sign up using google
 
 export default router;

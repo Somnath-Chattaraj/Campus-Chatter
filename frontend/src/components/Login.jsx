@@ -13,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { auth, googleProvider } from "../firebase.js";
+import { signInWithPopup } from "firebase/auth";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -20,6 +22,35 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      console.log("Google login result: ");
+      await axios.post("/user/google", { 
+        email:user.email,
+        displayName:user.displayName
+      }, { withCredentials: true });
+      toast({
+        title: "Login successful.",
+        description: "You are being redirected to the posts page.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/posts");
+    } catch (error) {
+      console.error("Google login error: ", error);
+      toast({
+        title: "Login failed.",
+        description: error.message || "An error occurred.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   const handleLogin = async () => {
     setLoading(true);
@@ -77,6 +108,9 @@ const LoginPage = () => {
           </FormControl>
           <Button colorScheme="teal" isLoading={loading} onClick={handleLogin}>
             Login
+          </Button>
+          <Button colorScheme="red" onClick={handleGoogleLogin}>
+            Login with Google
           </Button>
         </Stack>
       </Container>
