@@ -11,7 +11,7 @@ model User {
   user_id              String       @id @default(cuid())
   email                String       @unique
   name                 String?
-  password             String
+  password             String?
   createdAt            DateTime     @default(now())
   emailVerified        Boolean      @default(false)
   collegeEmailVerified Boolean      @default(false)
