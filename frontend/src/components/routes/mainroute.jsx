@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Mainbuttons, Createroom, Joinroom } from "../chatroomui/main";
 import Chatroom from "../chatroomui/chatroom";
+import Chatroom1 from "../chatroomui/chatroom1";
 import { Outlet } from "react-router-dom";
 import { chatRoomApi } from "../contexts/chatRoomApi";
 import { useState } from "react";
