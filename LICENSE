@@ -1,21 +1,27 @@
-MIT License
-
+Campus Chatter License
 Copyright (c) 2024 Tanish Majumdar
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to use, copy, modify, merge, publish, and distribute the Software for personal, educational, or non-commercial purposes, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Commercial Use Requires a License
+   Any use of the Software that directly or indirectly results in revenue generation, financial gain, or is intended for commercial advantage, including but not limited to incorporation into a product or service for sale, distribution, or any other profit-driven activity, requires the user to first obtain a Commercial License from the copyright holder, Tanish Majumdar.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+A Commercial License must be negotiated and agreed upon in writing with the copyright holder before any such use is made.
+This includes use by individuals, organizations, or corporations that seek to benefit commercially from the Software, whether by selling products that use the Software, providing services based on the Software, or otherwise monetizing the Software in any way. 2. Royalties and Compensation
+For any Commercial use of the Software, the user must agree to pay royalties or other compensation as determined by the terms of the Commercial License. The amount of royalties, payment frequency, and other terms will be defined in a separate, legally binding agreement between the user and the copyright holder.
+
+Failure to obtain a Commercial License and fulfill royalty obligations constitutes a violation of this License and may result in legal action. 3. Attribution
+Any distribution of this Software, modified or unmodified, must retain the above copyright notice, this permission notice, and the following conditions. Proper attribution must be given to the copyright holder in any material that references or incorporates this Software.
+
+4. Non-Liability for Modifications and Derived Works
+   While users are permitted to modify and create derivative works based on the Software for non-commercial use, the copyright holder is not responsible for any modifications made by third parties. Derivative works may not be used for Commercial purposes without obtaining the proper Commercial License, as outlined above.
+
+5. Prohibited Actions
+   The following actions are strictly prohibited under this License unless explicitly allowed under a separate Commercial License agreement:
+
+The sublicense, lease, sale, or transfer of the Software for profit or Commercial gain.
+Use of the Software in connection with any activity that generates revenue without obtaining prior written permission and a Commercial License. 6. Termination of License
+This License shall automatically terminate and be revoked if the user fails to comply with any of the conditions set forth in this document. Upon termination, the user must immediately cease all use, distribution, or modification of the Software.
+
+7. Disclaimer of Warranty
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
