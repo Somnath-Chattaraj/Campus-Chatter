@@ -10,12 +10,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
+
       - name: Fetch issue details
         id: fetch_issue
         run: |
           if [[ "${{ github.event.comment.body }}" =~ ^#[0-9]+$ ]]; then
-            ISSUE_NUMBER=${{ github.event.comment.body:1 }}
+            ISSUE_NUMBER="${{ github.event.comment.body }}"  # Get the entire comment
+            ISSUE_NUMBER=${ISSUE_NUMBER:1}  # Remove the leading '#'
             echo "Fetching issue #$ISSUE_NUMBER"
             ISSUE_DATA=$(gh issue view $ISSUE_NUMBER --json title,state,body --jq '.')
             echo "ISSUE_DATA=$ISSUE_DATA" >> $GITHUB_ENV
