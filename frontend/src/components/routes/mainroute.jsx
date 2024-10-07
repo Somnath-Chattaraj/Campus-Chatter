@@ -10,6 +10,7 @@ import HomePage from "../../pages/HomePage";
 import Register from "../Register";
 import SinglePost from "../../components/SinglePost";
 import LoginPage from "../Login";
+import AddDetails from "../AddDetails";
 const Test = () => {
   const [userId, setUserId] = useState("");
   const [roomId, setRoomId] = useState("");
@@ -56,6 +57,10 @@ const Mainrouter = createBrowserRouter([
   {
     path: "/posts/:id",
     element: <SinglePost />,
+  },
+  {
+    path: "/addDetails/:id",
+    element: <AddDetails />,
   },
   {
     path: "/login",
