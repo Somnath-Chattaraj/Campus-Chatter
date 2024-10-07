@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addCourseToUser = exports.getUserDetailsById = exports.getCurrentUserDetails = exports.verifyUser = exports.loginUser = exports.registerUser = void 0;
+exports.googleSignInOrSignUp = exports.addCourseToUser = exports.getUserDetailsById = exports.getCurrentUserDetails = exports.verifyUser = exports.loginUser = exports.registerUser = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -20,6 +20,45 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const sendMail_1 = __importDefault(require("../mail/sendMail"));
 const academic_email_verifier_1 = require("academic-email-verifier");
 const checkAcademic_1 = __importDefault(require("../mail/checkAcademic"));
+//@ts-ignore
+const googleSignInOrSignUp = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, displayName } = req.body;
+    const user = yield prisma_1.default.user.findUnique({
+        where: {
+            email,
+        },
+    });
+    if (!user) {
+        const user = yield prisma_1.default.user.create({
+            // @ts-ignore
+            data: {
+                email,
+                name: displayName,
+                collegeEmailVerified: false,
+                emailVerified: true,
+            },
+        });
+        const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
+        // @ts-ignore
+        const token = jsonwebtoken_1.default.sign({ sub: user.user_id, exp }, process.env.SECRET);
+        res.cookie("Authorization", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+        });
+        return res.status(201).json({ message: "User created" });
+    }
+    const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
+    // @ts-ignore
+    const token = jsonwebtoken_1.default.sign({ sub: user.user_id, exp }, process.env.SECRET);
+    res.cookie("Authorization", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+    });
+    res.status(200).json({ message: "User logged in" });
+}));
+exports.googleSignInOrSignUp = googleSignInOrSignUp;
 // @ts-ignore
 const registerUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, name, password, collegeName, courseName, isOnline, location } = req.body;
@@ -99,10 +138,10 @@ const registerUser = (0, express_async_handler_1.default)((req, res) => __awaite
         const exp = Date.now() + 1000 * 60 * 5;
         // @ts-ignore
         const token = jsonwebtoken_1.default.sign({ sub: user.user_id, exp }, process.env.SECRET);
-        const url = `https://api-statuscode1.wedevelopers.online/api/user/verify/${token}`;
+        const url = `${process.env.BACKEND_URL}/api/user/verify/${token}`;
         const htmlContent = `<a href="${url}">Verify using this link</a>`;
         // @ts-ignore
-        yield (0, sendMail_1.default)(email, htmlContent);
+        (0, sendMail_1.default)(htmlContent, email);
         res.status(201).json({ message: "User created" });
     }
     else {
@@ -117,10 +156,10 @@ const registerUser = (0, express_async_handler_1.default)((req, res) => __awaite
         const exp = Date.now() + 1000 * 60 * 5;
         // @ts-ignore
         const token = jsonwebtoken_1.default.sign({ sub: user.user_id, exp }, process.env.SECRET);
-        const url = `https://api-statuscode1.wedevelopers.online/api/user/verify/${token}`;
+        const url = `${process.env.BACKEND_URL}/api/user/verify/${token}`;
         const htmlContent = `<a href="${url}">Verify using this link</a>`;
         // @ts-ignore
-        yield (0, sendMail_1.default)(email, htmlContent);
+        (0, sendMail_1.default)(htmlContent, email);
         res.status(201).json({ message: "User created" });
     }
 }));
@@ -175,6 +214,10 @@ const loginUser = (0, express_async_handler_1.default)((req, res) => __awaiter(v
     });
     if (!user) {
         res.status(404).json({ message: "User not found" });
+        return;
+    }
+    if (!user.password) {
+        res.status(401).json({ message: "Logged in with Google Or Github" });
         return;
     }
     const match = yield bcrypt_1.default.compare(password, user.password);

@@ -1,38 +1,36 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
-const express_async_handler_1 = __importDefault(require("express-async-handler"));
-const transporter = nodemailer_1.default.createTransport({
-    // @ts-ignore
-    host: process.env.BREVO_HOST,
-    port: process.env.BREVO_PORT,
-    secure: false, // Use `true` for port 465, `false` for all other ports
-    auth: {
-        user: process.env.BREVO_USER,
-        pass: process.env.BREVO_PASSWORD,
-    },
-});
-const sendMail = (0, express_async_handler_1.default)((email, url) => __awaiter(void 0, void 0, void 0, function* () {
-    yield transporter.sendMail({
-        from: '"Review" <verify@review.com>',
+const sendMail = (htmlContent, receiverEmail) => {
+    const port = process.env.SMTP_PORT;
+    const host = process.env.SMTP_HOST;
+    const senderEmail = process.env.SMTP_EMAIL;
+    const password = process.env.SMTP_PASSWORD;
+    let transporter = nodemailer_1.default.createTransport({
         // @ts-ignore
-        to: email,
-        subject: "URL/OTP for verification",
-        text: "Single use URL/OTP",
-        // @ts-ignore
-        html: url,
+        host: 'smtp.gmail.com',
+        port: port,
+        secure: true,
+        auth: {
+            user: host,
+            pass: password,
+        },
     });
-}));
+    let mailOptions = {
+        from: `"Campus-Chatter Admin" <${senderEmail}>`,
+        to: receiverEmail,
+        subject: 'OTP Verification',
+        text: htmlContent,
+        html: htmlContent,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log('Error while sending email:', error);
+        }
+        console.log('Email sent successfully:', info.response);
+    });
+};
 exports.default = sendMail;

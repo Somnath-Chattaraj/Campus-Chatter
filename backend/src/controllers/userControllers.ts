@@ -7,6 +7,7 @@ import sendMail from "../mail/sendMail";
 import { Verifier } from "academic-email-verifier";
 import checkCollegeEmail from "../mail/checkAcademic";
 
+
 //@ts-ignore
 const googleSignInOrSignUp = asyncHandler(async (req: Request, res: Response) => {
   const{email,displayName}=req.body;
@@ -17,6 +18,7 @@ const googleSignInOrSignUp = asyncHandler(async (req: Request, res: Response) =>
   });
   if (!user) {
     const user = await prisma.user.create({
+      // @ts-ignore
       data: {
         email,
         name:displayName,
@@ -128,7 +130,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const exp = Date.now() + 1000 * 60 * 5;
     // @ts-ignore
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
-    const url = `http://localhost:3000/api/user/verify/${token}`;
+    const url = `${process.env.BACKEND_URL}/api/user/verify/${token}`;
     const htmlContent = `<a href="${url}">Verify using this link</a>`;
     // @ts-ignore
     sendMail(htmlContent, email);
@@ -145,7 +147,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     const exp = Date.now() + 1000 * 60 * 5;
     // @ts-ignore
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
-    const url = `https://api-statuscode1.wedevelopers.online/api/user/verify/${token}`;
+    const url = `${process.env.BACKEND_URL}/api/user/verify/${token}`;
     const htmlContent = `<a href="${url}">Verify using this link</a>`;
     // @ts-ignore
     sendMail(htmlContent, email);
