@@ -37,73 +37,50 @@ const Test = () => {
 const Mainrouter = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
-  },
-  {
-    path: "/posts",
-    element: <Posts />,
-  },
-  {
-    path: "/posts/:id",
-    element: <SinglePost />,
-  },
-  {
-    path: "/addDetails/:id",
-    element: <AddDetails />,
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/signup",
-    element: <Register />,
-  },
-  {
-    path: "/room",
-    element: <Test />,
+    element: <Navbar />,
     children: [
       {
-        element: <Navbar />,
+        path: "homepage",
+        element: <HomePage />,
+      },
+      {
+        path: "posts",
+        element: <Posts />,
+      },
+      {
+        path: "posts/:id",
+        element: <SinglePost />,
+      },
+      {
+        path: "/addDetails/:id",
+        element: <AddDetails />,
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        path: "signup",
+        element: <Register />,
+      },
+      {
+        path: "room",
+        element: <Mainbuttons />,
+        // index: true, was causing error
         children: [
           {
-            path: "homepage",
-            element: <HomePage />,
-          },
-          {
-            path: "posts",
-            element: <Posts />,
-          },
-          {
-            path: "posts/:id",
-            element: <SinglePost />,
-          },
-          {
-            path: "login",
-            element: <LoginPage />,
-          },
-          {
-            path: "signup",
-            element: <Register />,
-          },
-          {
-            path: "room",
-            element: <Mainbuttons />,
-            index: true,
-          },
-          {
-            path: "room/createroom",
+            path: "createroom",
             element: <Createroom />,
           },
           {
-            path: "room/joinroom",
+            path: "joinroom",
             element: <Joinroom />,
           },
           {
-            path: "room/chatting",
+            path: "chatting",
             element: <Chatroom />,
           },
-        ],
+        ]
       },
     ],
   },
