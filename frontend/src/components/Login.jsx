@@ -29,7 +29,7 @@ const LoginPage = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      await axios.post(
+      const response = await axios.post(
         "/user/google",
         {
           email: user.email,
@@ -37,6 +37,18 @@ const LoginPage = () => {
         },
         { withCredentials: true }
       );
+      // console.log(response.data.isCollegeEmail);
+      if (response.data.isCollegeEmail === true) {
+        toast({
+          title: "Signup successful.",
+          description: "Add college details to continue.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate(`/addDetails/${response.data.userId}`);
+        return;
+      }
       toast({
         title: "Login successful.",
         description: "You are being redirected to the posts page.",
@@ -61,7 +73,7 @@ const LoginPage = () => {
     try {
       const result = await signInWithPopup(auth, githubProvider);
       const user = result.user;
-      await axios.post(
+      const response = await axios.post(
         "/user/github",
         {
           email: user.email,
@@ -69,6 +81,17 @@ const LoginPage = () => {
         },
         { withCredentials: true }
       );
+      if (response.data.isCollegeEmail === true) {
+        toast({
+          title: "Signup successful.",
+          description: "Add college details to continue.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate(`/addDetails/${response.data.userId}`);
+        return;
+      }
       toast({
         title: "Login successful.",
         description: "You are being redirected to the posts page.",

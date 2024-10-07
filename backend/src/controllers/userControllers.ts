@@ -20,11 +20,18 @@ const googleSignInOrSignUp = asyncHandler(
       },
     });
     if (!user) {
+      let isCollegeEmail;
+
+      if (checkCollegeEmail(email)) {
+        isCollegeEmail = true;
+      } else {
+        isCollegeEmail = await Verifier.isAcademic(email);
+      }
       const user = await prisma.user.create({
         data: {
           email,
           name: displayName,
-          collegeEmailVerified: false,
+          collegeEmailVerified: isCollegeEmail,
           emailVerified: true,
         },
       });
@@ -35,16 +42,18 @@ const googleSignInOrSignUp = asyncHandler(
         secure: false,
         sameSite: "lax",
       });
-      return res.status(201).json({ message: "User created" });
+      const userId = user.user_id;
+      return res.status(201).json({ isCollegeEmail, userId });
     }
     const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
+    const isCollegeEmail = false;
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
     res.cookie("Authorization", token, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
     });
-    res.status(200).json({ message: "User logged in" });
+    res.status(200).json({ isCollegeEmail });
   }
 );
 
@@ -65,11 +74,18 @@ const githubSignInOrSignUp = asyncHandler(
     }
 
     if (!user) {
+      let isCollegeEmail;
+
+      if (checkCollegeEmail(email)) {
+        isCollegeEmail = true;
+      } else {
+        isCollegeEmail = await Verifier.isAcademic(email);
+      }
       const user = await prisma.user.create({
         data: {
           email,
           name: displayName,
-          collegeEmailVerified: false,
+          collegeEmailVerified: isCollegeEmail,
           emailVerified: true,
         },
       });
@@ -80,16 +96,17 @@ const githubSignInOrSignUp = asyncHandler(
         secure: false,
         sameSite: "lax",
       });
-      return res.status(201).json({ message: "User created" });
+      return res.status(201).json({ isCollegeEmail });
     }
     const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
+    const isCollegeEmail = false;
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
     res.cookie("Authorization", token, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
     });
-    res.status(200).json({ message: "User logged in" });
+    res.status(200).json({ isCollegeEmail });
   }
 );
 
@@ -394,6 +411,54 @@ const addCourseToUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(201).json({ message: "Course added to user" });
 });
 
+// @ts-ignore
+const addDetailsToUser = asyncHandler(async (req: Request, res: Response) => {
+  const { collegeName, courseName, isOnline, location, id } = req.body;
+  if (!collegeName || !courseName || !location || isOnline === undefined) {
+    return res.status(400).json({ message: "Please provide all fields" });
+  }
+  let college = await prisma.college.findFirst({
+    where: {
+      name: collegeName,
+    },
+  });
+  if (!college) {
+    college = await prisma.college.create({
+      data: {
+        name: collegeName,
+        location,
+      },
+    });
+  }
+  const college_id = college.college_id;
+  let course = await prisma.course.findFirst({
+    where: {
+      name: courseName,
+    },
+  });
+  let course_id;
+  if (course) {
+    course_id = course.course_id;
+  } else {
+    course = await prisma.course.create({
+      data: {
+        name: courseName,
+        college_id,
+        isOnline,
+      },
+    });
+    course_id = course.course_id;
+  }
+  await prisma.userCourse.create({
+    data: {
+      user_id: id,
+      course_id,
+      college_id,
+    },
+  });
+  res.status(201).json({ message: "Course added to user" });
+});
+
 export {
   registerUser,
   loginUser,
@@ -403,4 +468,5 @@ export {
   addCourseToUser,
   googleSignInOrSignUp,
   githubSignInOrSignUp,
+  addDetailsToUser,
 };

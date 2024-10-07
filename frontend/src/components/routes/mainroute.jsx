@@ -10,6 +10,7 @@ import HomePage from "../../pages/HomePage";
 import Register from "../Register";
 import SinglePost from "../../components/SinglePost";
 import LoginPage from "../Login";
+import AddDetails from "../AddDetails";
 import Navbar from "../MainNavbar";
 import Loader from "../loading";
 const Test = () => {
@@ -49,6 +50,34 @@ const Test = () => {
 const Mainrouter = createBrowserRouter([
   {
     path: "/",
+
+    element: <HomePage />,
+  },
+  {
+    path: "/posts",
+    element: <Posts />,
+  },
+  {
+    path: "/posts/:id",
+    element: <SinglePost />,
+  },
+  {
+    path: "/addDetails/:id",
+    element: <AddDetails />,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/signup",
+    element: <Register />,
+  },
+  {
+    path: "/room",
+    element: <Test />,
+    children: [
+
     element: <Navbar />,
     children:[
       {
