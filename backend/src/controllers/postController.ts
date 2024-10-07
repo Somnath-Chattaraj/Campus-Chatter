@@ -109,7 +109,7 @@ const fetchPosts = asyncHandler(async (req: Request, res: Response) => {
   const { page } = req.body;
   const pageNumber = page;
 
-  const postsPerPage = 3;
+  const postsPerPage = 4;
   const offset = (pageNumber - 1) * postsPerPage;
 
   const posts = await prisma.post.findMany({

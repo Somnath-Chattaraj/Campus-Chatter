@@ -40,4 +40,6 @@ export const collegeNames = [
   "Shiv Nadar University",
   "Jawaharlal Nehru Technological University",
   "IIT Patna",
+  "Indraprastha Institute of Information Technology",
+  "Netaji Subhas University of Technology",
 ];

@@ -11,9 +11,11 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
+import { FcGoogle } from "react-icons/fc"; // Google icon
+import { FaGithub } from "react-icons/fa"; // GitHub icon
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { auth, googleProvider } from "../firebase.js";
+import { auth, googleProvider, githubProvider } from "../firebase.js";
 import { signInWithPopup } from "firebase/auth";
 
 const LoginPage = () => {
@@ -27,11 +29,14 @@ const LoginPage = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      console.log("Google login result: ");
-      await axios.post("/user/google", { 
-        email:user.email,
-        displayName:user.displayName
-      }, { withCredentials: true });
+      await axios.post(
+        "/user/google",
+        {
+          email: user.email,
+          displayName: user.displayName,
+        },
+        { withCredentials: true }
+      );
       toast({
         title: "Login successful.",
         description: "You are being redirected to the posts page.",
@@ -42,6 +47,38 @@ const LoginPage = () => {
       navigate("/posts");
     } catch (error) {
       console.error("Google login error: ", error);
+      toast({
+        title: "Login failed.",
+        description: error.message || "An error occurred.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, githubProvider);
+      const user = result.user;
+      await axios.post(
+        "/user/github",
+        {
+          email: user.email,
+          displayName: user.displayName,
+        },
+        { withCredentials: true }
+      );
+      toast({
+        title: "Login successful.",
+        description: "You are being redirected to the posts page.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/posts");
+    } catch (error) {
+      console.error("Github login error: ", error);
       toast({
         title: "Login failed.",
         description: error.message || "An error occurred.",
@@ -82,10 +119,17 @@ const LoginPage = () => {
   };
 
   return (
-    <Flex minH="100vh" align="center" justify="center" bg="gray.50">
-      <Container maxW="md" bg="white" boxShadow="md" p={6} rounded="md">
+    <Flex minH="100vh" align="center" justify="center" bg="black">
+      <Container
+        maxW="md"
+        bg="gray.800"
+        boxShadow="md"
+        p={6}
+        rounded="md"
+        color="white"
+      >
         <Stack spacing={4}>
-          <Heading as="h1" size="lg" textAlign="center">
+          <Heading as="h1" size="lg" textAlign="center" color="white">
             Login
           </Heading>
           <FormControl id="email">
@@ -95,6 +139,8 @@ const LoginPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              bg="gray.700"
+              color="white"
             />
           </FormControl>
           <FormControl id="password">
@@ -104,13 +150,37 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              bg="gray.700"
+              color="white"
             />
           </FormControl>
-          <Button colorScheme="teal" isLoading={loading} onClick={handleLogin}>
+          <Button
+            colorScheme="teal"
+            isLoading={loading}
+            onClick={handleLogin}
+            _hover={{ bg: "teal.500" }}
+          >
             Login
           </Button>
-          <Button colorScheme="red" onClick={handleGoogleLogin}>
+          <Button
+            leftIcon={<FcGoogle />}
+            colorScheme="gray"
+            onClick={handleGoogleLogin}
+            bg="white"
+            color="black"
+            _hover={{ bg: "gray.200" }}
+          >
             Login with Google
+          </Button>
+          <Button
+            leftIcon={<FaGithub />}
+            colorScheme="gray"
+            onClick={handleGithubLogin}
+            bg="white"
+            color="black"
+            _hover={{ bg: "gray.200" }}
+          >
+            Login with Github
           </Button>
         </Stack>
       </Container>

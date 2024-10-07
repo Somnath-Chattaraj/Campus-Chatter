@@ -62,7 +62,7 @@ const Mainrouter = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: "/register",
+    path: "/signup",
     element: <Register />,
   },
   {

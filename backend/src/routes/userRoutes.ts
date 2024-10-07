@@ -7,7 +7,8 @@ import {
   getCurrentUserDetails,
   getUserDetailsById,
   addCourseToUser,
-  googleSignInOrSignUp
+  googleSignInOrSignUp,
+  githubSignInOrSignUp,
 } from "../controllers/userControllers";
 import checkAuth from "../middleware/checkAuth";
 
@@ -20,5 +21,6 @@ router.get("/me", checkAuth, getCurrentUserDetails); // get the user details of 
 router.get("/get/:userId", checkAuth, getUserDetailsById); // get the user details of a specific user
 router.post("/addcourse", checkAuth, addCourseToUser); // add a course to the current user
 router.post("/google", googleSignInOrSignUp); // sign in or sign up using google
+router.post("/github", githubSignInOrSignUp); // sign in or sign up using github
 
 export default router;
