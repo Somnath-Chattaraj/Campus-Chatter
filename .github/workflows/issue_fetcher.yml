@@ -1,0 +1,32 @@
+name: Fetch Issue Details
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  fetch-issue-details:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if comment references an issue
+        id: check
+        run: |
+          echo "COMMENT_BODY=${{ github.event.comment.body }}" >> $GITHUB_ENV
+          echo "ISSUE_NUMBER=$(echo '${{ github.event.comment.body }}' | grep -o '#[0-9]*' | tr -d '#')" >> $GITHUB_ENV
+          if [ -z "${{ env.ISSUE_NUMBER }}" ]; then
+            echo "No issue reference found." >> $GITHUB_ENV
+            exit 0
+          fi
+
+      - name: Fetch issue details
+        id: fetch_issue
+        run: |
+          ISSUE_DETAILS=$(gh issue view ${{ env.ISSUE_NUMBER }} --json title,body,state)
+          echo "ISSUE_DETAILS=${ISSUE_DETAILS}" >> $GITHUB_ENV
+
+      - name: Post issue details as a comment
+        if: success() && env.ISSUE_NUMBER != ''
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body "Issue #${{ env.ISSUE_NUMBER }} Details:\n\nTitle: ${{ fromJson(env.ISSUE_DETAILS).title }}\n\nState: ${{ fromJson(env.ISSUE_DETAILS).state }}\n\nDescription:\n\n${{ fromJson(env.ISSUE_DETAILS).body }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
