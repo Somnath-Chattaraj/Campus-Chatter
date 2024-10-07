@@ -30,10 +30,10 @@ const Navbar = () => {
                 navigate("/signup");
               }
               }>
-                Signup
+                Register
               </option>
           </select>
-          <Link to="/posts" className="text-gray-300 hover:text-white">
+          <Link to="/posts" className="text-gray-300 hover:text-white m-5">
             post
           </Link>
           <Link to="/room" className="text-gray-300 hover:text-white">
