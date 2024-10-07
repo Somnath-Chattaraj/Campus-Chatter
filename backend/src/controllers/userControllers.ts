@@ -7,51 +7,99 @@ import sendMail from "../mail/sendMail";
 import { Verifier } from "academic-email-verifier";
 import checkCollegeEmail from "../mail/checkAcademic";
 
-
-//@ts-ignore
-const googleSignInOrSignUp = asyncHandler(async (req: Request, res: Response) => {
-  const{email,displayName}=req.body;
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-  if (!user) {
-    const user = await prisma.user.create({
-      // @ts-ignore
-      data: {
+const googleSignInOrSignUp = asyncHandler(
+  //@ts-ignore
+  async (req: Request, res: Response) => {
+    const { email, displayName } = req.body;
+    if (!process.env.SECRET) {
+      throw new Error("Secret not found");
+    }
+    const user = await prisma.user.findUnique({
+      where: {
         email,
-        name:displayName,
-        collegeEmailVerified: false,
-        emailVerified:true,
       },
     });
-    const exp = Date.now() + 1000 * 60 *60*24*30;
-    // @ts-ignore
+    if (!user) {
+      const user = await prisma.user.create({
+        data: {
+          email,
+          name: displayName,
+          collegeEmailVerified: false,
+          emailVerified: true,
+        },
+      });
+      const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
+      const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
+      res.cookie("Authorization", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+      return res.status(201).json({ message: "User created" });
+    }
+    const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
     res.cookie("Authorization", token, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
     });
-    return res.status(201).json({ message: "User created" });
+    res.status(200).json({ message: "User logged in" });
   }
-  const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
-  // @ts-ignore
-  const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
-  res.cookie("Authorization", token, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-  });
-  res.status(200).json({ message: "User logged in" });
-});
+);
 
+const githubSignInOrSignUp = asyncHandler(
+  //@ts-ignore
+  async (req: Request, res: Response) => {
+    let { email, displayName } = req.body;
+    if (!process.env.SECRET) {
+      throw new Error("Secret not found");
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!displayName) {
+      displayName = email.split("@")[0];
+    }
+
+    if (!user) {
+      const user = await prisma.user.create({
+        data: {
+          email,
+          name: displayName,
+          collegeEmailVerified: false,
+          emailVerified: true,
+        },
+      });
+      const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
+      const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
+      res.cookie("Authorization", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+      return res.status(201).json({ message: "User created" });
+    }
+    const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
+    const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
+    res.cookie("Authorization", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    res.status(200).json({ message: "User logged in" });
+  }
+);
 
 // @ts-ignore
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, name, password, collegeName, courseName, isOnline, location } =
     req.body;
+  if (!process.env.SECRET) {
+    throw new Error("Secret not found");
+  }
   const hashedPassword = await bcrypt.hash(password, 8);
   if (!email || !name || !password) {
     res.status(400).json({ message: "Please provide all fields" });
@@ -128,11 +176,9 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       },
     });
     const exp = Date.now() + 1000 * 60 * 5;
-    // @ts-ignore
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
     const url = `${process.env.BACKEND_URL}/api/user/verify/${token}`;
     const htmlContent = `<a href="${url}">Verify using this link</a>`;
-    // @ts-ignore
     sendMail(htmlContent, email);
     res.status(201).json({ message: "User created" });
   } else {
@@ -145,11 +191,9 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       },
     });
     const exp = Date.now() + 1000 * 60 * 5;
-    // @ts-ignore
     const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
     const url = `${process.env.BACKEND_URL}/api/user/verify/${token}`;
     const htmlContent = `<a href="${url}">Verify using this link</a>`;
-    // @ts-ignore
     sendMail(htmlContent, email);
     res.status(201).json({ message: "User created" });
   }
@@ -194,6 +238,9 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
 
 const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
+  if (!process.env.SECRET) {
+    throw new Error("Secret not found");
+  }
   if (!email || !password) {
     res.status(400).json({ message: "Please provide all fields" });
     return;
@@ -207,7 +254,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     res.status(404).json({ message: "User not found" });
     return;
   }
-  if(!user.password){
+  if (!user.password) {
     res.status(401).json({ message: "Logged in with Google Or Github" });
     return;
   }
@@ -217,7 +264,6 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
   const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
-  // @ts-ignore
   const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
   res.cookie("Authorization", token, {
     httpOnly: true,
@@ -356,4 +402,5 @@ export {
   getUserDetailsById,
   addCourseToUser,
   googleSignInOrSignUp,
+  githubSignInOrSignUp,
 };

@@ -114,10 +114,10 @@ const Posts = () => {
   return (
     <Container centerContent>
       <SearchBar />
-      {communities.length>0 && (
+      {communities && (
         <CreatePost communities={communities} onSubmit={handleCreatePost} />
       )}
-      
+
       <VStack spacing={4} align="stretch" width="100%" mt={4}>
         <InfiniteScroll
           dataLength={posts.length}

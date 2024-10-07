@@ -74,13 +74,17 @@ const RegisterForm = () => {
     <ListItem
       p={2}
       borderBottom="1px solid"
-      borderColor="gray.200"
+      borderColor="gray.600"
       cursor="pointer"
-      _hover={{ backgroundColor: "gray.100" }}
+      _hover={{ backgroundColor: "gray.700" }}
+      bg="gray.800"
     >
       <Flex align="center">
         <Box>
-          <Text fontWeight="bold">{suggestion}</Text>
+          <Text fontWeight="bold" color="white">
+            {" "}
+            {suggestion}
+          </Text>
         </Box>
       </Flex>
     </ListItem>
