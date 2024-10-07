@@ -6,7 +6,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
-    console.log("here");
     if (location.pathname === '/') navigate("/homepage");
   }, [location]);
   return (
@@ -20,9 +19,20 @@ const Navbar = () => {
           <Link to="/homepage" className="text-gray-300 hover:text-white m-3">
             Home
           </Link>
-          <Link to="/login" className="text-gray-300 hover:text-white">
-            Login
-          </Link>
+          <select name="Registrer" id="">
+              <option onClick={() => {
+                navigate("/login");
+              }
+              }>
+                  Login
+              </option>
+              <option onClick={() => {
+                navigate("/signup");
+              }
+              }>
+                Signup
+              </option>
+          </select>
           <Link to="/posts" className="text-gray-300 hover:text-white">
             post
           </Link>
