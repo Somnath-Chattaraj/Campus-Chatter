@@ -11,27 +11,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Set up GitHub CLI
+        run: sudo apt-get install gh
+
       - name: Fetch issue details
         id: fetch_issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the GITHUB_TOKEN for authentication
         run: |
-          if [[ "${{ github.event.comment.body }}" =~ ^#[0-9]+$ ]]; then
-            ISSUE_NUMBER="${{ github.event.comment.body }}"  # Get the entire comment
-            ISSUE_NUMBER=${ISSUE_NUMBER:1}  # Remove the leading '#'
+          # Extract issue number, even if there's additional text after it
+          if [[ "${{ github.event.comment.body }}" =~ ^#([0-9]+) ]]; then
+            ISSUE_NUMBER="${BASH_REMATCH[1]}"  # Capture the issue number
             echo "Fetching issue #$ISSUE_NUMBER"
+            
+            # Fetch the issue data
             ISSUE_DATA=$(gh issue view $ISSUE_NUMBER --json title,state,body --jq '.')
             echo "ISSUE_DATA=$ISSUE_DATA" >> $GITHUB_ENV
           else
             echo "No valid issue reference found in comment."
             exit 0
-          fi
 
-      - name: Add comment with issue details
-        if: env.ISSUE_DATA != ''
+      - name: Output issue data
         run: |
-          TITLE=$(echo $ISSUE_DATA | jq -r '.title')
-          STATE=$(echo $ISSUE_DATA | jq -r '.state')
-          BODY=$(echo $ISSUE_DATA | jq -r '.body')
-
-          COMMENT="### Issue Details\n\n**Title:** $TITLE\n**State:** $STATE\n**Description:** $BODY"
-          echo "Adding comment with issue details..."
-          gh issue comment ${{ github.event.issue.number }} --body "$COMMENT"
+          echo "Issue details fetched:"
+          echo "${{ env.ISSUE_DATA }}"
