@@ -10,6 +10,8 @@ import HomePage from "../../pages/HomePage";
 import Register from "../Register";
 import SinglePost from "../../components/SinglePost";
 import LoginPage from "../Login";
+import Navbar from "../MainNavbar";
+import Loader from "../loading";
 const Test = () => {
   const [userId, setUserId] = useState("");
   const [roomId, setRoomId] = useState("");
@@ -47,45 +49,52 @@ const Test = () => {
 const Mainrouter = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
-  },
-  {
-    path: "/posts",
-    element: <Posts />,
-  },
-  {
-    path: "/posts/:id",
-    element: <SinglePost />,
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/signup",
-    element: <Register />,
-  },
-  {
-    path: "/room",
-    element: <Test />,
-    children: [
+    element: <Navbar />,
+    children:[
+      {
+        path:"homepage",
+        element:<HomePage></HomePage>
+      },
+      {
+        path: "posts",
+        element: <Posts />,
+      },
+      {
+        path: "posts/:id",
+        element: <SinglePost />,
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/signup",
+        element: <Register />,
+      },
       {
         path: "/room",
-        element: <Mainbuttons />,
-        index: true,
+        element: <Test />,
+        children: [
+          {
+            path: "/room",
+            element: <Mainbuttons />,
+            index: true,
+          },
+          {
+            path: "/room/createroom",
+            element: <Createroom />,
+          },
+          {
+            path: "/room/joinroom",
+            element: <Joinroom />,
+          },
+          {
+            path: "/room/chatting",
+            element: <Chatroom />,
+          },
+        ],
       },
-      {
-        path: "/room/createroom",
-        element: <Createroom />,
-      },
-      {
-        path: "/room/joinroom",
-        element: <Joinroom />,
-      },
-      {
-        path: "/room/chatting",
-        element: <Chatroom />,
-      },
+
     ],
   },
 ]);
