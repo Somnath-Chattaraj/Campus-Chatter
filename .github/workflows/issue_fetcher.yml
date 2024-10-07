@@ -17,21 +17,20 @@ jobs:
       - name: Fetch issue details
         id: fetch_issue
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the GITHUB_TOKEN for authentication
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |
-          # Extract issue number, even if there's additional text after it
-          if [[ "${{ github.event.comment.body }}" =~ ^#([0-9]+) ]]; then
-            ISSUE_NUMBER="${BASH_REMATCH[1]}"  # Capture the issue number
+          COMMENT_BODY="${{ github.event.comment.body }}"
+
+         
+          if [[ "$COMMENT_BODY" =~ ^#([0-9]+) ]]; then
+            ISSUE_NUMBER="${BASH_REMATCH[1]}"
             echo "Fetching issue #$ISSUE_NUMBER"
-            
-            # Fetch the issue data
+
             ISSUE_DATA=$(gh issue view $ISSUE_NUMBER --json title,state,body --jq '.')
             echo "ISSUE_DATA=$ISSUE_DATA" >> $GITHUB_ENV
           else
             echo "No valid issue reference found in comment."
             exit 0
 
-      - name: Output issue data
-        run: |
-          echo "Issue details fetched:"
-          echo "${{ env.ISSUE_DATA }}"
+      - name: Output issue details
+        run: echo "Fetched Issue Details: ${{ env.ISSUE_DATA }}"
