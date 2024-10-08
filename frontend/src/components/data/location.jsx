@@ -27,4 +27,5 @@ export const location = [
   "Ranchi", // Birla Institute of Technology, Mesra
   "Greater Noida", // Shiv Nadar University
   "Patna", // IIT Patna
+  "Durgapur", // NIT Durgapur
 ];
