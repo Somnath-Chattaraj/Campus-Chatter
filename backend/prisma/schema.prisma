@@ -10,7 +10,7 @@ datasource db {
 model User {
   user_id              String       @id @default(cuid())
   email                String       @unique
-  name                 String?
+  username             String?
   password             String?
   createdAt            DateTime     @default(now())
   emailVerified        Boolean      @default(false)
