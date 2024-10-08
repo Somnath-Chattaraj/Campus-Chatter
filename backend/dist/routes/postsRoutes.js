@@ -16,4 +16,5 @@ postsRoutes.post("/comment", checkAuth_1.default, postController_1.createComment
 postsRoutes.post("/liked", checkAuth_1.default, postController_1.postLiked);
 postsRoutes.post("/unlike", checkAuth_1.default, postController_1.unlikePost);
 postsRoutes.post("/search", checkAuth_1.default, postController_1.searchPosts);
+postsRoutes.get("/allcommunities", checkAuth_1.default, postController_1.getAllCommunities);
 exports.default = postsRoutes;
