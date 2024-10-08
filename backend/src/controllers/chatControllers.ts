@@ -17,8 +17,15 @@ export const getChatHistory = async (req: Request, res: Response) => {
       },
       orderBy: { timestamp: 'asc' }
     });
-
-    res.json(messages);
+    const messageFormat = messages.map((message) => ({
+      senderId: message.sender.user_id,
+      message: message.content,
+      at: message.timestamp,
+    }));
+    
+    // Send the formatted messages as a JSON response
+    res.json(messageFormat);
+    
   } catch (error) {
     res.status(500).json({ error: 'Failed to retrieve chat history' });
   }

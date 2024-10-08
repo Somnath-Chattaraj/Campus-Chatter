@@ -1,45 +1,62 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { chatRoomApi } from "../contexts/chatRoomApi";
+import React, { useEffect, useRef, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import { ReadyState } from "react-use-websocket";
+import axios from "axios";
 
 const Chatroom = () => {
   const userId = localStorage.getItem("userId");
   const roomId = localStorage.getItem("roomId");
   const [allMsg, setAllMsg] = useState([]);
+  const [prevMsg, setPrevMsg] = useState([]);
   const [myMsg, setMyMsg] = useState("");
-  const messageEndRef = useRef(null); // For auto-scroll
+  const messageEndRef = useRef(null); 
 
-  // WebSocket connection
+
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket('ws://localhost:8080');
 
-  // Initial query to join the room
+
   useEffect(() => {
-    const tosend = {
-      type: "joinRoom",
-      data: {
-        userId: userId,
-        roomId: roomId,
+    const fetchChatHistory = async () => {
+      try {
+        const response = await axios.get(`/chat/history/${roomId}`, {
+          withCredentials: true,
+        });
+        setPrevMsg(response.data); 
+
+
+        const tosend = {
+          type: "joinRoom",
+          data: {
+            userId: userId,
+            roomId: roomId,
+          }
+        };
+        sendJsonMessage(tosend);
+      } catch (error) {
+        console.error("Error fetching chat history:", error);
       }
     };
-    sendJsonMessage(tosend);
-  }, [roomId, userId, sendJsonMessage]);
 
-  // Handling incoming messages
+    fetchChatHistory();
+  }, [roomId, userId, sendJsonMessage]); 
   useEffect(() => {
     if (lastJsonMessage !== null) {
       if (lastJsonMessage.type === "error") {
         alert("Room not connected...");
       } else if (lastJsonMessage.type === "newMessage" && lastJsonMessage.data.roomId === roomId) {
         const data = lastJsonMessage.data.message;
-        setAllMsg(prev => [...prev, {
-          senderId: data.senderId,
-          message: data.content,
-          at: data.timestamp,
-        }]);
+
+        
+        if (data.senderId !== userId) {
+          setAllMsg(prev => [...prev, {
+            senderId: data.senderId,
+            message: data.content,
+            at: data.timestamp,
+          }]);
+        }
       }
     }
-  }, [lastJsonMessage, roomId]);
+  }, [lastJsonMessage, roomId, userId]);
 
   // Auto-scroll to the bottom when messages are updated
   useEffect(() => {
@@ -47,6 +64,8 @@ const Chatroom = () => {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [allMsg]);
+
+  
 
   // Submit message function
   const submit = () => {
@@ -59,12 +78,14 @@ const Chatroom = () => {
       }
     };
     sendJsonMessage(tosend);
+
+
     setAllMsg(prev => [...prev, {
       senderId: "you",
       message: myMsg,
       at: new Date().toISOString(),
     }]);
-    setMyMsg(""); // Clear input field
+    setMyMsg(""); 
   };
 
   // Format date
@@ -86,6 +107,9 @@ const Chatroom = () => {
     [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
   }[readyState];
 
+  // Combine and sort messages
+  const combinedMessages = [...prevMsg, ...allMsg].sort((a, b) => new Date(a.at) - new Date(b.at));
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-800 to-slate-600 p-4 text-white">
       <div className="max-w-4xl mx-auto w-full flex-grow flex flex-col bg-slate-900/80 rounded-lg shadow-lg p-6 space-y-6">
@@ -101,22 +125,20 @@ const Chatroom = () => {
 
         {/* Messages */}
         <div className="flex-grow overflow-y-auto p-4 bg-gray-800 rounded-lg shadow-inner max-h-full scrollbar-thin scrollbar-thumb-gray-500">
-          {allMsg.length ? (
-            allMsg.map((data, index) => (
-              data.senderId !== userId ? (
+          {combinedMessages.length ? (
+            combinedMessages.map((data, index) => (
               <div
                 key={index}
-                className={`p-4 rounded-lg shadow-md space-y-2 ${
-                  data.senderId === "you" ? "bg-green-700 ml-auto" : "bg-slate-700 mr-auto"
+                className={`p-4 rounded-lg my-3 shadow-md space-y-2 ${
+                  (data.senderId === "you" || data.senderId === userId) ? "bg-green-700 ml-auto" : "bg-slate-700 mr-auto"
                 } max-w-xs`}
               >
-                <div>{data.senderId === "you" ? "You" : data.senderId}</div>
+                <div>{(data.senderId === "you" || data.senderId === userId) ? "You" : (data.senderId || data.id)}</div>
                 <div>
-                  <b>{data.message}</b>
+                  <b>{data.message || data.content}</b>
                 </div>
-                <div className="text-sm text-gray-400">Sent at: {formatDate(data.at)}</div>
+                <div className="text-sm text-gray-400">Sent at: {formatDate(data.at) || formatDate(data.timestamp)}</div>
               </div>
-              ) : null
             ))
           ) : (
             <div className="text-gray-400">No messages yet</div>
@@ -138,6 +160,12 @@ const Chatroom = () => {
             className="bg-yellow-400 text-slate-800 p-3 rounded-lg shadow-lg font-semibold hover:bg-yellow-300 transition-colors"
           >
             Send
+          </button>
+          <button
+            onClick={closeConnection}
+            className="bg-red-400 text-slate-800 p-3 rounded-lg shadow-lg font-semibold hover:bg-yellow-300 transition-colors"
+          >
+            Stop
           </button>
         </div>
       </div>
