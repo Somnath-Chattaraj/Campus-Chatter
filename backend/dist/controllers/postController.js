@@ -200,7 +200,7 @@ const fetchSinglePost = (0, express_async_handler_1.default)((req, res) => __awa
                     user_id: true,
                     User: {
                         select: {
-                            name: true,
+                            username: true,
                         },
                     },
                 },

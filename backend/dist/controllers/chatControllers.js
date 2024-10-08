@@ -19,12 +19,18 @@ const getChatHistory = (req, res) => __awaiter(void 0, void 0, void 0, function*
             where: { chatRoomId: roomId },
             include: {
                 sender: {
-                    select: { user_id: true, name: true }
+                    select: { user_id: true, username: true }
                 }
             },
             orderBy: { timestamp: 'asc' }
         });
-        res.json(messages);
+        const messageFormat = messages.map((message) => ({
+            senderId: message.sender.user_id,
+            message: message.content,
+            at: message.timestamp,
+        }));
+        // Send the formatted messages as a JSON response
+        res.json(messageFormat);
     }
     catch (error) {
         res.status(500).json({ error: 'Failed to retrieve chat history' });
@@ -46,7 +52,7 @@ const listChatRooms = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 users: {
                     select: {
                         user_id: true,
-                        name: true
+                        username: true
                     }
                 }
             }
@@ -65,7 +71,7 @@ const getChatRoomDetails = (req, res) => __awaiter(void 0, void 0, void 0, funct
             where: { id: roomId },
             include: {
                 users: {
-                    select: { user_id: true, name: true }
+                    select: { user_id: true, username: true }
                 }
             }
         });

@@ -17,7 +17,7 @@ export const getChatHistory = async (req: Request, res: Response) => {
       },
       orderBy: { timestamp: 'asc' }
     });
-    const messageFormat = messages.map((message) => ({
+    const messageFormat = messages.map((message : any) => ({
       senderId: message.sender.user_id,
       message: message.content,
       at: message.timestamp,

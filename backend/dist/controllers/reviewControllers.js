@@ -137,7 +137,7 @@ const getBulkReviews = (0, express_async_handler_1.default)((req, res) => __awai
                 User: {
                     select: {
                         email: true,
-                        name: true,
+                        username: true,
                         userCourses: {
                             select: {
                                 Course: {
@@ -232,7 +232,7 @@ const getFullReview = (0, express_async_handler_1.default)((req, res) => __await
             User: {
                 select: {
                     email: true,
-                    name: true,
+                    username: true,
                     userCourses: {
                         select: {
                             Course: {

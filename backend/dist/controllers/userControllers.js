@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addDetailsToUser = exports.githubSignInOrSignUp = exports.googleSignInOrSignUp = exports.addCourseToUser = exports.getUserDetailsById = exports.getCurrentUserDetails = exports.verifyUser = exports.loginUser = exports.registerUser = void 0;
+exports.getAllUser = exports.addUsername = exports.addDetailsToUser = exports.githubSignInOrSignUp = exports.googleSignInOrSignUp = exports.addCourseToUser = exports.getUserDetailsById = exports.getCurrentUserDetails = exports.verifyUser = exports.loginUser = exports.registerUser = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -43,7 +43,6 @@ const googleSignInOrSignUp = (0, express_async_handler_1.default)(
         const user = yield prisma_1.default.user.create({
             data: {
                 email,
-                name: displayName,
                 collegeEmailVerified: isCollegeEmail,
                 emailVerified: true,
             },
@@ -56,7 +55,8 @@ const googleSignInOrSignUp = (0, express_async_handler_1.default)(
             sameSite: "lax",
         });
         const userId = user.user_id;
-        return res.status(201).json({ isCollegeEmail, userId });
+        const username = null;
+        return res.status(201).json({ isCollegeEmail, userId, username });
     }
     const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
     const isCollegeEmail = false;
@@ -66,13 +66,14 @@ const googleSignInOrSignUp = (0, express_async_handler_1.default)(
         secure: false,
         sameSite: "lax",
     });
-    res.status(200).json({ isCollegeEmail });
+    const username = user.username;
+    res.status(200).json({ isCollegeEmail, username });
 }));
 exports.googleSignInOrSignUp = googleSignInOrSignUp;
 const githubSignInOrSignUp = (0, express_async_handler_1.default)(
 //@ts-ignore
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { email, displayName } = req.body;
+    let { email } = req.body;
     if (!process.env.SECRET) {
         throw new Error("Secret not found");
     }
@@ -81,9 +82,6 @@ const githubSignInOrSignUp = (0, express_async_handler_1.default)(
             email,
         },
     });
-    if (!displayName) {
-        displayName = email.split("@")[0];
-    }
     if (!user) {
         let isCollegeEmail;
         if ((0, checkAcademic_1.default)(email)) {
@@ -95,7 +93,6 @@ const githubSignInOrSignUp = (0, express_async_handler_1.default)(
         const user = yield prisma_1.default.user.create({
             data: {
                 email,
-                name: displayName,
                 collegeEmailVerified: isCollegeEmail,
                 emailVerified: true,
             },
@@ -107,7 +104,9 @@ const githubSignInOrSignUp = (0, express_async_handler_1.default)(
             secure: false,
             sameSite: "lax",
         });
-        return res.status(201).json({ isCollegeEmail });
+        const userId = user.user_id;
+        const username = null;
+        return res.status(201).json({ isCollegeEmail, userId, username });
     }
     const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
     const isCollegeEmail = false;
@@ -117,23 +116,24 @@ const githubSignInOrSignUp = (0, express_async_handler_1.default)(
         secure: false,
         sameSite: "lax",
     });
-    res.status(200).json({ isCollegeEmail });
+    const username = user.username;
+    res.status(200).json({ isCollegeEmail, username });
 }));
 exports.githubSignInOrSignUp = githubSignInOrSignUp;
 // @ts-ignore
 const registerUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, name, password, collegeName, courseName, isOnline, location } = req.body;
+    const { email, username, password, collegeName, courseName, isOnline, location, } = req.body;
     if (!process.env.SECRET) {
         throw new Error("Secret not found");
     }
     const hashedPassword = yield bcrypt_1.default.hash(password, 8);
-    if (!email || !name || !password) {
+    if (!email || !username || !password) {
         res.status(400).json({ message: "Please provide all fields" });
         return;
     }
-    const userExists = yield prisma_1.default.user.findUnique({
+    const userExists = yield prisma_1.default.user.findFirst({
         where: {
-            email,
+            OR: [{ email: email }, { username: username }],
         },
     });
     if (userExists) {
@@ -188,7 +188,7 @@ const registerUser = (0, express_async_handler_1.default)((req, res) => __awaite
             data: {
                 email,
                 password: hashedPassword,
-                name,
+                username,
                 collegeEmailVerified: true,
             },
         });
@@ -211,7 +211,7 @@ const registerUser = (0, express_async_handler_1.default)((req, res) => __awaite
             data: {
                 email,
                 password: hashedPassword,
-                name,
+                username,
                 collegeEmailVerified: false,
             },
         });
@@ -307,7 +307,7 @@ const getCurrentUserDetails = (0, express_async_handler_1.default)((req, res) =>
         select: {
             user_id: true,
             email: true,
-            name: true,
+            username: true,
             userCourses: {
                 select: {
                     Course: {
@@ -341,7 +341,7 @@ const getUserDetailsById = (0, express_async_handler_1.default)((req, res) => __
         },
         select: {
             email: true,
-            name: true,
+            username: true,
             userCourses: {
                 select: {
                     Course: {
@@ -419,11 +419,56 @@ const addCourseToUser = (0, express_async_handler_1.default)((req, res) => __awa
 }));
 exports.addCourseToUser = addCourseToUser;
 // @ts-ignore
+const addUsername = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, id } = req.body;
+    if (!username) {
+        return res.status(400).json({ message: "Please provide all fields" });
+    }
+    const response = yield prisma_1.default.user.findFirst({
+        where: {
+            OR: [
+                { username: username },
+            ]
+        },
+    });
+    if (response) {
+        return res.status(409).json({ message: "Username already exists" });
+    }
+    yield prisma_1.default.user.update({
+        where: {
+            user_id: id,
+        },
+        data: {
+            username,
+        },
+    });
+    res.status(201).json({ message: "Username updated" });
+}));
+exports.addUsername = addUsername;
+// @ts-ignore
 const addDetailsToUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { collegeName, courseName, isOnline, location, id } = req.body;
+    const { username, collegeName, courseName, isOnline, location, id } = req.body;
     if (!collegeName || !courseName || !location || isOnline === undefined) {
         return res.status(400).json({ message: "Please provide all fields" });
     }
+    const user = yield prisma_1.default.user.findFirst({
+        where: {
+            OR: [
+                { username: username },
+            ]
+        },
+    });
+    if (user) {
+        return res.status(409).json({ message: "Username already exists" });
+    }
+    yield prisma_1.default.user.update({
+        where: {
+            user_id: id,
+        },
+        data: {
+            username,
+        },
+    });
     let college = yield prisma_1.default.college.findFirst({
         where: {
             name: collegeName,
@@ -467,3 +512,8 @@ const addDetailsToUser = (0, express_async_handler_1.default)((req, res) => __aw
     res.status(201).json({ message: "Course added to user" });
 }));
 exports.addDetailsToUser = addDetailsToUser;
+const getAllUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const users = yield prisma_1.default.user.findMany({});
+    res.status(200).json(users);
+}));
+exports.getAllUser = getAllUser;
