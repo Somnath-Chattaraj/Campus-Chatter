@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { chatRoomApi } from "../contexts/chatRoomApi";
+import axios from "axios";
 
 function Createroom() {
   //@ts-ignore
@@ -13,6 +14,13 @@ function Createroom() {
     roomId,
     setRoomId,
   } = useContext(chatRoomApi);
+  const [users,setUsers] = useState([]);
+    useEffect(() => {
+        const user = axios.get('/user/me', {
+            withCredentials: true,
+        })
+        setUsers(user);
+    }, []);
   const [tempRoomId, setTempRoomId] = useState("");
   const navigate = useNavigate();
   const submit = () => {
@@ -41,7 +49,7 @@ function Createroom() {
   };
   return (
     <div>
-      <input
+      {/* <input
         type="text"
         value={userId}
         onChange={(e) => setUserId(e.target.value)}
@@ -62,7 +70,18 @@ function Createroom() {
         ) : (
           ""
         )}
-      </div>
+      </div> */}
+      Choose from below users to create a Room
+        <div>
+            {users.map((user) => {
+                return (
+                    <div>
+                        {user}
+                    </div>
+                )
+            })}
+        </div>
+
     </div>
   );
 }
@@ -114,6 +133,7 @@ function Mainbuttons() {
     <div>
       <button onClick={createroom}>createroom</button>
       <button onClick={joinroom}>joinroom</button>
+      <Outlet />
     </div>
   );
 }
