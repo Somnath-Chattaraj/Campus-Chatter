@@ -179,6 +179,9 @@ const Posts = () => {
               <Text fontSize="sm" color="gray.500">
                 {post.College.name}
               </Text>
+              <Text fontSize="sm" color="gray.500">
+                {post.User.username}
+              </Text>
               <Text>{post.content}</Text>
               <Flex justify="space-between" align="center" mt={2}>
                 <Flex align="center">

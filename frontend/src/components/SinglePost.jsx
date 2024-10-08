@@ -115,6 +115,9 @@ const SinglePost = () => {
             <Text fontSize="sm" color="gray.400">
               {post.College.name}
             </Text>
+            <Text fontSize="sm" color="gray.400">
+              {post.User.username}
+            </Text>
           </Box>
         </Flex>
         <Text fontSize="md" mt={4} color="gray.300">

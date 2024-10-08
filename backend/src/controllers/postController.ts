@@ -127,6 +127,11 @@ const fetchPosts = asyncHandler(async (req: Request, res: Response) => {
           name: true,
         },
       },
+      User: {
+        select: {
+          username: true,
+        },
+      },
     },
     take: postsPerPage,
     skip: offset,
@@ -198,6 +203,11 @@ const fetchSinglePost = asyncHandler(async (req: Request, res: Response) => {
       College: {
         select: {
           name: true,
+        },
+      },
+      User: {
+        select: {
+          username: true,
         },
       },
       Comments: {
