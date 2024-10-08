@@ -28,9 +28,7 @@ import Autosuggest from "react-autosuggest";
 
 const AddDetails = () => {
   const [formData, setFormData] = useState({
-    email: "",
-    name: "",
-    password: "",
+    username: "",
     collegeName: "",
     courseName: "",
     isOnline: false, // Default value as boolean
@@ -163,6 +161,25 @@ const AddDetails = () => {
     <Box w="100%" maxW="500px" mx="auto" mt="5">
       <form onSubmit={handleSubmit}>
         <VStack spacing={4}>
+          <FormControl id="username" isRequired>
+            <FormLabel>Username</FormLabel>
+            <Input
+              type="text"
+              name="name"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Enter your username"
+              border="2px solid"
+              borderColor="gray.300"
+              padding={4}
+              borderRadius="md"
+              _focus={{
+                borderColor: "blue.500",
+                boxShadow: "0 0 0 1px #3182CE",
+              }}
+            />
+          </FormControl>
+
           <FormControl id="collegeName" isRequired>
             <FormLabel>College Name</FormLabel>
             <Autosuggest

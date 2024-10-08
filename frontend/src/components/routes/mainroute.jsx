@@ -12,6 +12,7 @@ import LoginPage from "../Login";
 import AddDetails from "../AddDetails";
 import Navbar from "../MainNavbar";
 import Loader from "../loading";
+import AddUsername from "../AddUsername";
 
 const Test = () => {
   const [userId, setUserId] = useState("");
@@ -56,6 +57,10 @@ const Mainrouter = createBrowserRouter([
         element: <AddDetails />,
       },
       {
+        path: "/addusername/:id",
+        element: <AddUsername />,
+      },
+      {
         path: "login",
         element: <LoginPage />,
       },
@@ -80,7 +85,7 @@ const Mainrouter = createBrowserRouter([
             path: "chatting",
             element: <Chatroom />,
           },
-        ]
+        ],
       },
     ],
   },
