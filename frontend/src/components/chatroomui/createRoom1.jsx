@@ -11,18 +11,15 @@ const Createroom1 = () => {
     const [currentRoomId, setCurrentRoomId] = useState(null); 
     const navigate = useNavigate();
     const toast = useToast();
-    useEffect(() => {
 
+    useEffect(() => {
         localStorage.removeItem("roomId");
         localStorage.removeItem("userId");
 
-
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('/user/all', {
-                    withCredentials: true,
-                });
-                setUsers(response.data); 
+                const response = await axios.get('/user/all', { withCredentials: true });
+                setUsers(response.data);
             } catch (error) {
                 console.error("Error fetching users:", error);
             }
@@ -30,10 +27,8 @@ const Createroom1 = () => {
 
         fetchUsers();
 
-
         const newSocket = new WebSocket("ws://localhost:8080");
         setSocket(newSocket);
-
 
         newSocket.addEventListener("message", (event) => {
             const data = JSON.parse(event.data);
@@ -43,20 +38,17 @@ const Createroom1 = () => {
                 case 'roomCreated':
                     console.log("Room Created:", data.data.roomId);
                     setCurrentRoomId(data.data.roomId); 
-
                     localStorage.setItem("roomId", data.data.roomId);
                     localStorage.setItem("userId", userDetails.user_id);
                     break;
                 case 'roomJoined':
                     console.log("Joined Room:", data.data.roomId);
                     setCurrentRoomId(data.data.roomId); 
-
                     localStorage.setItem("roomId", data.data.roomId);
                     localStorage.setItem("userId", userDetails.user_id);
                     break;
                 case 'newMessage':
                     console.log("New Message:", data.data.message);
-
                     break;
                 case 'newClientJoined':
                     console.log(data.data.message);
@@ -69,12 +61,10 @@ const Createroom1 = () => {
             }
         });
 
-
         return () => {
             newSocket.close();
         };
-    }, [userDetails?.user_id]); 
-
+    }, [userDetails?.user_id]);
 
     const handleChange = async (targetUserId) => {
         if (!socket || socket.readyState !== WebSocket.OPEN) {
@@ -93,6 +83,7 @@ const Createroom1 = () => {
         );
         console.log("Room creation request sent to server.");
     };
+
     if (currentRoomId) {
         toast({
             title: "Room Creation Successful.",
@@ -100,38 +91,40 @@ const Createroom1 = () => {
             status: "success",
             duration: 3000,
             isClosable: true,
-          });
+        });
         navigate('/room/chatting');
     }
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className="flex justify-center items-center h-screen text-xl text-gray-400">Loading...</div>;
 
     return (
-        <div>
-            <h2>Choose from below users to create a Room</h2>
-            <div>
-                {users.map((user) => {
+        <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center py-10">
+            <div className="backdrop-blur-md bg-white/10 shadow-lg rounded-lg p-8 w-full max-w-3xl">
+                <h2 className="text-2xl font-semibold text-gray-200 mb-6 text-center">Choose a User to Create a Room</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {users.map((user) => {
+                        if (user.user_id === userDetails.user_id || user.username === null) return null;
 
-                    if (user.user_id === userDetails.user_id) return null;
-
-                    return (
-                        <div
-                            key={user.user_id}
-                            onClick={() => handleChange(user.user_id)}
-                            className="cursor-pointer hover:bg-gray-200 p-2"
-                        >
-                            {user.user_id}
-                        </div>
-                    );
-                })}
-            </div>
-            {currentRoomId && (
-                <div>
-                    <h3>Room created with ID: {currentRoomId}</h3>
-
+                        return (
+                            <div
+                                key={user.user_id}
+                                onClick={() => handleChange(user.user_id)}
+                                className="flex items-center p-4 bg-white/20 rounded-lg shadow-md hover:bg-white/30 transition duration-200 cursor-pointer"
+                            >
+                                <div className="w-12 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full text-lg font-bold mr-4">
+                                    {user.username.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="text-lg font-medium text-gray-200">{user.username}</div>
+                            </div>
+                        );
+                    })}
                 </div>
-                
-            )}
+                {currentRoomId && (
+                    <div className="mt-6 p-4 bg-green-900/30 text-green-400 rounded-lg">
+                        <h3 className="text-lg font-semibold">Room created with ID: {currentRoomId}</h3>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

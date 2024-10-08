@@ -15,6 +15,7 @@ import Navbar from "../MainNavbar";
 import Loader from "../loading";
 import AddUsername from "../AddUsername";
 import { Createroom1 } from "../chatroomui/createRoom1";
+import { JoinRoom1 } from "../chatroomui/joinRoom1";
 
 const Test = () => {
   const [userId, setUserId] = useState("");
@@ -81,7 +82,7 @@ const Mainrouter = createBrowserRouter([
           },
           {
             path: "joinroom",
-            element: <Joinroom />,
+            element: <JoinRoom1 />,
           },
           {
             path: "chatting",
