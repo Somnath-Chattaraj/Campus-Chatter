@@ -161,12 +161,7 @@ const Chatroom = () => {
           >
             Send
           </button>
-          <button
-            onClick={closeConnection}
-            className="bg-red-400 text-slate-800 p-3 rounded-lg shadow-lg font-semibold hover:bg-yellow-300 transition-colors"
-          >
-            Stop
-          </button>
+          
         </div>
       </div>
     </div>
