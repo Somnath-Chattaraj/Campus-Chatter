@@ -30,7 +30,7 @@ const googleSignInOrSignUp = asyncHandler(
       const user = await prisma.user.create({
         data: {
           email,
-          name: displayName,
+          username: displayName,
           collegeEmailVerified: isCollegeEmail,
           emailVerified: true,
         },
@@ -84,7 +84,7 @@ const githubSignInOrSignUp = asyncHandler(
       const user = await prisma.user.create({
         data: {
           email,
-          name: displayName,
+          username: displayName,
           collegeEmailVerified: isCollegeEmail,
           emailVerified: true,
         },

@@ -27,7 +27,7 @@ import Autosuggest from "react-autosuggest";
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
     email: "",
-    name: "",
+    username: "",
     password: "",
     collegeName: "",
     courseName: "",
@@ -162,10 +162,10 @@ const RegisterForm = () => {
             <FormLabel>Name</FormLabel>
             <Input
               type="text"
-              name="name"
-              value={formData.name}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              placeholder="Enter your name"
+              placeholder="Enter your username"
             />
           </FormControl>
 
