@@ -139,7 +139,7 @@ const getBulkReviews = asyncHandler(async (req: Request, res: Response) => {
         User: {
           select: {
             email: true,
-            name: true,
+            username: true,
             userCourses: {
               select: {
                 Course: {
@@ -235,7 +235,7 @@ const getFullReview = asyncHandler(async (req: Request, res: Response) => {
       User: {
         select: {
           email: true,
-          name: true,
+          username: true,
           userCourses: {
             select: {
               Course: {

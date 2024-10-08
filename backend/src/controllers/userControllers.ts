@@ -57,11 +57,15 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     res.status(400).json({ message: "Please provide all fields" });
     return;
   }
-  const userExists = await prisma.user.findUnique({
+  const userExists = await prisma.user.findFirst({
     where: {
-      email,
-    },
+      OR: [
+        { email: email },
+        { username: username }
+      ]
+    }
   });
+  
   if (userExists) {
     res.status(409).json({ message: "User already exists" });
     return;

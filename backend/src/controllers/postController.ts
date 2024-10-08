@@ -206,7 +206,7 @@ const fetchSinglePost = asyncHandler(async (req: Request, res: Response) => {
           user_id: true,
           User: {
             select: {
-              name: true,
+              username: true,
             },
           },
         },
