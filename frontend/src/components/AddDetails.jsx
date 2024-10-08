@@ -165,7 +165,7 @@ const AddDetails = () => {
             <FormLabel>Username</FormLabel>
             <Input
               type="text"
-              name="name"
+              name="username"
               value={formData.username}
               onChange={handleChange}
               placeholder="Enter your username"

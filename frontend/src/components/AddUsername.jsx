@@ -21,9 +21,16 @@ const AddUsername = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { id } = useParams();
+
   useEffect(() => {
-    setFormData({ ...formData, id: id });
-  });
+    if (id) {
+      setFormData((prev) => ({
+        ...prev,
+        id: id,
+      }));
+    }
+  }, [id]);
+
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -37,16 +44,15 @@ const AddUsername = () => {
       const response = await axios.post("/user/addusername", formData, {
         withCredentials: true,
       });
-      if (response.data.success) {
-        toast({
-          title: "Username added successfully.",
-          description: "You can now post in communities.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        navigate("/login");
-      }
+      setLoading(false);
+      toast({
+        title: "Success",
+        description: response.data.message,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/login");
     } catch (err) {
       setLoading(false);
       toast({
@@ -67,7 +73,7 @@ const AddUsername = () => {
             <FormLabel>Username</FormLabel>
             <Input
               type="text"
-              name="name"
+              name="username"
               value={formData.username}
               onChange={handleChange}
               placeholder="Enter your username"

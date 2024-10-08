@@ -49,6 +49,17 @@ const LoginPage = () => {
         navigate(`/addDetails/${response.data.userId}`);
         return;
       }
+      if (!response.data.username) {
+        toast({
+          title: "Signup successful.",
+          description: "Add username to continue.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate(`/addusername/${response.data.userId}`);
+        return;
+      }
       toast({
         title: "Login successful.",
         description: "You are being redirected to the posts page.",
@@ -90,6 +101,16 @@ const LoginPage = () => {
           isClosable: true,
         });
         navigate(`/addDetails/${response.data.userId}`);
+        return;
+      } else if (!response.data.username) {
+        toast({
+          title: "Signup successful.",
+          description: "Add username to continue.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate(`/addusername/${response.data.userId}`);
         return;
       }
       toast({
