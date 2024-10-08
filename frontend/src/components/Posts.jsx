@@ -8,6 +8,8 @@ import {
   VStack,
   Container,
   Heading,
+  Stack,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 import CreatePost from "./CreatePosts";
@@ -19,15 +21,24 @@ const Posts = () => {
   const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
+  const [selectedCommunity, setSelectedCommunity] = useState("all");
+  const [allCommunities, setAllCommunities] = useState([]);
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
   const fetchPosts = async () => {
     try {
+      let collegeId;
+      if (selectedCommunity === "all") {
+        collegeId = null;
+      } else {
+        collegeId = selectedCommunity;
+      }
       const response = await axios.post(
         "/post/fetch",
         {
           page: page,
+          collegeId,
         },
         {
           withCredentials: true,
@@ -46,6 +57,14 @@ const Posts = () => {
     }
   };
 
+  const handleCommunityChange = async (e) => {
+    setSelectedCommunity(e.target.value);
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    fetchPosts();
+  };
+
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
@@ -53,29 +72,32 @@ const Posts = () => {
           withCredentials: true,
         });
         setCommunities(response.data.college);
-        console.log(response.data.college);
         setLoading(false);
       } catch (err) {
         setLoading(false);
         console.error("Error fetching communities:", err);
       }
     };
-    // const fetchPosts = async () => {
-    //   try {
-    //     const response = await axios.get("/post/fetch", {
-    //       withCredentials: true,
-    //     });
-    //     const posts = response.data.posts;
-    //     setPosts(posts);
-    //     setLoading(false);
-    //   } catch (err) {
-    //     setLoading(false);
-    //     alert("Error fetching posts");
-    //   }
-    // };
 
     fetchCommunities();
     fetchPosts();
+  }, []);
+
+  useEffect(() => {
+    const fetchAllCommunities = async () => {
+      try {
+        const response = await axios.get("/post/allcommunities", {
+          withCredentials: true,
+        });
+        setAllCommunities(response.data.college);
+        console.log(response.data.college);
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+        console.error("Error fetching all communities:", err);
+      }
+    };
+    fetchAllCommunities();
   }, []);
 
   const handlePostClick = (postId) => {
@@ -114,10 +136,21 @@ const Posts = () => {
   return (
     <Container centerContent>
       <SearchBar />
-      {communities.length>0 && (
+      {communities && (
         <CreatePost communities={communities} onSubmit={handleCreatePost} />
       )}
-      
+      <Stack direction="row" spacing={4} mb={4} width="100%" paddingTop={5}>
+        <Select value={selectedCommunity} onChange={handleCommunityChange}>
+          <option value="all">All</option>
+
+          {allCommunities.map((community) => (
+            <option key={community.college_id} value={community.college_id}>
+              {community.name}
+            </option>
+          ))}
+        </Select>
+      </Stack>
+
       <VStack spacing={4} align="stretch" width="100%" mt={4}>
         <InfiniteScroll
           dataLength={posts.length}

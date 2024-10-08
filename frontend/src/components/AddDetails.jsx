@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   Box,
   FormControl,
@@ -13,6 +14,7 @@ import {
   ListItem,
   Flex,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 
 import axios from "axios";
@@ -24,7 +26,7 @@ import { location } from "./data/location";
 
 import Autosuggest from "react-autosuggest";
 
-const RegisterForm = () => {
+const AddDetails = () => {
   const [formData, setFormData] = useState({
     email: "",
     name: "",
@@ -33,7 +35,13 @@ const RegisterForm = () => {
     courseName: "",
     isOnline: false, // Default value as boolean
     location: "",
+    id: "",
   });
+  const { id } = useParams();
+  const Toast = useToast();
+  useEffect(() => {
+    setFormData((prevData) => ({ ...prevData, id }));
+  }, [id]);
 
   const navigate = useNavigate();
 
@@ -132,10 +140,18 @@ const RegisterForm = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("/user/register", formData, {
+      const response = await axios.post("/user/addDetails", formData, {
         withCredentials: true,
       });
+      Toast({
+        title: "Details added successfully.",
+        description: "You are being redirected to the login page.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
       setLoading(false);
+
       navigate("/login");
     } catch (e) {
       console.log(e);
@@ -147,39 +163,6 @@ const RegisterForm = () => {
     <Box w="100%" maxW="500px" mx="auto" mt="5">
       <form onSubmit={handleSubmit}>
         <VStack spacing={4}>
-          <FormControl id="email" isRequired>
-            <FormLabel>Email</FormLabel>
-            <Input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-            />
-          </FormControl>
-
-          <FormControl id="name" isRequired>
-            <FormLabel>Name</FormLabel>
-            <Input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter your name"
-            />
-          </FormControl>
-
-          <FormControl id="password" isRequired>
-            <FormLabel>Password</FormLabel>
-            <Input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-            />
-          </FormControl>
-
           <FormControl id="collegeName" isRequired>
             <FormLabel>College Name</FormLabel>
             <Autosuggest
@@ -317,7 +300,6 @@ const RegisterForm = () => {
               )}
             />
           </FormControl>
-
           <FormControl as="fieldset" id="isOnline" isRequired>
             <FormLabel as="legend">Is Online?</FormLabel>
             <RadioGroup
@@ -333,7 +315,7 @@ const RegisterForm = () => {
           </FormControl>
 
           <Button type="submit" colorScheme="blue" width="full">
-            Register
+            Add Details
           </Button>
         </VStack>
       </form>
@@ -341,4 +323,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default AddDetails;

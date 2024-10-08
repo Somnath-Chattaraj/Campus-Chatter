@@ -106,13 +106,14 @@ const createPost = asyncHandler(async (req: Request, res: Response, next) => {
 
 // @ts-ignore
 const fetchPosts = asyncHandler(async (req: Request, res: Response) => {
-  const { page } = req.body;
+  const { page, collegeId } = req.body;
   const pageNumber = page;
 
-  const postsPerPage = 3;
+  const postsPerPage = 4;
   const offset = (pageNumber - 1) * postsPerPage;
 
   const posts = await prisma.post.findMany({
+    where: collegeId ? { college_id: collegeId } : {},
     orderBy: {
       createdAt: "desc",
     },
@@ -313,6 +314,21 @@ const unlikePost = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({ updatedPost });
 });
 
+// @ts-ignore
+const getAllCommunities = asyncHandler(async (req: Request, res: Response) => {
+  const college = await prisma.college.findMany({
+    orderBy: {
+      name: "asc",
+    },
+    select: {
+      college_id: true,
+      name: true,
+    },
+  });
+
+  return res.status(200).json({ college });
+});
+
 export {
   getCommunities,
   createPost,
@@ -323,4 +339,5 @@ export {
   postLiked,
   unlikePost,
   searchPosts,
+  getAllCommunities,
 };
