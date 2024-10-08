@@ -11,6 +11,7 @@ import chatRoutes from "./routes/chatRoutes";
 import reviewRoutes from "./routes/reviewRoutes";
 import ratingRoutes from "./routes/ratingRoute";
 import postsRoutes from "./routes/postsRoutes";
+import roomRouter from "./routes/roomRoutes";
 
 // import { getCommunities } from "./controllers/postController";
 
@@ -36,7 +37,7 @@ app.use("/api/review", reviewRoutes);
 app.use("/api/rating", ratingRoutes);
 app.use("/api/chat", chatRoutes); // Use the chat routes
 app.use("/api/post", postsRoutes);
-
+app.use('/api/room', roomRouter);
 // app.get("/api/post/communities", getCommunities);
 
 app.get("/", (req: Request, res: Response) => {
