@@ -21,7 +21,7 @@ const googleSignInOrSignUp = asyncHandler(async (req: Request, res: Response) =>
       // @ts-ignore
       data: {
         email,
-        name:displayName,
+        username:displayName,
         collegeEmailVerified: false,
         emailVerified:true,
       },
@@ -50,10 +50,10 @@ const googleSignInOrSignUp = asyncHandler(async (req: Request, res: Response) =>
 
 // @ts-ignore
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
-  const { email, name, password, collegeName, courseName, isOnline, location } =
+  const { email, username, password, collegeName, courseName, isOnline, location } =
     req.body;
   const hashedPassword = await bcrypt.hash(password, 8);
-  if (!email || !name || !password) {
+  if (!email || !username || !password) {
     res.status(400).json({ message: "Please provide all fields" });
     return;
   }
@@ -116,7 +116,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       data: {
         email,
         password: hashedPassword,
-        name,
+        username,
         collegeEmailVerified: true,
       },
     });
@@ -140,7 +140,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       data: {
         email,
         password: hashedPassword,
-        name,
+        username,
         collegeEmailVerified: false,
       },
     });
@@ -237,7 +237,7 @@ const getCurrentUserDetails = asyncHandler(
       select: {
         user_id: true,
         email: true,
-        name: true,
+        username: true,
         userCourses: {
           select: {
             Course: {
@@ -272,7 +272,7 @@ const getUserDetailsById = asyncHandler(async (req: Request, res: Response) => {
     },
     select: {
       email: true,
-      name: true,
+      username: true,
       userCourses: {
         select: {
           Course: {
