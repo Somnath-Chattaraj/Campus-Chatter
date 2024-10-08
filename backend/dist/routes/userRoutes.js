@@ -14,4 +14,6 @@ router.get("/me", checkAuth_1.default, userControllers_1.getCurrentUserDetails);
 router.get("/get/:userId", checkAuth_1.default, userControllers_1.getUserDetailsById); // get the user details of a specific user
 router.post("/addcourse", checkAuth_1.default, userControllers_1.addCourseToUser); // add a course to the current user
 router.post("/google", userControllers_1.googleSignInOrSignUp); // sign in or sign up using google
+router.post("/github", userControllers_1.githubSignInOrSignUp); // sign in or sign up using github
+router.post("/addDetails", checkAuth_1.default, userControllers_1.addDetailsToUser); // add details to the current user
 exports.default = router;
