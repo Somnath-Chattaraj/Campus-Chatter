@@ -30,7 +30,6 @@ const googleSignInOrSignUp = asyncHandler(
       const user = await prisma.user.create({
         data: {
           email,
-          username: displayName,
           collegeEmailVerified: isCollegeEmail,
           emailVerified: true,
         },
@@ -43,7 +42,8 @@ const googleSignInOrSignUp = asyncHandler(
         sameSite: "lax",
       });
       const userId = user.user_id;
-      return res.status(201).json({ isCollegeEmail, userId });
+      const username = null;
+      return res.status(201).json({ isCollegeEmail, userId, username });
     }
     const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
     const isCollegeEmail = false;
@@ -53,14 +53,15 @@ const googleSignInOrSignUp = asyncHandler(
       secure: false,
       sameSite: "lax",
     });
-    res.status(200).json({ isCollegeEmail });
+    const username = user.username;
+    res.status(200).json({ isCollegeEmail, username });
   }
 );
 
 const githubSignInOrSignUp = asyncHandler(
   //@ts-ignore
   async (req: Request, res: Response) => {
-    let { email, displayName } = req.body;
+    let { email } = req.body;
     if (!process.env.SECRET) {
       throw new Error("Secret not found");
     }
@@ -69,9 +70,6 @@ const githubSignInOrSignUp = asyncHandler(
         email,
       },
     });
-    if (!displayName) {
-      displayName = email.split("@")[0];
-    }
 
     if (!user) {
       let isCollegeEmail;
@@ -84,7 +82,6 @@ const githubSignInOrSignUp = asyncHandler(
       const user = await prisma.user.create({
         data: {
           email,
-          username: displayName,
           collegeEmailVerified: isCollegeEmail,
           emailVerified: true,
         },
@@ -96,7 +93,9 @@ const githubSignInOrSignUp = asyncHandler(
         secure: false,
         sameSite: "lax",
       });
-      return res.status(201).json({ isCollegeEmail });
+      const userId = user.user_id;
+      const username = null;
+      return res.status(201).json({ isCollegeEmail, userId, username });
     }
     const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
     const isCollegeEmail = false;
@@ -106,14 +105,22 @@ const githubSignInOrSignUp = asyncHandler(
       secure: false,
       sameSite: "lax",
     });
-    res.status(200).json({ isCollegeEmail });
+    const username = user.username;
+    res.status(200).json({ isCollegeEmail, username });
   }
 );
 
 // @ts-ignore
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
-  const { email, username, password, collegeName, courseName, isOnline, location } =
-    req.body;
+  const {
+    email,
+    username,
+    password,
+    collegeName,
+    courseName,
+    isOnline,
+    location,
+  } = req.body;
   if (!process.env.SECRET) {
     throw new Error("Secret not found");
   }
@@ -124,13 +131,10 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   }
   const userExists = await prisma.user.findFirst({
     where: {
-      OR: [
-        { email: email },
-        { username: username }
-      ]
-    }
+      OR: [{ email: email }, { username: username }],
+    },
   });
-  
+
   if (userExists) {
     res.status(409).json({ message: "User already exists" });
     return;
@@ -416,11 +420,53 @@ const addCourseToUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // @ts-ignore
+const addUsername = asyncHandler(async (req: Request, res: Response) => {
+  const { username, id } = req.body;
+  if (!username) {
+    return res.status(400).json({ message: "Please provide all fields" });
+  }
+  const response = await prisma.user.findUnique({
+    where: {
+      username,
+    },
+  });
+  if (response) {
+    return res.status(409).json({ message: "Username already exists" });
+  }
+  await prisma.user.update({
+    where: {
+      user_id: id,
+    },
+    data: {
+      username,
+    },
+  });
+  res.status(201).json({ message: "Username updated" });
+});
+
+// @ts-ignore
 const addDetailsToUser = asyncHandler(async (req: Request, res: Response) => {
-  const { collegeName, courseName, isOnline, location, id } = req.body;
+  const { username, collegeName, courseName, isOnline, location, id } =
+    req.body;
   if (!collegeName || !courseName || !location || isOnline === undefined) {
     return res.status(400).json({ message: "Please provide all fields" });
   }
+  const user = await prisma.user.findUnique({
+    where: {
+      username,
+    },
+  });
+  if (user) {
+    return res.status(409).json({ message: "Username already exists" });
+  }
+  await prisma.user.update({
+    where: {
+      user_id: id,
+    },
+    data: {
+      username,
+    },
+  });
   let college = await prisma.college.findFirst({
     where: {
       name: collegeName,
@@ -473,4 +519,5 @@ export {
   googleSignInOrSignUp,
   githubSignInOrSignUp,
   addDetailsToUser,
+  addUsername,
 };

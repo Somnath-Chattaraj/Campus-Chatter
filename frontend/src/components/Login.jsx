@@ -28,10 +28,35 @@ const LoginPage = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       console.log("Google login result: ");
-      await axios.post("/user/google", { 
-        email:user.email,
-        displayName:user.displayName
-      }, { withCredentials: true });
+      const response = await axios.post(
+        "/user/google",
+        {
+          email: user.email,
+          displayName: user.displayName,
+        },
+        { withCredentials: true }
+      );
+      if (response.data.isCollegeEmail === true) {
+        toast({
+          title: "Signup successful.",
+          description: "Add college details to continue.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate(`/addDetails/${response.data.userId}`);
+        return;
+      } else if (!response.data.username) {
+        toast({
+          title: "Signup successful.",
+          description: "You are being redirected to add username.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate("/addusername");
+        return;
+      }
       toast({
         title: "Login successful.",
         description: "You are being redirected to the posts page.",
@@ -42,6 +67,59 @@ const LoginPage = () => {
       navigate("/posts");
     } catch (error) {
       console.error("Google login error: ", error);
+      toast({
+        title: "Login failed.",
+        description: error.message || "An error occurred.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, githubProvider);
+      const user = result.user;
+      const response = await axios.post(
+        "/user/github",
+        {
+          email: user.email,
+          displayName: user.displayName,
+        },
+        { withCredentials: true }
+      );
+      if (response.data.isCollegeEmail === true) {
+        toast({
+          title: "Signup successful.",
+          description: "Add college details to continue.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate(`/addDetails/${response.data.userId}`);
+        return;
+      } else if (!response.data.username) {
+        toast({
+          title: "Signup successful.",
+          description: "You are being redirected to add username.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate(`/addusername/${response.data.userId}`);
+        return;
+      }
+      toast({
+        title: "Login successful.",
+        description: "You are being redirected to the posts page.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/posts");
+    } catch (error) {
+      console.error("Github login error: ", error);
       toast({
         title: "Login failed.",
         description: error.message || "An error occurred.",
