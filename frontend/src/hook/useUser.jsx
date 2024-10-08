@@ -7,7 +7,7 @@ export const useUser = () => {
 
     async function getDetails() {
         try {
-            const res = await axios.get('/', {
+            const res = await axios.get('/user/me', {
                 withCredentials: true,
             });
             setUserDetails(res.data);
