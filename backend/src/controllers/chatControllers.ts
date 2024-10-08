@@ -12,7 +12,7 @@ export const getChatHistory = async (req: Request, res: Response) => {
       where: { chatRoomId: roomId },
       include: {
         sender: {
-          select: { user_id: true, name: true }
+          select: { user_id: true, username: true }
         }
       },
       orderBy: { timestamp: 'asc' }
@@ -41,7 +41,7 @@ export const listChatRooms = async (req: Request, res: Response) => {
         users: {
           select: {
             user_id: true,
-            name: true
+            username: true
           }
         }
       }
@@ -61,7 +61,7 @@ export const getChatRoomDetails = async (req: Request, res: Response) => {
       where: { id: roomId },
       include: {
         users: {
-          select: { user_id: true, name: true }
+          select: { user_id: true, username: true }
         }
       }
     });
