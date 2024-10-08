@@ -11,9 +11,11 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
+import { FcGoogle } from "react-icons/fc"; // Google icon
+import { FaGithub } from "react-icons/fa"; // GitHub icon
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { auth, googleProvider } from "../firebase.js";
+import { auth, googleProvider, githubProvider } from "../firebase.js";
 import { signInWithPopup } from "firebase/auth";
 
 const LoginPage = () => {
@@ -27,7 +29,6 @@ const LoginPage = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      console.log("Google login result: ");
       const response = await axios.post(
         "/user/google",
         {
@@ -36,6 +37,7 @@ const LoginPage = () => {
         },
         { withCredentials: true }
       );
+      // console.log(response.data.isCollegeEmail);
       if (response.data.isCollegeEmail === true) {
         toast({
           title: "Signup successful.",
@@ -45,16 +47,6 @@ const LoginPage = () => {
           isClosable: true,
         });
         navigate(`/addDetails/${response.data.userId}`);
-        return;
-      } else if (!response.data.username) {
-        toast({
-          title: "Signup successful.",
-          description: "You are being redirected to add username.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        navigate("/addusername");
         return;
       }
       toast({
@@ -98,16 +90,6 @@ const LoginPage = () => {
           isClosable: true,
         });
         navigate(`/addDetails/${response.data.userId}`);
-        return;
-      } else if (!response.data.username) {
-        toast({
-          title: "Signup successful.",
-          description: "You are being redirected to add username.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        navigate(`/addusername/${response.data.userId}`);
         return;
       }
       toast({
@@ -160,10 +142,17 @@ const LoginPage = () => {
   };
 
   return (
-    <Flex minH="100vh" align="center" justify="center" bg="gray.50">
-      <Container maxW="md" bg="white" boxShadow="md" p={6} rounded="md">
+    <Flex minH="100vh" align="center" justify="center" bg="black">
+      <Container
+        maxW="md"
+        bg="gray.800"
+        boxShadow="md"
+        p={6}
+        rounded="md"
+        color="white"
+      >
         <Stack spacing={4}>
-          <Heading as="h1" size="lg" textAlign="center">
+          <Heading as="h1" size="lg" textAlign="center" color="white">
             Login
           </Heading>
           <FormControl id="email">
@@ -173,6 +162,8 @@ const LoginPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              bg="gray.700"
+              color="white"
             />
           </FormControl>
           <FormControl id="password">
@@ -182,13 +173,37 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              bg="gray.700"
+              color="white"
             />
           </FormControl>
-          <Button colorScheme="teal" isLoading={loading} onClick={handleLogin}>
+          <Button
+            colorScheme="teal"
+            isLoading={loading}
+            onClick={handleLogin}
+            _hover={{ bg: "teal.500" }}
+          >
             Login
           </Button>
-          <Button colorScheme="red" onClick={handleGoogleLogin}>
+          <Button
+            leftIcon={<FcGoogle />}
+            colorScheme="gray"
+            onClick={handleGoogleLogin}
+            bg="white"
+            color="black"
+            _hover={{ bg: "gray.200" }}
+          >
             Login with Google
+          </Button>
+          <Button
+            leftIcon={<FaGithub />}
+            colorScheme="gray"
+            onClick={handleGithubLogin}
+            bg="white"
+            color="black"
+            _hover={{ bg: "gray.200" }}
+          >
+            Login with Github
           </Button>
         </Stack>
       </Container>

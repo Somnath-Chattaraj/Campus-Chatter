@@ -425,11 +425,14 @@ const addUsername = asyncHandler(async (req: Request, res: Response) => {
   if (!username) {
     return res.status(400).json({ message: "Please provide all fields" });
   }
-  const response = await prisma.user.findUnique({
+  const response = await prisma.user.findFirst({
     where: {
-      username,
+      OR: [
+        { username: username },
+      ]
     },
   });
+  
   if (response) {
     return res.status(409).json({ message: "Username already exists" });
   }
@@ -451,11 +454,14 @@ const addDetailsToUser = asyncHandler(async (req: Request, res: Response) => {
   if (!collegeName || !courseName || !location || isOnline === undefined) {
     return res.status(400).json({ message: "Please provide all fields" });
   }
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: {
-      username,
+      OR: [
+        { username: username },
+      ]
     },
   });
+  
   if (user) {
     return res.status(409).json({ message: "Username already exists" });
   }
