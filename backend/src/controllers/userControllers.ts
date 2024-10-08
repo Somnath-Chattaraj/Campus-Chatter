@@ -515,6 +515,11 @@ const addDetailsToUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(201).json({ message: "Course added to user" });
 });
 
+const getAllUser = asyncHandler(async (req: Request, res: Response) => {
+  const users = await prisma.user.findMany({});
+  res.status(200).json(users);
+});
+
 export {
   registerUser,
   loginUser,
@@ -526,4 +531,5 @@ export {
   githubSignInOrSignUp,
   addDetailsToUser,
   addUsername,
+  getAllUser
 };

@@ -4,7 +4,8 @@ import useWebSocket from "react-use-websocket";
 import { ReadyState } from "react-use-websocket";
 
 const Chatroom = () => {
-  const { roomId, userId } = useContext(chatRoomApi);
+  const userId = localStorage.getItem("userId");
+  const roomId = localStorage.getItem("roomId");
   const [allMsg, setAllMsg] = useState([]);
   const [myMsg, setMyMsg] = useState("");
   const messageEndRef = useRef(null); // For auto-scroll

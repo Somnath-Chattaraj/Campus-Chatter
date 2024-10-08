@@ -11,6 +11,7 @@ import {
   githubSignInOrSignUp,
   addDetailsToUser,
   addUsername,
+  getAllUser,
 } from "../controllers/userControllers";
 import checkAuth from "../middleware/checkAuth";
 
@@ -26,5 +27,6 @@ router.post("/google", googleSignInOrSignUp); // sign in or sign up using google
 router.post("/github", githubSignInOrSignUp); // sign in or sign up using github
 router.post("/addDetails", addDetailsToUser); // add details to the current user
 router.post("/addusername", addUsername); // change the username of the current user
+router.get('/all', getAllUser);
 
 export default router;

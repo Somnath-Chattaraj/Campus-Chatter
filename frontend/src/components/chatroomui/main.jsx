@@ -16,7 +16,7 @@ function Createroom() {
   } = useContext(chatRoomApi);
   const [users,setUsers] = useState([]);
     useEffect(() => {
-        const user = axios.get('/user/me', {
+        const user = axios.get('/user/all', {
             withCredentials: true,
         })
         setUsers(user);
@@ -45,6 +45,7 @@ function Createroom() {
       if (data.type == "roomJoined") {
         setTempRoomId(data.data.roomId);
       }
+      
     });
   };
   return (
