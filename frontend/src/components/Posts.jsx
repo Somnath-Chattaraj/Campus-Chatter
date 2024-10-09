@@ -14,8 +14,9 @@ import {
 import axios from "axios";
 import CreatePost from "./CreatePosts";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
+import { useUser } from "../hook/useUser";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [communities, setCommunities] = useState([]);
@@ -24,6 +25,7 @@ const Posts = () => {
   const [selectedCommunity, setSelectedCommunity] = useState("all");
   const [allCommunities, setAllCommunities] = useState([]);
   const [page, setPage] = useState(1);
+  const { userDeatils} = useUser();
   const navigate = useNavigate();
 
   const fetchPosts = async () => {
@@ -132,7 +134,8 @@ const Posts = () => {
     );
     window.location.reload();
   };
-
+  if (loading) return <div>Loading...</div>;
+  if (!userDeatils) return <Navigate to="/login" />;
   return (
     <Container centerContent>
       <SearchBar />

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { chatRoomApi } from "../contexts/chatRoomApi";
 import axios from "axios";
+import { useUser } from "../../hook/useUser";
+
 
 function Createroom() {
   //@ts-ignore
@@ -121,6 +123,8 @@ function Joinroom() {
 
 function Mainbuttons() {
   const navigate = useNavigate();
+  const {loading, userDetatails} = useUser();
+
   const createroom = () => {
     console.log("creating the rooms");
     navigate("/room/createroom");
@@ -130,6 +134,13 @@ function Mainbuttons() {
     navigate("/room/joinroom");
     console.log("joining the rooms");
   };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (!userDetatails) {
+
+    return <Navigate to="/login" />;
+  }
   return (
     <div>
       <button onClick={createroom}>createroom</button>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useUser } from '../../hook/useUser';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
 
 const Createroom1 = () => {
@@ -96,6 +96,11 @@ const Createroom1 = () => {
     }
 
     if (loading) return <div className="flex justify-center items-center h-screen text-xl text-gray-400">Loading...</div>;
+    if (!userDetails) {
+        
+        return <Navigate to="/homepage" />;
+        
+    }
 
     return (
         <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center py-10">

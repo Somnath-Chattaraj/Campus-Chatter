@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import image from '../../images/image7.png';
@@ -53,10 +53,10 @@ export const Header = () => {
                     <span className='pt-1'>Campus Chatter</span>
                 </div>
                 <div className="hidden md:flex space-x-6">
-                    <a href="/" className="hover:text-purple-500">Home</a>
-                    <a href="/" className="hover:text-purple-500">Post</a>
-                    <a href="/" className="hover:text-purple-500">Room</a>
-                    <a href="/" className="hover:text-purple-500">Contact</a>
+                <Link to="/homepage" className="hover:text-purple-500 ">Home</Link>
+          <Link to="/posts" className="hover:text-purple-500 ">Post</Link>
+          <Link to="/room" className="hover:text-purple-500">Room</Link>
+          <Link to="/" className="hover:text-purple-500">contact</Link>
                 </div>
                 <button className="bg-purple-500 text-white rounded-full px-4 py-2 font-bold hover:bg-purple-600" onClick={() => { navigate('/signup') }}>
                     Sign up

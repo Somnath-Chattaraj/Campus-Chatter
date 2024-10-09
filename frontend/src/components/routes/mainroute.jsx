@@ -67,7 +67,7 @@ const Mainrouter = createBrowserRouter([
   {
 
     path: "/",
-    element: <Navbar />,
+    element: <Navbar btnName="Logout" navigateUrl="/logout"  display={true}/>,
     children: [
       
       {
