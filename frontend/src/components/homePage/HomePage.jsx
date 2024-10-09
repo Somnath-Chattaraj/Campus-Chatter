@@ -57,7 +57,7 @@ export const Header = () => {
                 <div className="hidden md:flex space-x-6">
                 <Link to="/homepage" className="hover:text-purple-500 ">Home</Link>
           <Link to="/posts" className="hover:text-purple-500 ">Post</Link>
-          <Link to="/room" className="hover:text-purple-500">Room</Link>
+          <Link to="/room/joinroom" className="hover:text-purple-500">Room</Link>
           <Link to="/" className="hover:text-purple-500">contact</Link>
                 </div>
                 {!userDetails && <button className="bg-purple-500 text-white rounded-full px-4 py-2 font-bold hover:bg-purple-600" onClick={() => { navigate('/signup') }}>
@@ -89,23 +89,23 @@ export const Header = () => {
                     </button>}
                 </div>
 
-                {/* Images Section */}
+
                 <div className="w-full lg:w-1/2 ">
                     <img src={image} alt="hero" className='w-full first-page-image' />
                 </div>
             </div>
 
-            {/* Why Campus Chatter Section */}
+
             <section className="h-full md:h-screen bg-[#E3E7EB] py-20 px-10 md:px-20 relative">
                 <div className="flex flex-col md:flex-row items-center h-full">
-                    {/* Left Grid Section */}
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 w-full md:w-1/2 h-full">
                         
                         <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between h-full feature-card">
                             <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
                                 {<FiUsers size={24} className="text-yellow-500" />}
                             </div>
-                            <div className="flex-grow"></div> {/* Spacer to push content to bottom */}
+                            <div className="flex-grow"></div> 
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold text-black ">{"Engage In Community"}</h3>
                                 <span className="text-blue-500 font-bold text-xl cursor-pointer">→</span>
@@ -116,7 +116,7 @@ export const Header = () => {
                             <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
                                 {<FiShare2 size={24} className="text-red-400" />}
                             </div>
-                            <div className="flex-grow"></div> {/* Spacer to push content to bottom */}
+                            <div className="flex-grow"></div> 
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold text-black ">{"Discover New Connections"}</h3>
                                 <span className="text-blue-500 font-bold text-xl cursor-pointer">→</span>
@@ -127,7 +127,7 @@ export const Header = () => {
                             <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
                                 {<FiMessageCircle size={24} className="text-purple-500"  />}
                             </div>
-                            <div className="flex-grow"></div> {/* Spacer to push content to bottom */}
+                            <div className="flex-grow"></div> 
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold text-black ">{"Share Ideas And Creativity"}</h3>
                                 <span className="text-blue-500 font-bold text-xl cursor-pointer">→</span>
@@ -138,7 +138,7 @@ export const Header = () => {
                             <div className="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
                                 {<FiBell size={24} className="text-blue-500" />}
                             </div>
-                            <div className="flex-grow"></div> {/* Spacer to push content to bottom */}
+                            <div className="flex-grow"></div> 
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold text-black ">{"Access Information And News"}</h3>
                                 <span className="text-blue-500 font-bold text-xl cursor-pointer">→</span>
