@@ -24,7 +24,7 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
         {/* Logo Section */}
         <div className="text-lg font-bold flex items-center">
           <img
-            src={"src/images/logo.png"}
+            src={"/logo.png"}
             alt="Logo"
             className="w-10 h-10 rounded-full mx-3"
           />
