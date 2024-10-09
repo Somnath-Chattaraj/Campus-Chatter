@@ -1,10 +1,10 @@
 # Campus Chatter
 
 [![GitHub release](https://img.shields.io/github/v/release/tanish35/Campus-Chatter)](https://github.com/tanish35/Campus-Chatter/releases)
-[![GitHub issues](https://img.shields.io/github/issues/tanish35/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/issues)
-[![GitHub forks](https://img.shields.io/github/forks/tanish35/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/network)
-[![GitHub stars](https://img.shields.io/github/stars/tanish35/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/stargazers)
-[![GitHub license](https://img.shields.io/github/license/tanish35/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/Somnath-Chattaraj/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/issues)
+[![GitHub forks](https://img.shields.io/github/Somnath-Chattaraj/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/network)
+[![GitHub stars](https://img.shields.io/github/stars/Somnath-Chattaraj/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/stargazers)
+[![License: Royalty License](https://img.shields.io/badge/License-Royalty-blue)](https://github.com/Somnath-Chattaraj/Campus-Chatter/blob/master/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
