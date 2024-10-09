@@ -16,6 +16,7 @@ import Loader from "../loading";
 import AddUsername from "../AddUsername";
 import { Createroom1 } from "../chatroomui/createRoom1";
 import { JoinRoom1 } from "../chatroomui/joinRoom1";
+import { Header } from "../HomePage";
 
 const Test = () => {
   const [userId, setUserId] = useState("");
@@ -39,7 +40,10 @@ const Test = () => {
 };
 
 const Mainrouter = createBrowserRouter([
-  {
+  {path : '/h',
+  element : <Header />
+  }, {
+
     path: "/",
     element: <Navbar />,
     children: [
