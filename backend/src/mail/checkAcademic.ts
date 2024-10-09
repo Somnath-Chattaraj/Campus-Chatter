@@ -1,12 +1,12 @@
 import fs from "fs";
 import path from "path";
 
-// Import the CommonJS module for __dirname and rename it
-const currentDir = require("./dirNameHelper");
-
-// Function to check if an email has a valid college domain
+// Function to check if an email has a valid college domain blah blah
 function checkCollegeEmail(email: string): boolean {
-  const filePath = path.join(currentDir, "emails.json");
+  // Use process.cwd() to get the current directory
+  const filePath = path.join(process.cwd(), "/src/mail/emails.json");
+
+  // Read the domains from the JSON file
   const domains: string[] = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
   // Extract the domain from the email

@@ -283,6 +283,10 @@ const loginUser = (0, express_async_handler_1.default)((req, res) => __awaiter(v
         res.status(401).json({ message: "Logged in with Google Or Github" });
         return;
     }
+    if (!user.emailVerified) {
+        res.status(401).json({ message: "Email not verified" });
+        return;
+    }
     const match = yield bcrypt_1.default.compare(password, user.password);
     if (!match) {
         res.status(401).json({ message: "Invalid credentials" });
@@ -426,9 +430,7 @@ const addUsername = (0, express_async_handler_1.default)((req, res) => __awaiter
     }
     const response = yield prisma_1.default.user.findFirst({
         where: {
-            OR: [
-                { username: username },
-            ]
+            OR: [{ username: username }],
         },
     });
     if (response) {
@@ -453,9 +455,7 @@ const addDetailsToUser = (0, express_async_handler_1.default)((req, res) => __aw
     }
     const user = yield prisma_1.default.user.findFirst({
         where: {
-            OR: [
-                { username: username },
-            ]
+            OR: [{ username: username }],
         },
     });
     if (user) {
@@ -513,7 +513,12 @@ const addDetailsToUser = (0, express_async_handler_1.default)((req, res) => __aw
 }));
 exports.addDetailsToUser = addDetailsToUser;
 const getAllUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield prisma_1.default.user.findMany({});
+    const users = yield prisma_1.default.user.findMany({
+        select: {
+            user_id: true,
+            username: true,
+        },
+    });
     res.status(200).json(users);
 }));
 exports.getAllUser = getAllUser;

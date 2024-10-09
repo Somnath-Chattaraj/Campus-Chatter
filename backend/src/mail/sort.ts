@@ -1,11 +1,11 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 // Path to the emails.json file
 const filePath = path.join(__dirname, "emails.json");
 
 // Function to read, sort, and write the emails.json file
-function sortEmailDomains() {
+export function sortEmailDomains(): void {
   // Read the file
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
@@ -14,7 +14,7 @@ function sortEmailDomains() {
     }
 
     // Parse the JSON data
-    let domains;
+    let domains: string[];
     try {
       domains = JSON.parse(data);
     } catch (err) {
@@ -22,7 +22,7 @@ function sortEmailDomains() {
       return;
     }
 
-    // Sort the array
+    // Sort the array in place
     domains.sort();
 
     // Convert the array back to JSON

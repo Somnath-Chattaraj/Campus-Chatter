@@ -40,12 +40,13 @@
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.4",
     "prettier": "^3.3.3",
-    "ts-node": "^10.9.2",
+    "tsc": "^2.0.4",
     "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "prisma": "^5.20.0",
-    "typescript": "^5.5.4"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
   }
 }

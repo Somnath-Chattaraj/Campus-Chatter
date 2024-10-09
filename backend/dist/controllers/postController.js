@@ -129,6 +129,11 @@ const fetchPosts = (0, express_async_handler_1.default)((req, res) => __awaiter(
                     name: true,
                 },
             },
+            User: {
+                select: {
+                    username: true,
+                },
+            },
         },
         take: postsPerPage,
         skip: offset,
@@ -191,6 +196,11 @@ const fetchSinglePost = (0, express_async_handler_1.default)((req, res) => __awa
             College: {
                 select: {
                     name: true,
+                },
+            },
+            User: {
+                select: {
+                    username: true,
                 },
             },
             Comments: {
