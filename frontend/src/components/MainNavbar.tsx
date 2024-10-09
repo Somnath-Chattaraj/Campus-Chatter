@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface NavbarProps {
   btnName: string;
@@ -15,7 +15,7 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (location.pathname === '/') navigate("/homepage");
+    if (location.pathname === "/") navigate("/homepage");
   }, [location, navigate]);
 
   return (
@@ -24,7 +24,7 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
         {/* Logo Section */}
         <div className="text-lg font-bold flex items-center">
           <img
-            src={"frontend/src/images/logo.png"}
+            src={"src/images/logo.png"}
             alt="Logo"
             className="w-10 h-10 rounded-full mx-3"
           />
@@ -33,10 +33,18 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
 
         {/* Navigation Links (Centered) */}
         <div className="hidden md:flex flex-grow justify-center space-x-6">
-          <Link to="/homepage" className="hover:text-purple-500 ">Home</Link>
-          <Link to="/posts" className="hover:text-purple-500 ">Post</Link>
-          <Link to="/room" className="hover:text-purple-500">Room</Link>
-          <Link to="/" className="hover:text-purple-500">contact</Link>
+          <Link to="/homepage" className="hover:text-purple-500 ">
+            Home
+          </Link>
+          <Link to="/posts" className="hover:text-purple-500 ">
+            Post
+          </Link>
+          <Link to="/room" className="hover:text-purple-500">
+            Room
+          </Link>
+          <Link to="/" className="hover:text-purple-500">
+            contact
+          </Link>
         </div>
 
         {/* Button Section */}
@@ -55,8 +63,19 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           {/* Hamburger Icon */}
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
           </svg>
         </button>
       </nav>
@@ -72,10 +91,34 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
               Close
             </button>
             <nav className="space-y-4">
-              <Link to="/homepage" className="block hover:text-purple-500" onClick={() => setIsSidebarOpen(false)}>Home</Link>
-              <Link to="/about" className="block hover:text-purple-500" onClick={() => setIsSidebarOpen(false)}>About</Link>
-              <Link to="/features" className="block hover:text-purple-500" onClick={() => setIsSidebarOpen(false)}>Features</Link>
-              <Link to="/contact" className="block hover:text-purple-500" onClick={() => setIsSidebarOpen(false)}>Contact</Link>
+              <Link
+                to="/homepage"
+                className="block hover:text-purple-500"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                to="/about"
+                className="block hover:text-purple-500"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                About
+              </Link>
+              <Link
+                to="/features"
+                className="block hover:text-purple-500"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                Features
+              </Link>
+              <Link
+                to="/contact"
+                className="block hover:text-purple-500"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                Contact
+              </Link>
               {display && (
                 <button
                   className="bg-purple-500 text-white rounded-full px-4 py-2 font-bold hover:bg-purple-600"
