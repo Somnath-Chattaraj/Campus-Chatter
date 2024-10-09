@@ -14,6 +14,7 @@ import {
   Flex,
   Text,
 } from "@chakra-ui/react";
+import { set, z } from "zod";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -35,12 +36,34 @@ const RegisterForm = () => {
     location: "",
   });
 
+  const registerSchema = z.object({
+    email: z.string().email({ message: "Invalid email address " }),
+    username: z
+      .string()
+      .min(3, { message: "Username must be at least 3 characters long " }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters long " })
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+        {
+          message:
+            "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character ",
+        }
+      ),
+    collegeName: z.string().optional(),
+    courseName: z.string().optional(),
+    isOnline: z.boolean(),
+    location: z.string().optional(),
+  });
+
   const navigate = useNavigate();
 
   const [suggestionsCollege, setSuggestionsCollege] = useState([]);
   const [suggestionsCourse, setSuggestionsCourse] = useState([]);
   const [suggestionsLocation, setSuggestionsLocation] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const getSuggestionsCollege = (value) => {
     const inputValue = value.trim().toLowerCase();
@@ -132,12 +155,17 @@ const RegisterForm = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      registerSchema.parse(formData);
+      setErrors({});
       const response = await axios.post("/user/register", formData, {
         withCredentials: true,
       });
       setLoading(false);
       navigate("/login");
     } catch (e) {
+      if (e instanceof z.ZodError) {
+        setErrors(e.formErrors.fieldErrors);
+      }
       console.log(e);
       setLoading(false);
     }
@@ -156,10 +184,11 @@ const RegisterForm = () => {
               onChange={handleChange}
               placeholder="Enter your email"
             />
+            {errors.email && <Box color="red">{errors.email}</Box>}
           </FormControl>
 
-          <FormControl id="name" isRequired>
-            <FormLabel>Name</FormLabel>
+          <FormControl id="username" isRequired>
+            <FormLabel>Username</FormLabel>
             <Input
               type="text"
               name="username"
@@ -167,6 +196,7 @@ const RegisterForm = () => {
               onChange={handleChange}
               placeholder="Enter your username"
             />
+            {errors.username && <Box color="red">{errors.username}</Box>}
           </FormControl>
 
           <FormControl id="password" isRequired>
@@ -178,9 +208,10 @@ const RegisterForm = () => {
               onChange={handleChange}
               placeholder="Enter your password"
             />
+            {errors.password && <Box color="red">{errors.password}</Box>}
           </FormControl>
 
-          <FormControl id="collegeName" isRequired>
+          <FormControl id="collegeName">
             <FormLabel>College Name</FormLabel>
             <Autosuggest
               suggestions={suggestionsCollege}
@@ -226,7 +257,7 @@ const RegisterForm = () => {
             />
           </FormControl>
 
-          <FormControl id="courseName" isRequired>
+          <FormControl id="courseName">
             <FormLabel>Course Name</FormLabel>
             <Autosuggest
               suggestions={suggestionsCourse}
@@ -272,7 +303,7 @@ const RegisterForm = () => {
             />
           </FormControl>
 
-          <FormControl id="location" isRequired>
+          <FormControl id="location">
             <FormLabel>Location</FormLabel>
             <Autosuggest
               suggestions={suggestionsLocation}
@@ -318,7 +349,7 @@ const RegisterForm = () => {
             />
           </FormControl>
 
-          <FormControl as="fieldset" id="isOnline" isRequired>
+          <FormControl as="fieldset" id="isOnline">
             <FormLabel as="legend">Is Online?</FormLabel>
             <RadioGroup
               name="isOnline"
