@@ -6,7 +6,7 @@ import { useToast } from "@chakra-ui/react";
 
 const Createroom1 = () => {
   const [users, setUsers] = useState([]);
-  const { loading, userDetails } = useUser();
+  const { loadingUser, userDetails } = useUser();
   const [socket, setSocket] = useState(null);
   const [currentRoomId, setCurrentRoomId] = useState(null);
   const navigate = useNavigate();
@@ -97,7 +97,7 @@ const Createroom1 = () => {
     navigate("/room/chatting");
   }
 
-  if (loading)
+  if (loadingUser)
     return (
       <div className="flex justify-center items-center h-screen text-xl text-gray-400">
         Loading...

@@ -7,12 +7,13 @@ import image from '../../images/image7.png';
 import { FiUsers, FiShare2, FiMessageCircle, FiBell } from 'react-icons/fi';
 import logo from '../../images/logo.png';
 import '../../index.css';
+import { useUser } from '../../hook/useUser';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const Header = () => {
     const navigate = useNavigate();
-
+    const {loadingUser, userDetails} = useUser();
     useEffect(() => {
         
         gsap.to(".first-page-image", {
@@ -34,16 +35,17 @@ export const Header = () => {
             }, {
                 opacity: 1,
                 y: 0, 
-                duration: 1,
+                duration: 2,
                 ease: 'power3.out',
                 scrollTrigger: {
                     trigger: card,
                     start: "top 80%", 
-                    toggleActions: "play none none none", 
+                    toggleActions: "play none none none"
                 }
             });
         });
     }, []);
+    
 
     return (
         <div className='bg-[#1F2135]'>
@@ -58,9 +60,13 @@ export const Header = () => {
           <Link to="/room" className="hover:text-purple-500">Room</Link>
           <Link to="/" className="hover:text-purple-500">contact</Link>
                 </div>
-                <button className="bg-purple-500 text-white rounded-full px-4 py-2 font-bold hover:bg-purple-600" onClick={() => { navigate('/signup') }}>
+                {!userDetails && <button className="bg-purple-500 text-white rounded-full px-4 py-2 font-bold hover:bg-purple-600" onClick={() => { navigate('/signup') }}>
                     Sign up
-                </button>
+                </button>}
+
+                {userDetails && <button className="bg-purple-500 text-white rounded-full px-4 py-2 font-bold hover:bg-purple-600" onClick={() => { navigate('/logout') }}>
+                    Logout
+                </button>}
             </nav>
 
 
@@ -74,9 +80,13 @@ export const Header = () => {
                     <p className="mt-8 text-white">
                         Our platform offers a variety of features to help you stay connected, including instant messaging, video chat, and news feeds.
                     </p>
-                    <button onClick={() => { navigate('/signup') }} className="mt-10 bg-orange-500 text-black py-3 px-6 rounded-full font-semibold hover:bg-orange-600">
+                    {!userDetails && <button onClick={() => { navigate('/signup') }} className="mt-10 bg-orange-500 text-black py-3 px-6 rounded-full font-semibold hover:bg-orange-600">
                         Create Account
-                    </button>
+                    </button>}
+
+                    {userDetails && <button onClick={() => { navigate('/posts') }} className="mt-10 bg-orange-500 text-black py-3 px-6 rounded-full font-semibold hover:bg-orange-600">
+                        Get Started
+                    </button>}
                 </div>
 
                 {/* Images Section */}

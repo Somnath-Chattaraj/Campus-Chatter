@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import sendMail from "../mail/sendMail";
 import { Verifier } from "academic-email-verifier";
 import checkCollegeEmail from "../mail/checkAcademic";
+import { registerSchema } from "../validation/registerSchema";
 
 const googleSignInOrSignUp = asyncHandler(
   //@ts-ignore
@@ -127,6 +128,10 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const hashedPassword = await bcrypt.hash(password, 8);
   if (!email || !username || !password) {
     res.status(400).json({ message: "Please provide all fields" });
+    return;
+  }
+  if (registerSchema.safeParse(req.body).success === false) {
+    res.status(400).json({ message: registerSchema.safeParse(req.body).error });
     return;
   }
   const userExists = await prisma.user.findFirst({

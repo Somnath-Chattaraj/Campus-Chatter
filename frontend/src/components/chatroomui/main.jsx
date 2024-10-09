@@ -116,7 +116,7 @@ function Joinroom() {
 
 function Mainbuttons() {
   const navigate = useNavigate();
-  const { loading, userDetatails } = useUser();
+  const { loadingUser, userDetails } = useUser();
 
   const createroom = () => {
     console.log("creating the rooms");
@@ -127,18 +127,32 @@ function Mainbuttons() {
     navigate("/room/joinroom");
     console.log("joining the rooms");
   };
-  if (loading) {
+  if (loadingUser) {
     return <div>Loading...</div>;
   }
-  if (!userDetatails) {
+  if (!loadingUser && !userDetails) {
+    console.log(userDetails);
     return <Navigate to="/login" />;
   }
   return (
-    <div>
-      <button onClick={createroom}>createroom</button>
-      <button onClick={joinroom}>joinroom</button>
-      <Outlet />
-    </div>
+    <div className="min-h-screen flex flex-col mt-6 items-center justify-center bg-gray-900">
+  <div className="space-x-4">
+    <button
+      onClick={createroom}
+      className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-all duration-300 ease-in-out transform hover:scale-105"
+    >
+      Create Room
+    </button>
+    <button
+      onClick={joinroom}
+      className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-300 ease-in-out transform hover:scale-105"
+    >
+      Join Room
+    </button>
+  </div>
+  <Outlet />
+</div>
+
   );
 }
 

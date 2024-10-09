@@ -3,6 +3,7 @@ import useWebSocket from "react-use-websocket";
 import { ReadyState } from "react-use-websocket";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
+import { useUser } from "../../hook/useUser";
 
 const Chatroom = () => {
   const userId = localStorage.getItem("userId");
@@ -11,7 +12,7 @@ const Chatroom = () => {
   const [prevMsg, setPrevMsg] = useState([]);
   const [myMsg, setMyMsg] = useState("");
   const messageEndRef = useRef(null);
-  const { loading, userDeatils } = useUser();
+  const { loadingUser, userDeatils } = useUser();
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     "ws://localhost:8080"
@@ -71,12 +72,12 @@ const Chatroom = () => {
     }
   }, [allMsg]);
 
-  if (loading) {
+  if (loadingUser) {
     return <div>Loading...</div>;
   }
-  if (!userDeatils) {
-    return <Navigate to="/login" />;
-  }
+  // if (!userDeatils) {
+  //   return <Navigate to="/login" />;
+  // }
 
   // Submit message function
   const submit = () => {

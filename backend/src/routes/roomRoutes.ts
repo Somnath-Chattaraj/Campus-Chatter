@@ -4,6 +4,6 @@ import checkAuth from "../middleware/checkAuth";
 
 const roomRouter = express.Router();
 
-roomRouter.get("/",checkAuth, searchRoom);
+roomRouter.get("/", checkAuth,searchRoom);
 
 export default roomRouter;
