@@ -18,6 +18,7 @@ import { Createroom1 } from "../chatroomui/createRoom1";
 import { JoinRoom1 } from "../chatroomui/joinRoom1";
 import { Header } from "../homePage/HomePage";
 import Navbar from "../MainNavbar";
+import Logout from "../Logout";
 
 const Test = () => {
   const [userId, setUserId] = useState("");
@@ -54,6 +55,16 @@ const Mainrouter = createBrowserRouter([
       },
     ]
   },
+{
+  path: "/",
+  element: <Navbar btnName="sign up" display={true} navigateUrl="/signup" />,
+  children: [
+    {
+      path: "logout",
+      element: <Logout />,
+    },
+  ]
+},
   {
     path: "/",
     element: <Navbar btnName="login" display={true} navigateUrl="/login"/>,

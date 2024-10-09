@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useUser } from '../../hook/useUser';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
+import Loader from '../loading';
 
 const JoinRoom1 = () => {
   const { loading, userDetails } = useUser();
@@ -29,9 +30,7 @@ const JoinRoom1 = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen text-xl text-gray-600">
-        Loading...
-      </div>
+      <Loader />
     );
   }
 
@@ -65,6 +64,7 @@ const JoinRoom1 = () => {
     <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
       Your Chat Rooms
     </h2>
+
     <div className="space-y-4">
       {updateArray.length > 0 ? (
         updateArray.map((room) => (

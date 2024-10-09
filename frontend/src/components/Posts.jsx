@@ -18,6 +18,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Navigate, useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { useUser } from "../hook/useUser";
+import Loader from "./loading";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [communities, setCommunities] = useState([]);
@@ -146,7 +147,7 @@ const Posts = () => {
     window.location.reload();
   };
   if (loading) return <div>Loading...</div>;
-  if (loadingUser) return <div>Loading...</div>;
+  if (loadingUser) return <Loader />;
   if (!userDetails) {
     return <Navigate to="/login" />;
   }
