@@ -25,7 +25,7 @@ const SinglePost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`/post/fetch/${id}`, {
+        const response = await axios.get(`/api/post/fetch/${id}`, {
           withCredentials: true,
         });
         setPost(response.data.post);
@@ -39,7 +39,7 @@ const SinglePost = () => {
     const checkIfLiked = async () => {
       try {
         const response = await axios.post(
-          `/post/liked`,
+          `/api/post/liked`,
           { postId: id },
           { withCredentials: true }
         );
@@ -58,7 +58,11 @@ const SinglePost = () => {
   const handleLike = async (postId) => {
     if (postLiked) {
       try {
-        await axios.post("/post/unlike", { postId }, { withCredentials: true });
+        await axios.post(
+          "/api/post/unlike",
+          { postId },
+          { withCredentials: true }
+        );
         setPost((prevPost) => ({ ...prevPost, likes: prevPost.likes - 1 }));
         setPostLiked(false);
       } catch (error) {
@@ -66,7 +70,11 @@ const SinglePost = () => {
       }
     } else {
       try {
-        await axios.post("/post/like", { postId }, { withCredentials: true });
+        await axios.post(
+          "/api/post/like",
+          { postId },
+          { withCredentials: true }
+        );
         setPost((prevPost) => ({ ...prevPost, likes: prevPost.likes + 1 }));
         setPostLiked(true);
       } catch (error) {

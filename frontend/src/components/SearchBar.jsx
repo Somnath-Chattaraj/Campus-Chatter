@@ -21,7 +21,7 @@ const SearchBar = () => {
   const fetchSuggestions = async (value) => {
     try {
       const response = await axios.post(
-        "/post/search",
+        "/api/post/search",
         { query: value },
         { withCredentials: true }
       );
@@ -69,7 +69,7 @@ const SearchBar = () => {
   const handleSearchSubmit = async () => {
     try {
       const response = await axios.post(
-        "/post/search",
+        "/api/post/search",
         { query: searchTerm },
         { withCredentials: true }
       );

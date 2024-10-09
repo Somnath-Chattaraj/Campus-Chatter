@@ -30,7 +30,7 @@ const LoginPage = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       const response = await axios.post(
-        "/user/google",
+        "/api/user/google",
         {
           email: user.email,
           displayName: user.displayName,
@@ -85,7 +85,7 @@ const LoginPage = () => {
       const result = await signInWithPopup(auth, githubProvider);
       const user = result.user;
       const response = await axios.post(
-        "/user/github",
+        "/api/user/github",
         {
           email: user.email,
           displayName: user.displayName,
@@ -137,7 +137,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "/user/login",
+        "/api/user/login",
         { email, password },
         { withCredentials: true }
       );

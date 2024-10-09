@@ -39,7 +39,7 @@ const Posts = () => {
         collegeId = selectedCommunity;
       }
       const response = await axios.post(
-        "/post/fetch",
+        "/api/post/fetch",
         {
           page: page,
           collegeId,
@@ -81,7 +81,7 @@ const Posts = () => {
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
-        const response = await axios.get("/post/communities", {
+        const response = await axios.get("/api/post/communities", {
           withCredentials: true,
         });
         setCommunities(response.data.college);
@@ -99,7 +99,7 @@ const Posts = () => {
   useEffect(() => {
     const fetchAllCommunities = async () => {
       try {
-        const response = await axios.get("/post/allcommunities", {
+        const response = await axios.get("/api/post/allcommunities", {
           withCredentials: true,
         });
         setAllCommunities(response.data.college);
@@ -119,7 +119,7 @@ const Posts = () => {
 
   const handleLike = async (postId) => {
     try {
-      await axios.post("/post/like", { postId }, { withCredentials: true });
+      await axios.post("/api/post/like", { postId }, { withCredentials: true });
       setPosts((prevPosts) =>
         prevPosts.map((post) => {
           if (post.post_id === postId) {
@@ -135,7 +135,7 @@ const Posts = () => {
 
   const handleCreatePost = async ({ title, content, community }) => {
     const response = await axios.post(
-      "/post/create",
+      "/api/post/create",
       {
         title: title,
         content: content,

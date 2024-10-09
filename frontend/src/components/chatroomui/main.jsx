@@ -5,7 +5,6 @@ import { chatRoomApi } from "../contexts/chatRoomApi";
 import axios from "axios";
 import { useUser } from "../../hook/useUser";
 
-
 function Createroom() {
   //@ts-ignore
   const {
@@ -16,13 +15,13 @@ function Createroom() {
     roomId,
     setRoomId,
   } = useContext(chatRoomApi);
-  const [users,setUsers] = useState([]);
-    useEffect(() => {
-        const user = axios.get('/user/all', {
-            withCredentials: true,
-        })
-        setUsers(user);
-    }, []);
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    const user = axios.get("/api/user/all", {
+      withCredentials: true,
+    });
+    setUsers(user);
+  }, []);
   const [tempRoomId, setTempRoomId] = useState("");
   const navigate = useNavigate();
   const submit = () => {
@@ -47,7 +46,6 @@ function Createroom() {
       if (data.type == "roomJoined") {
         setTempRoomId(data.data.roomId);
       }
-      
     });
   };
   return (
@@ -75,16 +73,11 @@ function Createroom() {
         )}
       </div> */}
       Choose from below users to create a Room
-        <div>
-            {users.map((user) => {
-                return (
-                    <div>
-                        {user}
-                    </div>
-                )
-            })}
-        </div>
-
+      <div>
+        {users.map((user) => {
+          return <div>{user}</div>;
+        })}
+      </div>
     </div>
   );
 }
@@ -123,7 +116,7 @@ function Joinroom() {
 
 function Mainbuttons() {
   const navigate = useNavigate();
-  const {loading, userDetatails} = useUser();
+  const { loading, userDetatails } = useUser();
 
   const createroom = () => {
     console.log("creating the rooms");
@@ -138,7 +131,6 @@ function Mainbuttons() {
     return <div>Loading...</div>;
   }
   if (!userDetatails) {
-
     return <Navigate to="/login" />;
   }
   return (

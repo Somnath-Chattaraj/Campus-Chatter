@@ -41,7 +41,7 @@ const AddUsername = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("/user/addusername", formData, {
+      const response = await axios.post("/api/user/addusername", formData, {
         withCredentials: true,
       });
       setLoading(false);

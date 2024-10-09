@@ -10,28 +10,27 @@ const Chatroom = () => {
   const [allMsg, setAllMsg] = useState([]);
   const [prevMsg, setPrevMsg] = useState([]);
   const [myMsg, setMyMsg] = useState("");
-  const messageEndRef = useRef(null); 
-  const {loading, userDeatils} = useUser();
+  const messageEndRef = useRef(null);
+  const { loading, userDeatils } = useUser();
 
-
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket('ws://localhost:8080');
-
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+    "ws://localhost:8080"
+  );
 
   useEffect(() => {
     const fetchChatHistory = async () => {
       try {
-        const response = await axios.get(`/chat/history/${roomId}`, {
+        const response = await axios.get(`/api/chat/history/${roomId}`, {
           withCredentials: true,
         });
-        setPrevMsg(response.data); 
-
+        setPrevMsg(response.data);
 
         const tosend = {
           type: "joinRoom",
           data: {
             userId: userId,
             roomId: roomId,
-          }
+          },
         };
         sendJsonMessage(tosend);
       } catch (error) {
@@ -40,21 +39,26 @@ const Chatroom = () => {
     };
 
     fetchChatHistory();
-  }, [roomId, userId, sendJsonMessage]); 
+  }, [roomId, userId, sendJsonMessage]);
   useEffect(() => {
     if (lastJsonMessage !== null) {
       if (lastJsonMessage.type === "error") {
         alert("Room not connected...");
-      } else if (lastJsonMessage.type === "newMessage" && lastJsonMessage.data.roomId === roomId) {
+      } else if (
+        lastJsonMessage.type === "newMessage" &&
+        lastJsonMessage.data.roomId === roomId
+      ) {
         const data = lastJsonMessage.data.message;
 
-        
         if (data.senderId !== userId) {
-          setAllMsg(prev => [...prev, {
-            senderId: data.senderId,
-            message: data.content,
-            at: data.timestamp,
-          }]);
+          setAllMsg((prev) => [
+            ...prev,
+            {
+              senderId: data.senderId,
+              message: data.content,
+              at: data.timestamp,
+            },
+          ]);
         }
       }
     }
@@ -81,41 +85,45 @@ const Chatroom = () => {
       data: {
         roomId: roomId,
         userId: userId,
-        message: myMsg
-      }
+        message: myMsg,
+      },
     };
     sendJsonMessage(tosend);
 
-
-    setAllMsg(prev => [...prev, {
-      senderId: "you",
-      message: myMsg,
-      at: new Date().toISOString(),
-    }]);
-    setMyMsg(""); 
+    setAllMsg((prev) => [
+      ...prev,
+      {
+        senderId: "you",
+        message: myMsg,
+        at: new Date().toISOString(),
+      },
+    ]);
+    setMyMsg("");
   };
 
   // Format date
   const formatDate = (isoString) => {
     const date = new Date(isoString);
-    return new Intl.DateTimeFormat('en-US', {
-      weekday: 'short',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true
+    return new Intl.DateTimeFormat("en-US", {
+      weekday: "short",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
     }).format(date);
   };
 
   const constatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Open',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Closed',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    [ReadyState.CONNECTING]: "Connecting",
+    [ReadyState.OPEN]: "Open",
+    [ReadyState.CLOSING]: "Closing",
+    [ReadyState.CLOSED]: "Closed",
+    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
 
   // Combine and sort messages
-  const combinedMessages = [...prevMsg, ...allMsg].sort((a, b) => new Date(a.at) - new Date(b.at));
+  const combinedMessages = [...prevMsg, ...allMsg].sort(
+    (a, b) => new Date(a.at) - new Date(b.at)
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-800 to-slate-600 p-4 text-white">
@@ -137,14 +145,22 @@ const Chatroom = () => {
               <div
                 key={index}
                 className={`p-4 rounded-lg my-3 shadow-md space-y-2 ${
-                  (data.senderId === "you" || data.senderId === userId) ? "bg-green-700 ml-auto" : "bg-slate-700 mr-auto"
+                  data.senderId === "you" || data.senderId === userId
+                    ? "bg-green-700 ml-auto"
+                    : "bg-slate-700 mr-auto"
                 } max-w-xs`}
               >
-                <div>{(data.senderId === "you" || data.senderId === userId) ? "You" : (data.senderId || data.id)}</div>
+                <div>
+                  {data.senderId === "you" || data.senderId === userId
+                    ? "You"
+                    : data.senderId || data.id}
+                </div>
                 <div>
                   <b>{data.message || data.content}</b>
                 </div>
-                <div className="text-sm text-gray-400">Sent at: {formatDate(data.at) || formatDate(data.timestamp)}</div>
+                <div className="text-sm text-gray-400">
+                  Sent at: {formatDate(data.at) || formatDate(data.timestamp)}
+                </div>
               </div>
             ))
           ) : (
@@ -168,7 +184,6 @@ const Chatroom = () => {
           >
             Send
           </button>
-          
         </div>
       </div>
     </div>

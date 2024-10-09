@@ -160,7 +160,7 @@ const RegisterForm = () => {
     try {
       registerSchema.parse(formData);
       setErrors({});
-      const response = await axios.post("/user/register", formData, {
+      const response = await axios.post("/api/user/register", formData, {
         withCredentials: true,
       });
       toast({
@@ -183,7 +183,9 @@ const RegisterForm = () => {
 
   return (
     <Box w="100%" maxW="500px" mx="auto" mt="5">
-      <FormLabel fontSize="5xl" textAlign="center" >Register</FormLabel>
+      <FormLabel fontSize="5xl" textAlign="center">
+        Register
+      </FormLabel>
       {/* <Navbar btnName="Login"/> */}
       <form onSubmit={handleSubmit}>
         <VStack spacing={4}>

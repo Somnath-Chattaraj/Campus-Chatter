@@ -138,7 +138,7 @@ const AddDetails = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("/user/addDetails", formData, {
+      const response = await axios.post("/api/user/addDetails", formData, {
         withCredentials: true,
       });
       Toast({
