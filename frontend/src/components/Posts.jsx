@@ -10,6 +10,7 @@ import {
   Heading,
   Stack,
   Select,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 import CreatePost from "./CreatePosts";
@@ -25,8 +26,9 @@ const Posts = () => {
   const [selectedCommunity, setSelectedCommunity] = useState("all");
   const [allCommunities, setAllCommunities] = useState([]);
   const [page, setPage] = useState(1);
-  const { userDeatils} = useUser();
+  const { userDetails, loadingUser } = useUser();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const fetchPosts = async () => {
     try {
@@ -54,6 +56,15 @@ const Posts = () => {
       setPage(page + 1);
       setLoading(false);
     } catch (err) {
+      if (err.response.status === 401) {
+        toast({
+          title: "Please login to view posts",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
       setLoading(false);
       alert("Error fetching posts");
     }
@@ -135,7 +146,10 @@ const Posts = () => {
     window.location.reload();
   };
   if (loading) return <div>Loading...</div>;
-  if (!userDeatils) return <Navigate to="/login" />;
+  if (loadingUser) return <div>Loading...</div>;
+  if (!userDetails) {
+    return <Navigate to="/login" />;
+  }
   return (
     <Container centerContent>
       <SearchBar />
