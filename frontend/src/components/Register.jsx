@@ -25,6 +25,7 @@ import { courseNames } from "./data/courseName";
 import { location } from "./data/location";
 
 import Autosuggest from "react-autosuggest";
+import Navbar from "./MainNavbar";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -182,6 +183,8 @@ const RegisterForm = () => {
 
   return (
     <Box w="100%" maxW="500px" mx="auto" mt="5">
+      <FormLabel fontSize="5xl" textAlign="center" >Register</FormLabel>
+      {/* <Navbar btnName="Login"/> */}
       <form onSubmit={handleSubmit}>
         <VStack spacing={4}>
           <FormControl id="email" isRequired>

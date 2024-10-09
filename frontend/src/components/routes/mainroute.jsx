@@ -11,12 +11,13 @@ import Register from "../Register";
 import SinglePost from "../../components/SinglePost";
 import LoginPage from "../Login";
 import AddDetails from "../AddDetails";
-import Navbar from "../MainNavbar";
+
 import Loader from "../loading";
 import AddUsername from "../AddUsername";
 import { Createroom1 } from "../chatroomui/createRoom1";
 import { JoinRoom1 } from "../chatroomui/joinRoom1";
 import { Header } from "../homePage/HomePage";
+import Navbar from "../MainNavbar";
 
 const Test = () => {
   const [userId, setUserId] = useState("");
@@ -42,7 +43,28 @@ const Test = () => {
 const Mainrouter = createBrowserRouter([
   {path : '/homepage',
   element : <Header />
-  }, {
+  },
+  {
+    path: "/",
+    element: <Navbar btnName="sign up" display={true} navigateUrl="/signup" />,
+    children: [
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+    ]
+  },
+  {
+    path: "/",
+    element: <Navbar btnName="login" display={true} navigateUrl="/login"/>,
+    children: [
+      {
+        path: "signup",
+        element: <Register />,
+      },
+    ]
+  },
+  {
 
     path: "/",
     element: <Navbar />,
@@ -64,14 +86,7 @@ const Mainrouter = createBrowserRouter([
         path: "/addusername/:id",
         element: <AddUsername />,
       },
-      {
-        path: "login",
-        element: <LoginPage />,
-      },
-      {
-        path: "signup",
-        element: <Register />,
-      },
+      
       {
         path: "room",
         element: <Mainbuttons />,
