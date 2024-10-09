@@ -13,6 +13,7 @@ import {
   ListItem,
   Flex,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { set, z } from "zod";
 
@@ -58,6 +59,7 @@ const RegisterForm = () => {
   });
 
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [suggestionsCollege, setSuggestionsCollege] = useState([]);
   const [suggestionsCourse, setSuggestionsCourse] = useState([]);
@@ -159,6 +161,13 @@ const RegisterForm = () => {
       setErrors({});
       const response = await axios.post("/user/register", formData, {
         withCredentials: true,
+      });
+      toast({
+        title: "Account created.",
+        description: "Please check your email to verify your account.",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
       });
       setLoading(false);
       navigate("/login");

@@ -283,6 +283,10 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     res.status(401).json({ message: "Logged in with Google Or Github" });
     return;
   }
+  if (!user.emailVerified) {
+    res.status(401).json({ message: "Email not verified" });
+    return;
+  }
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
     res.status(401).json({ message: "Invalid credentials" });
@@ -427,12 +431,10 @@ const addUsername = asyncHandler(async (req: Request, res: Response) => {
   }
   const response = await prisma.user.findFirst({
     where: {
-      OR: [
-        { username: username },
-      ]
+      OR: [{ username: username }],
     },
   });
-  
+
   if (response) {
     return res.status(409).json({ message: "Username already exists" });
   }
@@ -456,12 +458,10 @@ const addDetailsToUser = asyncHandler(async (req: Request, res: Response) => {
   }
   const user = await prisma.user.findFirst({
     where: {
-      OR: [
-        { username: username },
-      ]
+      OR: [{ username: username }],
     },
   });
-  
+
   if (user) {
     return res.status(409).json({ message: "Username already exists" });
   }
@@ -520,7 +520,7 @@ const getAllUser = asyncHandler(async (req: Request, res: Response) => {
     select: {
       user_id: true,
       username: true,
-    }
+    },
   });
   res.status(200).json(users);
 });
@@ -536,5 +536,5 @@ export {
   githubSignInOrSignUp,
   addDetailsToUser,
   addUsername,
-  getAllUser
+  getAllUser,
 };
