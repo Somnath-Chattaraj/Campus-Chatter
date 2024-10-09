@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
     "./src/components/chatroomui/*.{js,ts,jsx,tsx}",
+    "./src/components/homePage/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {},

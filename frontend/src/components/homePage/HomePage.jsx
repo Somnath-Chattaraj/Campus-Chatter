@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import image from '../../images/image7.png';
-import FeatureCard from './homePage/FeatureCard';
+
 import { FiUsers, FiShare2, FiMessageCircle, FiBell } from 'react-icons/fi';
 import logo from '../../images/logo.png';
-
+import '../../index.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,14 +27,13 @@ export const Header = () => {
             }
         });
 
-        // GSAP Scroll Animation for the feature cards
         gsap.utils.toArray(".feature-card").forEach((card) => {
             gsap.fromTo(card, {
                 opacity: 0,
-                y: 50 // Start from below
+                y: 50 
             }, {
                 opacity: 1,
-                y: 0, // End at original position
+                y: 0, 
                 duration: 1,
                 ease: 'power3.out',
                 scrollTrigger: {
@@ -48,7 +47,6 @@ export const Header = () => {
 
     return (
         <div className='bg-[#1F2135]'>
-            {/* Navbar Section */}
             <nav className="flex justify-between items-center px-6 lg:px-32 py-5">
                 <div className="text-lg font-bold flex">
                     <img src={logo} alt="Campus Chatter Logo" className='w-10 h-10 rounded-full mx-3' />
@@ -65,9 +63,8 @@ export const Header = () => {
                 </button>
             </nav>
 
-            {/* Hero Section */}
+
             <div className="h-screen flex flex-col lg:flex-row items-center justify-center px-6 lg:px-32 space-y-10 lg:space-y-0 lg:space-x-10">
-                {/* Text Section */}
                 <div className="w-full lg:w-1/2 text-center lg:text-left">
                     <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
                         Grow your network, <br />
@@ -89,7 +86,7 @@ export const Header = () => {
             </div>
 
             {/* Why Campus Chatter Section */}
-            <section className="h-screen bg-[#E3E7EB] py-20 px-10 md:px-20 relative">
+            <section className="h-full md:h-screen bg-[#E3E7EB] py-20 px-10 md:px-20 relative">
                 <div className="flex flex-col md:flex-row items-center h-full">
                     {/* Left Grid Section */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 w-full md:w-1/2 h-full">

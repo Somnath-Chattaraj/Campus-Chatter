@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 import { chatRoomApi } from "../contexts/chatRoomApi";
 import { useState } from "react";
 import Posts from "../../components/Posts";
-import HomePage from "../../pages/HomePage";
+
 import Register from "../Register";
 import SinglePost from "../../components/SinglePost";
 import LoginPage from "../Login";
@@ -16,7 +16,7 @@ import Loader from "../loading";
 import AddUsername from "../AddUsername";
 import { Createroom1 } from "../chatroomui/createRoom1";
 import { JoinRoom1 } from "../chatroomui/joinRoom1";
-import { Header } from "../HomePage";
+import { Header } from "../homePage/HomePage";
 
 const Test = () => {
   const [userId, setUserId] = useState("");
@@ -40,17 +40,14 @@ const Test = () => {
 };
 
 const Mainrouter = createBrowserRouter([
-  {path : '/h',
+  {path : '/homepage',
   element : <Header />
   }, {
 
     path: "/",
     element: <Navbar />,
     children: [
-      {
-        path: "homepage",
-        element: <HomePage />,
-      },
+      
       {
         path: "posts",
         element: <Posts />,
