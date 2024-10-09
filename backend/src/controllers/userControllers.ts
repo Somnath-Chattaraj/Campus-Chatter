@@ -516,7 +516,12 @@ const addDetailsToUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllUser = asyncHandler(async (req: Request, res: Response) => {
-  const users = await prisma.user.findMany({});
+  const users = await prisma.user.findMany({
+    select: {
+      user_id: true,
+      username: true,
+    }
+  });
   res.status(200).json(users);
 });
 
