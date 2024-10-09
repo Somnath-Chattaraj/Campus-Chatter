@@ -43,7 +43,7 @@ const RegisterForm = () => {
       .min(3, { message: "Username must be at least 3 characters long " }),
     password: z
       .string()
-      .min(6, { message: "Password must be at least 6 characters long " })
+      .min(6, { message: "Password must be at least 6 characters long. " })
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
         {
