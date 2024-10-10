@@ -33,7 +33,7 @@ const ForgetPassword = () => {
 
   async function handleChange() {
     setLoading(true);
-    const res = await axios.post("/api/otp/", { email: email });
+    const res = await axios.post("/api/otp", { email: email });
     setLoading(false);
     if (res.status === 200) {
       toast({
