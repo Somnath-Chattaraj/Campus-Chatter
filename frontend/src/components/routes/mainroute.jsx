@@ -20,6 +20,7 @@ import { JoinRoom1 } from "../chatroomui/joinRoom1";
 import { Header } from "../homePage/HomePage";
 import Navbar from "../MainNavbar";
 import Logout from "../Logout";
+import ForgetPassword from "../forgotPassword/ForgetPassword";
 
 const Test = () => {
   const [userId, setUserId] = useState("");
@@ -52,6 +53,10 @@ const Mainrouter = createBrowserRouter([
         path: "login",
         element: <LoginPage />,
       },
+      {
+        path: "forgetPassword",
+        element: <ForgetPassword />
+      }
     ],
   },
   {

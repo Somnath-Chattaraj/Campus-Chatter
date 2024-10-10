@@ -14,7 +14,7 @@ import {
 import { FcGoogle } from "react-icons/fc"; // Google icon
 import { FaGithub } from "react-icons/fa"; // GitHub icon
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth, googleProvider, githubProvider } from "../firebase.js";
 import { signInWithPopup } from "firebase/auth";
 import { InfinitySpin } from "react-loader-spinner";
@@ -221,6 +221,7 @@ const LoginPage = () => {
           >
             Login
           </Button>
+          <Link className="text-center" to='/forgetPassword'>Forgot Password?</Link>
           <Button
             leftIcon={<FcGoogle />}
             colorScheme="gray"
