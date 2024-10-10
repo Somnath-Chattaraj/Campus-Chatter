@@ -49,17 +49,23 @@ const SearchBar = () => {
     <ListItem
       p={2}
       borderBottom="1px solid"
-      borderColor="gray.200"
+      borderColor="gray.600"
       cursor="pointer"
-      _hover={{ backgroundColor: "gray.100" }}
+      _hover={{ backgroundColor: "gray.700" }}
+      bg="gray.800"
       onClick={() => navigate(`/posts/${suggestion.post_id}`)}
     >
       <Flex align="center">
-        <Avatar size="sm" mr={3} />
+        <Avatar src={suggestion.User.pic} size="sm" mr={3} />
         <Box>
-          <Text fontWeight="bold">{suggestion.title}</Text>
-          <Text fontSize="sm" color="gray.500">
+          <Text fontWeight="bold" color="white">
+            {suggestion.title}
+          </Text>
+          <Text fontSize="sm" color="gray.400">
             {suggestion.content.slice(0, 50)}...
+          </Text>
+          <Text fontSize="xs" color="gray.500">
+            Posted by {suggestion.User.username}
           </Text>
         </Box>
       </Flex>

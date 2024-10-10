@@ -20,6 +20,12 @@ const searchPosts = asyncHandler(async (req: Request, res: Response) => {
           name: true,
         },
       },
+      User: {
+        select: {
+          username: true,
+          pic: true,
+        },
+      },
     },
   });
 
