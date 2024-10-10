@@ -11,6 +11,7 @@ import Register from "../Register";
 import SinglePost from "../../components/SinglePost";
 import LoginPage from "../Login";
 import AddDetails from "../AddDetails";
+import EditDetails from "../EditDetails";
 
 import Loader from "../loading";
 import AddUsername from "../AddUsername";
@@ -42,9 +43,7 @@ const Test = () => {
 };
 
 const Mainrouter = createBrowserRouter([
-  {path : '/homepage',
-  element : <Header />
-  },
+  { path: "/homepage", element: <Header /> },
   {
     path: "/",
     element: <Navbar btnName="sign up" display={true} navigateUrl="/signup" />,
@@ -53,34 +52,32 @@ const Mainrouter = createBrowserRouter([
         path: "login",
         element: <LoginPage />,
       },
-    ]
+    ],
   },
-{
-  path: "/",
-  element: <Navbar btnName="sign up" display={true} navigateUrl="/signup" />,
-  children: [
-    {
-      path: "logout",
-      element: <Logout />,
-    },
-  ]
-},
   {
     path: "/",
-    element: <Navbar btnName="login" display={true} navigateUrl="/login"/>,
+    element: <Navbar btnName="sign up" display={true} navigateUrl="/signup" />,
+    children: [
+      {
+        path: "logout",
+        element: <Logout />,
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <Navbar btnName="login" display={true} navigateUrl="/login" />,
     children: [
       {
         path: "signup",
         element: <Register />,
       },
-    ]
+    ],
   },
   {
-
     path: "/",
-    element: <Navbar btnName="Logout" navigateUrl="/logout"  display={true}/>,
+    element: <Navbar btnName="Logout" navigateUrl="/logout" display={true} />,
     children: [
-      
       {
         path: "posts",
         element: <Posts />,
@@ -97,7 +94,11 @@ const Mainrouter = createBrowserRouter([
         path: "/addusername/:id",
         element: <AddUsername />,
       },
-      
+      {
+        path: "/edit",
+        element: <EditDetails />,
+      },
+
       {
         path: "room",
         element: <Mainbuttons />,
@@ -105,7 +106,7 @@ const Mainrouter = createBrowserRouter([
         children: [
           {
             path: "createroom",
-            element: <Createroom1 />
+            element: <Createroom1 />,
           },
           {
             path: "joinroom",

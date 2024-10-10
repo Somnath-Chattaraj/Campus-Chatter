@@ -12,12 +12,21 @@ import {
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+
+const AddUsernameSchema = z.object({
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters long" }),
+  id: z.string(),
+});
 
 const AddUsername = () => {
   const [formData, setFormData] = useState({
     username: "",
     id: "",
   });
+  const [error, setError] = useState({});
   const navigate = useNavigate();
   const toast = useToast();
   const { id } = useParams();
@@ -41,6 +50,8 @@ const AddUsername = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      AddUsernameSchema.parse(formData);
+      setError({});
       const response = await axios.post("/api/user/addusername", formData, {
         withCredentials: true,
       });
@@ -54,6 +65,9 @@ const AddUsername = () => {
       });
       navigate("/login");
     } catch (err) {
+      if (err instanceof z.ZodError) {
+        setError(err.formErrors.fieldErrors);
+      }
       setLoading(false);
       toast({
         title: "Error",
@@ -86,6 +100,7 @@ const AddUsername = () => {
                 boxShadow: "0 0 0 1px #3182CE",
               }}
             />
+            {error.username && <Box color="red.500">{error.username}</Box>}
           </FormControl>
           <Button
             type="submit"

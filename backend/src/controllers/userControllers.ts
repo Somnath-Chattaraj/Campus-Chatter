@@ -440,6 +440,21 @@ const addUsername = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
+  const user1 = await prisma.user.findUnique({
+    where: {
+      user_id: id,
+    },
+  });
+
+  if (!user1) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  if (user1.username) {
+    return res
+      .status(409)
+      .json({ message: "You are not authorized to change the username" });
+  }
+
   if (response) {
     return res.status(409).json({ message: "Username already exists" });
   }
@@ -458,7 +473,13 @@ const addUsername = asyncHandler(async (req: Request, res: Response) => {
 const addDetailsToUser = asyncHandler(async (req: Request, res: Response) => {
   const { username, collegeName, courseName, isOnline, location, id } =
     req.body;
-  if (!collegeName || !courseName || !location || isOnline === undefined) {
+  if (
+    !collegeName ||
+    !courseName ||
+    !location ||
+    isOnline === undefined ||
+    !username
+  ) {
     return res.status(400).json({ message: "Please provide all fields" });
   }
   const user = await prisma.user.findFirst({
@@ -466,6 +487,20 @@ const addDetailsToUser = asyncHandler(async (req: Request, res: Response) => {
       OR: [{ username: username }],
     },
   });
+
+  const user1 = await prisma.user.findUnique({
+    where: {
+      user_id: id,
+    },
+  });
+  if (!user1) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  if (user1.username) {
+    return res
+      .status(409)
+      .json({ message: "You are not authorized to change the username" });
+  }
 
   if (user) {
     return res.status(409).json({ message: "Username already exists" });
@@ -530,6 +565,51 @@ const getAllUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(users);
 });
 
+const logOut = asyncHandler(async (req: Request, res: Response) => {
+  res.clearCookie("Authorization");
+  res.status(200).json({ message: "Logged out" });
+});
+
+// @ts-ignore
+const updateDetails = asyncHandler(async (req: Request, res: Response) => {
+  // @ts-ignore
+  const userId = req.user.user_id;
+  let { username, pic } = req.body;
+  if (!username) {
+    // @ts-ignore
+    username = req.user.username;
+  }
+  if (!pic) {
+    // @ts-ignore
+    pic = req.user.pic;
+  }
+  // @ts-ignore
+  if (username !== req.user.username) {
+    const response = await prisma.user.findFirst({
+      where: {
+        OR: [{ username: username }],
+      },
+    });
+    if (response) {
+      return res.status(409).json({ message: "Username already exists" });
+    }
+  }
+  if (!pic) {
+    // @ts-ignore
+    pic = req.user.pic;
+  }
+  await prisma.user.update({
+    where: {
+      user_id: userId,
+    },
+    data: {
+      username,
+      pic,
+    },
+  });
+  return res.status(200).json({ message: "Details updated" });
+});
+
 export {
   registerUser,
   loginUser,
@@ -542,4 +622,6 @@ export {
   addDetailsToUser,
   addUsername,
   getAllUser,
+  logOut,
+  updateDetails,
 };

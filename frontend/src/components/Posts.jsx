@@ -187,11 +187,7 @@ const Posts = () => {
               onClick={() => handlePostClick(post.post_id)}
             >
               <Flex align="center" mb={2}>
-                <Avatar
-                  src="https://i.scdn.co/image/ab67616d0000b27377a3afdbf4d24dd545105177"
-                  size="md"
-                  mr={4}
-                />
+                <Avatar src={post.User.pic} size="md" mr={4} />
                 <Heading size="md">{post.title}</Heading>
               </Flex>
               <Text fontSize="sm" color="gray.500">

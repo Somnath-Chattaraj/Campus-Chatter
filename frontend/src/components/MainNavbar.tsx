@@ -39,6 +39,9 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
           <Link to="/posts" className="hover:text-purple-500 ">
             Post
           </Link>
+          <Link to="/edit" className="hover:text-purple-500 ">
+            Edit
+          </Link>
           <Link to="/room/joinroom" className="hover:text-purple-500">
             Room
           </Link>

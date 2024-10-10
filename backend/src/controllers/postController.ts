@@ -130,6 +130,7 @@ const fetchPosts = asyncHandler(async (req: Request, res: Response) => {
       User: {
         select: {
           username: true,
+          pic: true,
         },
       },
     },

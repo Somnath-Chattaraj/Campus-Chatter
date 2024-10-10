@@ -1,29 +1,29 @@
-import React, { useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
-import axios from 'axios'; 
+import React, { useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import axios from "axios";
 
 const Logout = () => {
-    const [loggedOut, setLoggedOut] = React.useState(false);
+  const [loggedOut, setLoggedOut] = React.useState(false);
 
-    useEffect(() => {
-        const logout = async () => {
-            try {
-                await axios.get("/api/logout", { 
-                    withCredentials: true,
-                });
-                setLoggedOut(true); 
-            } catch (err) {
-                console.error("Error logging out:", err);
-            }
-        };
-        logout();
-    }, []);
+  useEffect(() => {
+    const logout = async () => {
+      try {
+        await axios.get("/api/user/logout", {
+          withCredentials: true,
+        });
+        setLoggedOut(true);
+      } catch (err) {
+        console.error("Error logging out:", err);
+      }
+    };
+    logout();
+  }, []);
 
-    if (loggedOut) {
-        return <Navigate to="/" />; 
-    }
+  if (loggedOut) {
+    return <Navigate to="/" />;
+  }
 
-    return null; 
+  return null;
 };
 
 export default Logout;

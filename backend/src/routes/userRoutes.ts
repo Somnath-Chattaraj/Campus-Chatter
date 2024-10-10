@@ -12,6 +12,8 @@ import {
   addDetailsToUser,
   addUsername,
   getAllUser,
+  logOut,
+  updateDetails,
 } from "../controllers/userControllers";
 import checkAuth from "../middleware/checkAuth";
 
@@ -22,11 +24,13 @@ router.route("/login").post(loginUser);
 router.route("/verify/:token").get(verifyUser);
 router.get("/me", checkAuth, getCurrentUserDetails); // get the user details of the current user
 // router.get("/get/:userId", checkAuth, getUserDetailsById); // get the user details of a specific user
-router.post("/addcourse", checkAuth, addCourseToUser); // add a course to the current user
+// router.post("/addcourse", checkAuth, addCourseToUser); // add a course to the current user
 router.post("/google", googleSignInOrSignUp); // sign in or sign up using google
 router.post("/github", githubSignInOrSignUp); // sign in or sign up using github
 router.post("/addDetails", addDetailsToUser); // add details to the current user
 router.post("/addusername", addUsername); // change the username of the current user
-router.get('/all', getAllUser);
+router.get("/all", getAllUser);
+router.get("/logout", logOut);
+router.post("/update", checkAuth, updateDetails);
 
 export default router;

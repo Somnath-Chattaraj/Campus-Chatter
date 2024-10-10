@@ -16,6 +16,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
+import { z } from "zod";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -26,12 +27,23 @@ import { location } from "./data/location";
 
 import Autosuggest from "react-autosuggest";
 
+const AddDetailsSchema = z.object({
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters long" }),
+  collegeName: z.string(),
+  courseName: z.string(),
+  isOnline: z.boolean(),
+  location: z.string(),
+  id: z.string(),
+});
+
 const AddDetails = () => {
   const [formData, setFormData] = useState({
     username: "",
     collegeName: "",
     courseName: "",
-    isOnline: false, // Default value as boolean
+    isOnline: false,
     location: "",
     id: "",
   });
@@ -42,6 +54,7 @@ const AddDetails = () => {
   }, [id]);
 
   const navigate = useNavigate();
+  const [error, setError] = useState({});
 
   const [suggestionsCollege, setSuggestionsCollege] = useState([]);
   const [suggestionsCourse, setSuggestionsCourse] = useState([]);
@@ -138,6 +151,8 @@ const AddDetails = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      AddDetailsSchema.parse(formData);
+      setError({});
       const response = await axios.post("/api/user/addDetails", formData, {
         withCredentials: true,
       });
@@ -152,6 +167,9 @@ const AddDetails = () => {
 
       navigate("/login");
     } catch (e) {
+      if (e instanceof z.ZodError) {
+        setError(e.formErrors.fieldErrors);
+      }
       console.log(e);
       setLoading(false);
     }
@@ -178,6 +196,7 @@ const AddDetails = () => {
                 boxShadow: "0 0 0 1px #3182CE",
               }}
             />
+            {error.username && <Box color="red.500">{error.username}</Box>}
           </FormControl>
 
           <FormControl id="collegeName" isRequired>
