@@ -74,12 +74,11 @@ const Posts = () => {
     }
   };
 
-  const handleCommunityChange = async (e) => {
+  const handleCommunityChange = (e) => {
     setSelectedCommunity(e.target.value);
     setPosts([]);
     setPage(1);
     setHasMore(true);
-    fetchPosts();
   };
 
   useEffect(() => {
