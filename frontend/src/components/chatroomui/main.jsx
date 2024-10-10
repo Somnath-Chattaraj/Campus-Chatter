@@ -4,6 +4,8 @@ import { useContext } from "react";
 import { chatRoomApi } from "../contexts/chatRoomApi";
 import axios from "axios";
 import { useUser } from "../../hook/useUser";
+import Loader from "../loading";
+import { WEBSOCKET_URL } from "../../config";
 
 function Createroom() {
   //@ts-ignore
@@ -25,7 +27,7 @@ function Createroom() {
   const [tempRoomId, setTempRoomId] = useState("");
   const navigate = useNavigate();
   const submit = () => {
-    const socket = new WebSocket("ws://localhost:8080");
+    const socket = new WebSocket(WEBSOCKET_URL);
     // Connection opened
     socket.addEventListener("open", (event) => {
       socket.send(
@@ -128,7 +130,7 @@ function Mainbuttons() {
     console.log("joining the rooms");
   };
   if (loadingUser) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
   if (!loadingUser && !userDetails) {
     console.log(userDetails);
