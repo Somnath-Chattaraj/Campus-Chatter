@@ -4,6 +4,7 @@ import { ReadyState } from "react-use-websocket";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { useUser } from "../../hook/useUser";
+import { WEBSOCKET_URL } from "../../config";
 
 const Chatroom = () => {
   const userId = localStorage.getItem("userId");
@@ -15,7 +16,7 @@ const Chatroom = () => {
   const { loadingUser, userDeatils } = useUser();
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-    "ws://localhost:8080"
+    WEBSOCKET_URL
   );
 
   useEffect(() => {

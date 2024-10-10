@@ -20,8 +20,8 @@ app.use(express.json());
 const corsOptions = {
   origin: [
     "http://localhost:3001",
-    "https://app-statuscode1.wedevelopers.online",
     "http://localhost:5173",
+    "https://www.campusify.site/"
   ],
   credentials: true,
 };
