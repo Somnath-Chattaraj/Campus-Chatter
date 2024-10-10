@@ -16,6 +16,7 @@ function Createroom() {
     setRoomId,
   } = useContext(chatRoomApi);
   const [users, setUsers] = useState([]);
+  const { loadingUser, userDetails } = useUser();
   useEffect(() => {
     const user = axios.get("/api/user/all", {
       withCredentials: true,
@@ -136,23 +137,22 @@ function Mainbuttons() {
   }
   return (
     <div className="min-h-screen flex flex-col mt-6 items-center justify-center bg-gray-900">
-  <div className="space-x-4">
-    <button
-      onClick={createroom}
-      className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-all duration-300 ease-in-out transform hover:scale-105"
-    >
-      Chat to new Users
-    </button>
-    <button
-      onClick={joinroom}
-      className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-300 ease-in-out transform hover:scale-105"
-    >
-      Join Room
-    </button>
-  </div>
-  <Outlet />
-</div>
-
+      <div className="space-x-4">
+        <button
+          onClick={createroom}
+          className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-all duration-300 ease-in-out transform hover:scale-105"
+        >
+          Chat to new Users
+        </button>
+        <button
+          onClick={joinroom}
+          className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-all duration-300 ease-in-out transform hover:scale-105"
+        >
+          Join Room
+        </button>
+      </div>
+      <Outlet />
+    </div>
   );
 }
 

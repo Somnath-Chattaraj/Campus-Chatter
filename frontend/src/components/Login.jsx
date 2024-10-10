@@ -17,6 +17,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { auth, googleProvider, githubProvider } from "../firebase.js";
 import { signInWithPopup } from "firebase/auth";
+import { TailSpin } from "react-loader-spinner";
+import { set } from "zod";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -27,6 +29,7 @@ const LoginPage = () => {
 
   const handleGoogleLogin = async () => {
     try {
+      setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       const response = await axios.post(
@@ -46,6 +49,7 @@ const LoginPage = () => {
           duration: 3000,
           isClosable: true,
         });
+        setLoading(false);
         navigate(`/addDetails/${response.data.userId}`);
         return;
       }
@@ -57,9 +61,11 @@ const LoginPage = () => {
           duration: 3000,
           isClosable: true,
         });
+        setLoading(false);
         navigate(`/addusername/${response.data.userId}`);
         return;
       }
+      setLoading(false);
       toast({
         title: "Login successful.",
         description: "You are being redirected to the posts page.",
@@ -69,6 +75,7 @@ const LoginPage = () => {
       });
       navigate("/posts");
     } catch (error) {
+      setLoading(false);
       console.error("Google login error: ", error);
       toast({
         title: "Login failed.",
@@ -132,6 +139,14 @@ const LoginPage = () => {
       });
     }
   };
+
+  if (loading) {
+    return (
+      <Flex minH="100vh" align="center" justify="center" bg="black">
+        <TailSpin color="#38b2ac" height={80} width={80} />
+      </Flex>
+    );
+  }
 
   const handleLogin = async () => {
     setLoading(true);

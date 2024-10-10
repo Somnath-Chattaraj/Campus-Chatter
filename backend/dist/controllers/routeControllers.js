@@ -29,11 +29,11 @@ const searchRoom = (0, express_async_handler_1.default)((req, res) => __awaiter(
             }
         }
     });
-    const updateArray = rooms.map(room => {
-        const otherUsers = room.users.filter(user => user.user_id != user_id);
+    const updateArray = rooms.map((room) => {
+        const otherUsers = room.users.filter((user) => user.user_id != user_id);
         return {
             roomId: room.id,
-            usernames: otherUsers.map(user => user.username)
+            usernames: otherUsers.map((user) => user.username)
         };
     });
     res.status(200).json(updateArray);

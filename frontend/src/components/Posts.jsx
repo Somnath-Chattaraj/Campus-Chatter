@@ -19,6 +19,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { useUser } from "../hook/useUser";
 import Loader from "./loading";
+import { TailSpin } from "react-loader-spinner";
+import { set } from "zod";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [communities, setCommunities] = useState([]);
@@ -32,6 +34,7 @@ const Posts = () => {
   const toast = useToast();
 
   const fetchPosts = async () => {
+    setLoading(true);
     try {
       let collegeId;
       if (selectedCommunity === "all") {
@@ -81,6 +84,7 @@ const Posts = () => {
 
   useEffect(() => {
     const fetchCommunities = async () => {
+      setLoading(true);
       try {
         const response = await axios.get("/api/post/communities", {
           withCredentials: true,
@@ -98,6 +102,7 @@ const Posts = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     const fetchAllCommunities = async () => {
       try {
         const response = await axios.get("/api/post/allcommunities", {
@@ -146,8 +151,20 @@ const Posts = () => {
     );
     window.location.reload();
   };
-  if (loading) return <div>Loading...</div>;
-  if (loadingUser) return <Loader />;
+  if (loading) {
+    return (
+      <Flex minH="100vh" align="center" justify="center" bg="black">
+        <TailSpin color="#38b2ac" height={80} width={80} />
+      </Flex>
+    );
+  }
+  if (loadingUser) {
+    return (
+      <Flex minH="100vh" align="center" justify="center" bg="black">
+        <TailSpin color="#38b2ac" height={80} width={80} />
+      </Flex>
+    );
+  }
   if (!userDetails) {
     return <Navigate to="/login" />;
   }

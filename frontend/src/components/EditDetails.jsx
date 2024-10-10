@@ -7,10 +7,13 @@ import {
   Button,
   VStack,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import { z } from "zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../hook/useUser";
+import { TailSpin } from "react-loader-spinner";
 
 const EditDetailsSchema = z.object({
   username: z
@@ -24,6 +27,7 @@ const EditDetails = () => {
     username: "",
     pic: "",
   });
+  const { userDetails, loadingUser } = useUser();
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -36,6 +40,25 @@ const EditDetails = () => {
   const handleFileChange = (e) => {
     setFormData({ ...formData, pic: e.target.files[0] });
   };
+
+  if (loadingUser) {
+    return (
+      <Flex minH="100vh" align="center" justify="center" bg="black">
+        <TailSpin color="#38b2ac" height={80} width={80} />
+      </Flex>
+    );
+  }
+  if (!userDetails) {
+    toast({
+      title: "Error",
+      description: "You need to be logged in to access this page.",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+    navigate("/login");
+    return;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -138,14 +161,15 @@ const EditDetails = () => {
               name="pic"
               accept="image/*"
               onChange={handleFileChange}
-              padding={4}
-              border="2px solid"
+              padding={2}
+              borderWidth={2}
               borderColor="gray.300"
               borderRadius="md"
               _focus={{
                 borderColor: "blue.500",
                 boxShadow: "0 0 0 1px #3182CE",
               }}
+              height="auto"
             />
           </FormControl>
 
