@@ -1,9 +1,12 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" },
     {
-      "source": "/api/(.*)",
-      "destination": "https://api123.campusify.site/api/$1"
+      "source": "/api/:match*",
+      "destination": "https://api123.campusify.site/api/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
