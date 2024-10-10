@@ -11,4 +11,12 @@ export default defineConfig({
       plugins: [tailwindcss()],
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: process.env.VITE_BACKEND_URL,
+        changeOrigin: true,
+      },
+    },
+  },
 });
