@@ -20,6 +20,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const sendMail_1 = __importDefault(require("../mail/sendMail"));
 const academic_email_verifier_1 = require("academic-email-verifier");
 const checkAcademic_1 = __importDefault(require("../mail/checkAcademic"));
+const registerSchema_1 = require("../validation/registerSchema");
 const googleSignInOrSignUp = (0, express_async_handler_1.default)(
 //@ts-ignore
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -129,6 +130,10 @@ const registerUser = (0, express_async_handler_1.default)((req, res) => __awaite
     const hashedPassword = yield bcrypt_1.default.hash(password, 8);
     if (!email || !username || !password) {
         res.status(400).json({ message: "Please provide all fields" });
+        return;
+    }
+    if (registerSchema_1.registerSchema.safeParse(req.body).success === false) {
+        res.status(400).json({ message: registerSchema_1.registerSchema.safeParse(req.body).error });
         return;
     }
     const userExists = yield prisma_1.default.user.findFirst({

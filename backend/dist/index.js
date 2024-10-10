@@ -37,6 +37,9 @@ app.use("/api/chat", chatRoutes_1.default); // Use the chat routes
 app.use("/api/post", postsRoutes_1.default);
 app.use('/api/room', roomRoutes_1.default);
 // app.get("/api/post/communities", getCommunities);
+app.get('/api/logout', (req, res) => {
+    res.clearCookie('Authorization').json({ message: 'Logged out successfully' });
+});
 app.get("/", (req, res) => {
     res.send("Backend is running");
 });

@@ -17,13 +17,8 @@ const express_async_handler_1 = __importDefault(require("express-async-handler")
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const searchRoom = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // @ts-ignore
-    const userId = req.user.user_id;
+    const user_id = req.user.user_id;
     const rooms = yield prisma_1.default.chatRoom.findMany({
-        where: {
-            users: {
-                some: { user_id: userId }
-            }
-        },
         select: {
             id: true,
             users: {
@@ -34,6 +29,13 @@ const searchRoom = (0, express_async_handler_1.default)((req, res) => __awaiter(
             }
         }
     });
-    res.status(200).json(rooms);
+    const updateArray = rooms.map(room => {
+        const otherUsers = room.users.filter(user => user.user_id != user_id);
+        return {
+            roomId: room.id,
+            usernames: otherUsers.map(user => user.username)
+        };
+    });
+    res.status(200).json(updateArray);
 }));
 exports.searchRoom = searchRoom;
