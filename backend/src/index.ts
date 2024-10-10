@@ -21,7 +21,8 @@ const corsOptions = {
   origin: [
     "http://localhost:3001",
     "http://localhost:5173",
-    "https://www.campusify.site/"
+    "https://www.campusify.site/",
+    "https://app.campusify.site/",
   ],
   credentials: true,
 };
@@ -37,12 +38,11 @@ app.use("/api/review", reviewRoutes);
 app.use("/api/rating", ratingRoutes);
 app.use("/api/chat", chatRoutes); // Use the chat routes
 app.use("/api/post", postsRoutes);
-app.use('/api/room', roomRouter);
+app.use("/api/room", roomRouter);
 // app.get("/api/post/communities", getCommunities);
-app.get('/api/logout', (req: Request, res: Response) => {
-  res.clearCookie('Authorization').json({ message: 'Logged out successfully' });
+app.get("/api/logout", (req: Request, res: Response) => {
+  res.clearCookie("Authorization").json({ message: "Logged out successfully" });
 });
-
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Backend is running");
