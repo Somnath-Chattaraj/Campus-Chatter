@@ -3,7 +3,7 @@
     { "source": "/(.*)", "destination": "/" },
     {
       "source": "/api/(.*)",
-      "destination": "https://api123.campusify.site/$1"
+      "destination": "https://api123.campusify.site/api/$1"
     }
   ]
 }
