@@ -5,6 +5,6 @@ import { changePassword, otpGenerator, verifyOtp } from "../controllers/otpContr
 const Otprouter = express.Router();
 
 Otprouter.post('/' ,otpGenerator);
-Otprouter.get('/verify',verifyOtp);
+Otprouter.post('/verify',verifyOtp);
 Otprouter.post('/change', changePassword);
 export default Otprouter;

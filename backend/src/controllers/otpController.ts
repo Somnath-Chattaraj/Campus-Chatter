@@ -63,7 +63,7 @@ export const verifyOtp = asyncHandler(async (req: any, res: any) => {
     });
 
     if (otpData === null) {
-      return res.status(400).json({ message: "Invalid OTP" });
+      return res.status(404).json({ message: "Invalid OTP" });
     }
 
     res.status(200).json({ message: "OTP verified successfully" });
