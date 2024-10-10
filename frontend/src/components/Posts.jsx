@@ -19,7 +19,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { useUser } from "../hook/useUser";
 import Loader from "./loading";
-import { TailSpin } from "react-loader-spinner";
+import { InfinitySpin } from "react-loader-spinner";
 import { set } from "zod";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -154,14 +154,14 @@ const Posts = () => {
   if (loading) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg="black">
-        <TailSpin color="#38b2ac" height={80} width={80} />
+        <InfinitySpin color="#3182CE" size={80} />
       </Flex>
     );
   }
   if (loadingUser) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg="black">
-        <TailSpin color="#38b2ac" height={80} width={80} />
+        <InfinitySpin color="#3182CE" size={80} />
       </Flex>
     );
   }

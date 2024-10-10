@@ -17,7 +17,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { auth, googleProvider, githubProvider } from "../firebase.js";
 import { signInWithPopup } from "firebase/auth";
-import { TailSpin } from "react-loader-spinner";
+import { InfinitySpin } from "react-loader-spinner";
 import { set } from "zod";
 
 const LoginPage = () => {
@@ -143,7 +143,7 @@ const LoginPage = () => {
   if (loading) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg="black">
-        <TailSpin color="#38b2ac" height={80} width={80} />
+        <InfinitySpin color="#3182CE" size={80} />
       </Flex>
     );
   }
