@@ -604,6 +604,7 @@ const updateDetails = asyncHandler(async (req: Request, res: Response) => {
     },
     data: {
       username,
+      // @ts-ignore
       pic,
     },
   });

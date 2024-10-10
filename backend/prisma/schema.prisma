@@ -23,7 +23,20 @@ model User {
   chatRooms            ChatRoom[]   @relation("UserChatRooms")
   sentMessages         Message[]    @relation("SentMessages")
   Like                 Like[]
+  Otp                  Otp[]
 }
+
+model Otp {
+  id         Int      @id @default(autoincrement())
+  otp        String   
+  userId     String  
+  user       User     @relation(fields: [userId], references: [user_id])
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+
+  @@index([userId])
+}
+
 
 model College {
   college_id String       @id @default(uuid())
