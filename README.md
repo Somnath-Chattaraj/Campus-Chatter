@@ -8,21 +8,25 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Campus Chatter is a platform for college students to discuss their college life, courses, and more. It's a community-driven space where students can post reviews and ratings about their courses, participate in college-specific communities, and engage with their peers.
 
-## Features
+**Campus Chatter** is a vibrant platform designed specifically for college students to engage in discussions about their college experiences, courses, and much more. This community-driven space empowers students to share reviews and ratings about their courses, participate in college-specific communities, and connect with peers in meaningful ways.
 
-- **Post Reviews and Ratings**: Share your thoughts on courses and rate them to help fellow students.
-- **College Communities**: Join college-specific communities where you can post and discuss topics related to your institution.
-- **Email Verification**: Ensure a safe environment by verifying college emails before registering students.
-- **Authentication**: Secure login and registration using JWT.
-- **Mailing**: Receive important notifications via email using Nodemailer.
-- **Built with Modern Technologies**:
-  - **TypeScript**: Ensures type safety and better development experience.
-  - **React**: Provides a responsive and dynamic user interface.
-  - **Express.js**: Powers the backend with a robust and flexible framework.
-  - **Prisma**: Simplifies database access with an ORM that works seamlessly with PostgreSQL.
-  - **Chakra UI**: Delivers a beautiful and accessible UI with ease.
+## Key Features
+
+- **Post Reviews and Ratings**: Share your insights on courses and provide ratings to assist fellow students in making informed decisions.
+- **College Communities**: Join college-specific groups to discuss topics unique to your institution, fostering a sense of belonging and collaboration.
+- **Email Verification**: Enhance security by verifying college email addresses during registration, ensuring a trusted environment.
+- **Secure Authentication**: Experience safe login and registration through JSON Web Tokens (JWT).
+- **Notifications via Email**: Stay updated with important notifications delivered to your inbox using Nodemailer.
+- **Real-time Chatting**: Engage in both group and personal chats using WebSockets, facilitating real-time communication among students.
+- **Fuzzy Searching**: Utilize Fuse.js for intelligent fuzzy searching, making it easy to find posts, users, and more.
+- **User-Friendly Search**: Leverage React Autocomplete for searching posts and users, enhancing the overall user experience.
+- **DDoS Protection**: Implement a proxy server to safeguard against DDoS attacks, ensuring stability and security.
+- **Google and GitHub Authentication**: Seamlessly authenticate using Google and GitHub, with verification of educational accounts to ensure valid college email addresses.
+- **Image Uploads**: Use the Cloudinary API to upload and display profile pictures, enhancing user profiles.
+- **Engagement Features**: Users can like posts and comment, fostering interaction and community building.
+- **Access Control**: Ensure that users without college email IDs can comment but are restricted from posting, maintaining the integrity of the platform.
+
 
 ## Getting Started
 
