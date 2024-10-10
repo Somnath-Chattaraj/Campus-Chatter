@@ -1,7 +1,19 @@
-import { Flex, FormControl, Button, useToast, FormLabel, Input, Box, Text, useBreakpointValue, SlideFade, Spinner } from '@chakra-ui/react'
-import axios from 'axios';
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import {
+  Flex,
+  FormControl,
+  Button,
+  useToast,
+  FormLabel,
+  Input,
+  Box,
+  Text,
+  useBreakpointValue,
+  SlideFade,
+  Spinner,
+} from "@chakra-ui/react";
+import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
@@ -21,11 +33,9 @@ const ForgetPassword = () => {
 
   async function handleChange() {
     setLoading(true);
-    const res = await axios.post('/api/otp/', { email: email });
-    console.log(res);
+    const res = await axios.post("/api/otp/", { email: email });
     setLoading(false);
-    if (res.data.status === 200) {
-      console.log("OTP sent successfully");
+    if (res.status === 200) {
       toast({
         title: "OTP sent successfully",
         status: "success",
@@ -33,8 +43,7 @@ const ForgetPassword = () => {
         isClosable: true,
       });
       setVerifyPasswordPage(true);
-    } else if (res.data.status === 404) {
-      console.log("Email not found");
+    } else if (res.status === 404) {
       toast({
         title: "User not found",
         status: "error",
@@ -42,7 +51,6 @@ const ForgetPassword = () => {
         isClosable: true,
       });
     } else {
-      console.log("Error sending OTP");
       toast({
         title: "Error sending OTP",
         status: "error",
@@ -54,11 +62,9 @@ const ForgetPassword = () => {
 
   async function handleVerify() {
     setLoading(true);
-    const res = await axios.get('/api/otp/verify', { otp: otp, email: email });
-    console.log(res);
+    const res = await axios.get("/api/otp/verify", { otp: otp, email: email });
     setLoading(false);
-    if (res.data.status === 200) {
-      console.log("OTP verified successfully");
+    if (res.status === 200) {
       toast({
         title: "OTP verified successfully",
         status: "success",
@@ -68,7 +74,6 @@ const ForgetPassword = () => {
       setVerifyPasswordPage(false);
       setChangePasswordPage(true);
     } else {
-      console.log("Error verifying OTP");
       toast({
         title: "Error verifying OTP",
         status: "error",
@@ -80,11 +85,12 @@ const ForgetPassword = () => {
 
   async function changePassword() {
     setLoading(true);
-    const res = await axios.post('/api/otp/change', { email: email, password: password });
-    console.log(res);
+    const res = await axios.post("/api/otp/change", {
+      email: email,
+      password: password,
+    });
     setLoading(false);
-    if (res.data.status === 200) {
-      console.log("Password changed successfully");
+    if (res.status === 200) {
       toast({
         title: "Password changed successfully",
         description: "You are being redirected to the login page.",
@@ -92,9 +98,8 @@ const ForgetPassword = () => {
         duration: 3000,
         isClosable: true,
       });
-      navigate('/login');
+      navigate("/login");
     } else {
-      console.log("Error changing password");
       toast({
         title: "Error changing password",
         status: "error",
@@ -105,7 +110,13 @@ const ForgetPassword = () => {
   }
 
   return (
-    <Box minH="100vh" bgGradient="linear(to-r, teal.500, blue.600)" display="flex" alignItems="center" justifyContent="center">
+    <Box
+      minH="100vh"
+      bgGradient="linear(to-r, teal.500, blue.600)"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
       <Flex
         direction="column"
         p={formPadding}
@@ -123,16 +134,19 @@ const ForgetPassword = () => {
           Forgot Password
         </Text>
 
-        <SlideFade in={!verifyPasswordPage && !changePasswordPage} offsetY="20px">
+        <SlideFade
+          in={!verifyPasswordPage && !changePasswordPage}
+          offsetY="20px"
+        >
           <FormControl id="email" mb={4}>
-            <FormLabel className='text-black'>Email address</FormLabel>
+            <FormLabel className="text-black">Email address</FormLabel>
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder='Enter your email'
-              className='text-black'
+              placeholder="Enter your email"
+              className="text-black"
               bg="gray.100"
               focusBorderColor="teal.500"
             />
@@ -152,10 +166,10 @@ const ForgetPassword = () => {
 
         <SlideFade in={verifyPasswordPage} offsetY="20px">
           <FormControl id="otp" mb={4}>
-            <FormLabel className='text-black'>Enter OTP</FormLabel>
+            <FormLabel className="text-black">Enter OTP</FormLabel>
             <Input
               type="text"
-              className='text-black'
+              className="text-black"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
@@ -178,10 +192,10 @@ const ForgetPassword = () => {
 
         <SlideFade in={changePasswordPage} offsetY="20px">
           <FormControl id="password" mb={4}>
-            <FormLabel className='text-black'>New Password</FormLabel>
+            <FormLabel className="text-black">New Password</FormLabel>
             <Input
               type="password"
-              className='text-black'
+              className="text-black"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -203,7 +217,7 @@ const ForgetPassword = () => {
         </SlideFade>
       </Flex>
     </Box>
-  )
-}
+  );
+};
 
 export default ForgetPassword;
