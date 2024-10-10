@@ -2,9 +2,8 @@ name: Auto-Merge Dependabot PRs
 
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
+    types: [opened, synchronize]
+  workflow_dispatch:
 
 jobs:
   automerge:
