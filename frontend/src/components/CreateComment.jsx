@@ -11,7 +11,7 @@ const CreateComment = ({ postId, onCommentAdded }) => {
     setLoading(true);
     try {
       await axios.post(
-        "/post/comment",
+        "/api/post/comment",
         { content: comment, postId: postId },
         { withCredentials: true }
       );

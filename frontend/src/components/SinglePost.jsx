@@ -111,11 +111,7 @@ const SinglePost = () => {
     >
       <VStack spacing={4} align="start">
         <Flex align="center" w="full">
-          <Avatar
-            src="https://i.scdn.co/image/ab67616d0000b27377a3afdbf4d24dd545105177"
-            size="lg"
-            mr={4}
-          />
+          <Avatar src={post.User.pic} size="lg" mr={4} />
           <Box>
             <Heading size="lg" color="whiteAlpha.900">
               {post.title}
@@ -172,13 +168,9 @@ const SinglePost = () => {
                 borderWidth={1}
               >
                 <Flex align="center" mb={2}>
-                  <Avatar
-                    src="https://i.scdn.co/image/ab67616d0000b27377a3afdbf4d24dd545105177"
-                    size="sm"
-                    mr={2}
-                  />
+                  <Avatar src={comment.User.pic} size="sm" mr={2} />
                   <Text fontWeight="bold" color="whiteAlpha.900">
-                    {comment.User.name}
+                    {comment.User.username}
                   </Text>
                 </Flex>
                 <Text fontSize="large" color="gray.300">
