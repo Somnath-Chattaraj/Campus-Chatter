@@ -62,17 +62,17 @@ export const verifyOtp = asyncHandler(async (req: any, res: any) => {
       },
     });
 
-    if (!otpData) {
+    if (otpData === null) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    await prisma.otp.delete({
-      where: {
-        id: otpData.id,
-      },
-    });
-
     res.status(200).json({ message: "OTP verified successfully" });
+    // await prisma.otp.delete({
+    //   where: {
+    //     id: otpData.id,
+    //   },
+    // });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error in verifying OTP" });
