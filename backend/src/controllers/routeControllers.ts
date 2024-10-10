@@ -17,11 +17,11 @@ const searchRoom = asyncHandler(async (req: Request, res: Response) => {
             }
         }
     });
-    const updateArray = rooms.map(room => {
-        const otherUsers = room.users.filter(user => user.user_id != user_id);
+    const updateArray = rooms.map((room : any) => {
+        const otherUsers = room.users.filter((user : any) => user.user_id != user_id);
         return {
           roomId: room.id,
-          usernames: otherUsers.map(user => user.username)
+          usernames: otherUsers.map((user : any) => user.username)
         };
       });
     
