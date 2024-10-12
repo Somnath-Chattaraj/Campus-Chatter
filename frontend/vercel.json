@@ -5,14 +5,12 @@
       "destination": "https://chatterapi.campusify.site/api/:match*"
     },
     {
-      "source": "/(.*)",
-      "destination": "/"
-    }
-  ],
-  "proxies": [
-    {
       "source": "/ws/:match*",
       "destination": "wss://realtime.campusify.site/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
