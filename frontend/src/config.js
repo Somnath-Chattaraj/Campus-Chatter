@@ -1,1 +1,1 @@
-export const WEBSOCKET_URL = "wss://realtime.campusify.site";
+export const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "../../hook/useUser";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
+import { WEBSOCKET_URL } from "../../config";
 
 const Createroom1 = () => {
   const [users, setUsers] = useState([]);
@@ -29,7 +30,7 @@ const Createroom1 = () => {
 
     fetchUsers();
 
-    const newSocket = new WebSocket("ws://localhost:8080");
+    const newSocket = new WebSocket(WEBSOCKET_URL);
     setSocket(newSocket);
 
     newSocket.addEventListener("message", (event) => {
