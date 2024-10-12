@@ -6,7 +6,13 @@ const searchRoom = asyncHandler(async (req: Request, res: Response) => {
     // @ts-ignore
     const user_id = req.user.user_id;
     const rooms = await prisma.chatRoom.findMany({
-        
+        where: {
+          users: {
+            some: {
+                user_id
+            },
+          },
+        },
         select : {
             id : true,
             users: {
