@@ -17,6 +17,11 @@ export default defineConfig({
         target: process.env.VITE_BACKEND_URL,
         changeOrigin: true,
       },
+      "/ws": {
+        target: process.env.VITE_WEBSOCKET_URL,
+        changeOrigin: true,
+        ws: true, 
+      },
     },
   },
 });
