@@ -139,6 +139,11 @@ const fetchPosts = asyncHandler(async (req: Request, res: Response) => {
           pic: true,
         },
       },
+      _count: {
+        select: {
+          Comments: true,
+        },
+      },
     },
     take: postsPerPage,
     skip: offset,

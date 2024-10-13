@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Avatar,
   Box,
-  Button,
   Flex,
   Text,
   VStack,
@@ -20,7 +19,9 @@ import SearchBar from "./SearchBar";
 import { useUser } from "../hook/useUser";
 import Loader from "./loading";
 import { InfinitySpin } from "react-loader-spinner";
-import { set } from "zod";
+import { gsap } from "gsap";
+import { useRef } from "react";
+
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [communities, setCommunities] = useState([]);
@@ -36,12 +37,7 @@ const Posts = () => {
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      let collegeId;
-      if (selectedCommunity === "all") {
-        collegeId = null;
-      } else {
-        collegeId = selectedCommunity;
-      }
+      let collegeId = selectedCommunity === "all" ? null : selectedCommunity;
       const response = await axios.post(
         "/api/post/fetch",
         {
@@ -54,7 +50,7 @@ const Posts = () => {
       );
       const posts = response.data.posts;
       setPosts((prevPosts) => [...prevPosts, ...posts]);
-      if (response.data.isOver == true) {
+      if (response.data.isOver) {
         setHasMore(false);
       }
       setPage(page + 1);
@@ -121,22 +117,6 @@ const Posts = () => {
     navigate(`/posts/${postId}`);
   };
 
-  const handleLike = async (postId) => {
-    try {
-      await axios.post("/api/post/like", { postId }, { withCredentials: true });
-      setPosts((prevPosts) =>
-        prevPosts.map((post) => {
-          if (post.post_id === postId) {
-            return { ...post, likes: post.likes + 1 };
-          }
-          return post;
-        })
-      );
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
-  };
-
   const handleCreatePost = async ({ title, content, community }) => {
     const response = await axios.post(
       "/api/post/create",
@@ -149,36 +129,43 @@ const Posts = () => {
     );
     window.location.reload();
   };
-  if (loading) {
+
+  const postRef = useRef(null);
+
+  useEffect(() => {
+    gsap.fromTo(
+      postRef.current,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6, stagger: 0.2 }
+    );
+  }, [posts]);
+
+  if (loading || loadingUser) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg="black">
         <InfinitySpin color="#3182CE" size={80} />
       </Flex>
     );
   }
-  if (loadingUser) {
-    return (
-      <Flex minH="100vh" align="center" justify="center" bg="black">
-        <InfinitySpin color="#3182CE" size={80} />
-      </Flex>
-    );
-  }
+
   if (!userDetails) {
     return <Navigate to="/login" />;
   }
+
   if (userDetails.username === null) {
     return <Navigate to={`/addusername/${userDetails.user_id}`} />;
   }
+
   return (
     <Container centerContent>
       <SearchBar />
       {communities && (
         <CreatePost communities={communities} onSubmit={handleCreatePost} />
       )}
+
       <Stack direction="row" spacing={4} mb={4} width="100%" paddingTop={5}>
         <Select value={selectedCommunity} onChange={handleCommunityChange}>
           <option value="all">All</option>
-
           {allCommunities.map((community) => (
             <option key={community.college_id} value={community.college_id}>
               {community.name}
@@ -187,7 +174,7 @@ const Posts = () => {
         </Select>
       </Stack>
 
-      <VStack spacing={4} align="stretch" width="100%" mt={4}>
+      <VStack spacing={6} align="stretch" width="100%" mt={4}>
         <InfiniteScroll
           dataLength={posts.length}
           next={fetchPosts}
@@ -196,15 +183,19 @@ const Posts = () => {
         >
           {posts.map((post) => (
             <Box
+              ref={postRef}
               key={post.post_id}
-              p={4}
+              p={6}
               borderWidth={1}
+              borderColor="gray.200"
               borderRadius="lg"
+              boxShadow="lg"
               width="100%"
-              marginTop={3}
+              mt={6}
+              className="transition transform hover:-translate-y-1 hover:shadow-2xl duration-300"
               onClick={() => handlePostClick(post.post_id)}
             >
-              <Flex align="center" mb={2}>
+              <Flex align="center" mb={4}>
                 <Avatar src={post.User.pic} size="md" mr={4} />
                 <Heading size="md">{post.title}</Heading>
               </Flex>
@@ -215,16 +206,19 @@ const Posts = () => {
                 {post.User.username}
               </Text>
               <Text>{post.content}</Text>
-              <Flex justify="space-between" align="center" mt={2}>
+
+              <Flex justify="space-between" align="center" mt={4}>
                 <Flex align="center">
-                  <Button size="sm" onClick={() => handleLike(post.post_id)}>
-                    Like
-                  </Button>
-                  <Text ml={2}>
+                  <Text className="text-sm text-white bg-blue-500 rounded-md px-2 py-1 shadow-md">
                     {post.likes} {post.likes === 1 ? "like" : "likes"}
                   </Text>
                 </Flex>
-                <Button size="sm">Comments</Button>
+                <Flex align="center">
+                  <Text className="text-sm text-white bg-green-500 rounded-md px-2 py-1 shadow-md">
+                    {post._count.Comments}{" "}
+                    {post._count.Comments === 1 ? "comment" : "comments"}
+                  </Text>
+                </Flex>
               </Flex>
             </Box>
           ))}

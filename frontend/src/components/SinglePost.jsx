@@ -13,8 +13,9 @@ import {
   Center,
   VStack,
 } from "@chakra-ui/react";
+import { gsap } from "gsap";
 import axios from "axios";
-import CreateComment from "./CreateComment"; // Import the CreateComment component
+import CreateComment from "./CreateComment";
 import { useUser } from "../hook/useUser";
 import { InfinitySpin } from "react-loader-spinner";
 
@@ -24,6 +25,10 @@ const SinglePost = () => {
   const [loading, setLoading] = useState(true);
   const [postLiked, setPostLiked] = useState(false);
   const { userDetails, loadingUser } = useUser();
+
+  // Refs for the animations
+  const likeButtonRef = React.useRef(null);
+  const likeFloodRef = React.useRef(null);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -74,6 +79,41 @@ const SinglePost = () => {
   }
 
   const handleLike = async (postId) => {
+    const timeline = gsap.timeline();
+
+    timeline.to(likeButtonRef.current, {
+      scale: 1.5,
+      duration: 0.2,
+      ease: "power2.inOut",
+    });
+    timeline.to(likeButtonRef.current, {
+      scale: 1,
+      duration: 0.2,
+      ease: "power2.inOut",
+    });
+
+    if (!postLiked) {
+      gsap
+        .to(likeFloodRef.current, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.5,
+          ease: "power2.out",
+        })
+        .then(() => {
+          gsap.to(likeFloodRef.current, {
+            opacity: 0,
+            scale: 0,
+            duration: 0.5,
+            ease: "power2.in",
+            onComplete: () => {
+              // Hide the box after the animation is complete
+              gsap.set(likeFloodRef.current, { opacity: 0, scale: 1 });
+            },
+          });
+        });
+    }
+
     if (postLiked) {
       try {
         await axios.post(
@@ -121,11 +161,11 @@ const SinglePost = () => {
       maxW="3xl"
       mx="auto"
       mt={8}
-      bg="gray.900" // Dark background for the post box
+      bg="gray.900"
       borderRadius="md"
       boxShadow="lg"
       borderWidth={1}
-      color="whiteAlpha.900" // White text for contrast
+      color="whiteAlpha.900"
     >
       <VStack spacing={4} align="start">
         <Flex align="center" w="full">
@@ -148,11 +188,13 @@ const SinglePost = () => {
         <Flex w="full" justify="space-between" align="center" mt={4}>
           <Flex align="center">
             <Button
+              ref={likeButtonRef}
               colorScheme="teal"
               size="sm"
               variant="outline"
               onClick={() => handleLike(post.post_id)}
               leftIcon={postLiked ? <AiFillLike /> : <GrLike />}
+              className="like-button"
             >
               {postLiked ? "Liked" : "Like"}
             </Button>
@@ -164,6 +206,21 @@ const SinglePost = () => {
             Comments
           </Button>
         </Flex>
+        <Box
+          ref={likeFloodRef}
+          className="like-flood-animation"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            opacity: 0,
+            transform: "translate(-50%, -50%)",
+            fontSize: "2rem",
+            pointerEvents: "none",
+          }}
+        >
+          💖💖💖💖💖💖💖💖💖💖💖💖
+        </Box>
         <Box mt={6} w="full">
           <Heading size="md" mb={4} color="whiteAlpha.900">
             Comments
@@ -179,8 +236,8 @@ const SinglePost = () => {
                 key={comment.comment_id}
                 p={4}
                 mb={4}
-                bg="gray.800" // Darker background for comments
-                color="whiteAlpha.900" // White text for comments
+                bg="gray.800"
+                color="whiteAlpha.900"
                 borderRadius="md"
                 boxShadow="sm"
                 borderWidth={1}
