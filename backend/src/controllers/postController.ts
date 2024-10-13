@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import Fuse from "fuse.js";
+import sendMail from "../mail/sendMail";
 
 // @ts-ignore
 const searchPosts = asyncHandler(async (req: Request, res: Response) => {
@@ -271,6 +272,55 @@ const createComment = asyncHandler(async (req: Request, res: Response) => {
       post_id: postId,
     },
   });
+
+  const post = await prisma.post.findUnique({
+    where: { post_id: postId },
+    select: {
+      title: true,
+      User: {
+        select: {
+          email: true,
+          user_id: true,
+        },
+      },
+    },
+  });
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+
+  if (post.User.user_id === user_id) {
+    return res.status(201).json({ comment });
+  }
+
+  const email = post.User.email;
+  const postTitle = post.title;
+  const commentContent = comment.content;
+  const commentAuthor = user.username;
+  const htmlContent = `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f4; border-radius: 10px;">
+    <h2 style="color: #4CAF50; text-align: center;">New Comment on Your Post</h2>
+    
+    <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      <h3 style="color: #333;">Post Title: ${postTitle}</h3>
+      <p style="color: #666; font-size: 14px;">A new comment has been added to your post:</p>
+
+      <blockquote style="background-color: #f9f9f9; border-left: 4px solid #4CAF50; padding: 10px 20px; margin: 10px 0; color: #555;">
+        ${commentContent}
+      </blockquote>
+
+      <p style="color: #666; font-size: 14px;">Commented by: <strong>${commentAuthor}</strong></p>
+      <a href="https://campusify.site/posts/${postId}" style="display: inline-block; margin-top: 20px; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View Post</a>
+    </div>
+
+    <footer style="text-align: center; margin-top: 20px; color: #999; font-size: 12px;">
+      <p>Campusify</p>
+      <p><a href="https://campusify.site" style="color: #4CAF50;">Visit our website</a></p>
+    </footer>
+  </div>
+`;
+
+  sendMail(htmlContent, email, "New Comment on Your Post");
 
   return res.status(201).json({ comment });
 });

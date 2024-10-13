@@ -1,6 +1,10 @@
 import nodemailer from "nodemailer";
 
-const sendMail = (htmlContent: any, receiverEmail: string) => {
+const sendMail = (
+  htmlContent: any,
+  receiverEmail: string,
+  subject: any = "Verification Email"
+) => {
   const port = process.env.SMTP_PORT;
   const host = process.env.SMTP_HOST;
   const senderEmail = process.env.SMTP_EMAIL;
@@ -19,7 +23,7 @@ const sendMail = (htmlContent: any, receiverEmail: string) => {
   let mailOptions = {
     from: `"Campus-Chatter Admin" <${senderEmail}>`,
     to: receiverEmail,
-    subject: "OTP Verification",
+    subject: subject,
     text: htmlContent,
     html: htmlContent,
   };
