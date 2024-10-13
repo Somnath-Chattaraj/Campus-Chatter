@@ -49,6 +49,23 @@ export const Header = () => {
 
     return (
         <div className='bg-[#1F2135]'>
+            <Helmet>
+            <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Capusify",
+          "url": "https://capusify.site",
+          "logo": "https://capusify.site/logo.png",
+          "description": "Your platform for XYZ.",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+1-800-123-456",
+            "contactType": "Customer Support"
+          }
+        })}
+      </script>
+    </Helmet>
             <nav className="flex justify-between items-center px-6 lg:px-32 py-5">
                 <div className="text-lg font-bold flex">
                     <img src={logo} alt="Campus Chatter Logo" className='w-10 h-10 rounded-full mx-3' />
