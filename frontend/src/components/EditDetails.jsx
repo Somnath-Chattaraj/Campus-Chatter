@@ -143,7 +143,7 @@ const EditDetails = () => {
   return (
     <Box w="100%" maxW="500px" mx="auto" mt="5">
       <Box textAlign="center" mb={6}>
-        <Avatar size="xl" src={userDetails.pic} mb={2} />
+        <Avatar size="xl" src={userDetails?.pic} mb={2} />
         <Text fontSize="lg">{userDetails?.username || "Your Username"}</Text>
       </Box>
       <form onSubmit={handleSubmit}>

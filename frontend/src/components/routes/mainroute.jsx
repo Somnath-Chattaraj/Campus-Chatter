@@ -21,6 +21,7 @@ import { Header } from "../homePage/HomePage";
 import Navbar from "../MainNavbar";
 import Logout from "../Logout";
 import ForgetPassword from "../forgotPassword/ForgetPassword";
+import NotFound from "../NotFound";
 
 const Test = () => {
   const [userId, setUserId] = useState("");
@@ -55,8 +56,8 @@ const Mainrouter = createBrowserRouter([
       },
       {
         path: "forgetPassword",
-        element: <ForgetPassword />
-      }
+        element: <ForgetPassword />,
+      },
     ],
   },
   {
@@ -103,11 +104,9 @@ const Mainrouter = createBrowserRouter([
         path: "/edit",
         element: <EditDetails />,
       },
-
       {
         path: "room",
         element: <Mainbuttons />,
-        // index: true, was causing error
         children: [
           {
             path: "createroom",
@@ -124,6 +123,10 @@ const Mainrouter = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "*", // Catch-all route for undefined paths
+    element: <NotFound />, // Render the NotFound component
   },
 ]);
 
