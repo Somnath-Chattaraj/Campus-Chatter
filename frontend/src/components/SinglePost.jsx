@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { GrLike } from "react-icons/gr";
 import { AiFillLike } from "react-icons/ai";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import {
   Box,
   Heading,
@@ -12,6 +12,7 @@ import {
   Spinner,
   Center,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import { gsap } from "gsap";
 import axios from "axios";
@@ -29,6 +30,7 @@ const SinglePost = () => {
   // Refs for the animations
   const likeButtonRef = React.useRef(null);
   const likeFloodRef = React.useRef(null);
+  const toast = useToast();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -72,6 +74,12 @@ const SinglePost = () => {
   }
 
   if (!userDetails) {
+    toast({
+      title: "Please login to view this page",
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+    });
     return <Navigate to="/login" />;
   }
   if (userDetails.username === null) {
