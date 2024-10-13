@@ -215,8 +215,8 @@ const Posts = () => {
                 </Flex>
                 <Flex align="center">
                   <Text className="text-sm text-white bg-green-500 rounded-md px-2 py-1 shadow-md">
-                    {post._count.Comments}{" "}
-                    {post._count.Comments === 1 ? "comment" : "comments"}
+                    {post._count?.Comments}{" "}
+                    {post._count?.Comments === 1 ? "comment" : "comments"}
                   </Text>
                 </Flex>
               </Flex>
