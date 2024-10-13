@@ -108,7 +108,6 @@ const Posts = () => {
           withCredentials: true,
         });
         setAllCommunities(response.data.college);
-        console.log(response.data.college);
         setLoading(false);
       } catch (err) {
         setLoading(false);
@@ -166,6 +165,9 @@ const Posts = () => {
   }
   if (!userDetails) {
     return <Navigate to="/login" />;
+  }
+  if (userDetails.username === null) {
+    return <Navigate to={`/addusername/${userDetails.user_id}`} />;
   }
   return (
     <Container centerContent>

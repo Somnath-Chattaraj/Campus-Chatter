@@ -55,7 +55,8 @@ const googleSignInOrSignUp = asyncHandler(
       sameSite: "lax",
     });
     const username = user.username;
-    res.status(200).json({ isCollegeEmail, username });
+    const userId = user.user_id;
+    res.status(200).json({ isCollegeEmail, username, userId });
   }
 );
 
@@ -318,6 +319,7 @@ const getCurrentUserDetails = asyncHandler(
         user_id: true,
         email: true,
         username: true,
+        pic: true,
         userCourses: {
           select: {
             Course: {

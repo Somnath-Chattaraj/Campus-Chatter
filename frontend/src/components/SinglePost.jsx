@@ -15,12 +15,15 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import CreateComment from "./CreateComment"; // Import the CreateComment component
+import { useUser } from "../hook/useUser";
+import { InfinitySpin } from "react-loader-spinner";
 
 const SinglePost = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [postLiked, setPostLiked] = useState(false);
+  const { userDetails, loadingUser } = useUser();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -54,6 +57,21 @@ const SinglePost = () => {
     fetchPost();
     checkIfLiked();
   }, [id]);
+
+  if (loadingUser) {
+    return (
+      <Center h="100vh">
+        <InfinitySpin />
+      </Center>
+    );
+  }
+
+  if (!userDetails) {
+    return <Navigate to="/login" />;
+  }
+  if (userDetails.username === null) {
+    return <Navigate to={`/addusername/${userDetails.userId}`} />;
+  }
 
   const handleLike = async (postId) => {
     if (postLiked) {

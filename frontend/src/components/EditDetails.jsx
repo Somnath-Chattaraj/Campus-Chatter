@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   FormControl,
@@ -8,6 +8,8 @@ import {
   VStack,
   useToast,
   Flex,
+  Avatar,
+  Text,
 } from "@chakra-ui/react";
 import { z } from "zod";
 import axios from "axios";
@@ -41,24 +43,31 @@ const EditDetails = () => {
     setFormData({ ...formData, pic: e.target.files[0] });
   };
 
-  if (loadingUser) {
-    return (
-      <Flex minH="100vh" align="center" justify="center" bg="black">
-        <InfinitySpin color="#3182CE" size={80} />
-      </Flex>
-    );
-  }
-  if (!userDetails) {
-    toast({
-      title: "Error",
-      description: "You need to be logged in to access this page.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-    navigate("/login");
-    return;
-  }
+  useEffect(() => {
+    if (loadingUser) return;
+
+    if (!userDetails) {
+      toast({
+        title: "Error",
+        description: "You need to be logged in to access this page.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/login");
+    } else if (userDetails.username === null) {
+      navigate(`/addusername/${userDetails.user_id}`);
+    }
+  }, [userDetails, loadingUser, navigate, toast]);
+
+  useEffect(() => {
+    if (userDetails) {
+      setFormData({
+        username: userDetails.username || "",
+        pic: "",
+      });
+    }
+  }, [userDetails]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,13 +101,6 @@ const EditDetails = () => {
         pic: picUrl,
       };
 
-      const user = await axios.get("/api/user/me", {
-        withCredentials: true,
-      });
-      if (!updatedFormData.username) {
-        updatedFormData.username = user.data.username;
-      }
-
       EditDetailsSchema.parse(updatedFormData);
       setError({});
 
@@ -130,8 +132,20 @@ const EditDetails = () => {
     }
   };
 
+  if (loadingUser) {
+    return (
+      <Flex minH="100vh" align="center" justify="center" bg="black">
+        <InfinitySpin color="#3182CE" size={80} />
+      </Flex>
+    );
+  }
+
   return (
     <Box w="100%" maxW="500px" mx="auto" mt="5">
+      <Box textAlign="center" mb={6}>
+        <Avatar size="xl" src={userDetails.pic} mb={2} />
+        <Text fontSize="lg">{userDetails?.username || "Your Username"}</Text>
+      </Box>
       <form onSubmit={handleSubmit}>
         <VStack spacing={4}>
           <FormControl id="username">
