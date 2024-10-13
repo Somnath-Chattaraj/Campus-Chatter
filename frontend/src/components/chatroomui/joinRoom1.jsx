@@ -40,6 +40,10 @@ const JoinRoom1 = () => {
     );
   }
 
+  if (userDetails.username == null) {
+    navigate(`/addusername/${userDetails.user_id}`);
+  }
+
   function handleClick(roomId) {
     localStorage.removeItem("roomId");
     localStorage.removeItem("userId");

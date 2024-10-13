@@ -71,7 +71,7 @@ const AddUsername = () => {
       setLoading(false);
       toast({
         title: "Error",
-        description: "Error adding username.",
+        description: err.response?.data.message || "An error occurred",
         status: "error",
         duration: 3000,
         isClosable: true,
