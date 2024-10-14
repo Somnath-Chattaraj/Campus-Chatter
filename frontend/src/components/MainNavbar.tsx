@@ -23,12 +23,14 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
       <nav className="bg-[#1F2135] text-white px-6 lg:px-32 py-5 flex justify-between items-center">
         {/* Logo Section */}
         <div className="text-lg font-bold flex items-center">
-          <img
-            src={"/logo.png"}
-            alt="Logo"
-            className="w-10 h-10 rounded-full mx-3"
-          />
-          <span className="pt-1">Campus Chatter</span>
+          <Link to="/homepage" className="flex items-center">
+            <img
+              src={"/logo.png"}
+              alt="Logo"
+              className="w-10 h-10 rounded-full mx-3"
+            />
+            <span className="pt-1">Campus Chatter</span>
+          </Link>
         </div>
 
         {/* Navigation Links (Centered) */}
