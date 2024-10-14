@@ -16,14 +16,6 @@ export const Header = () => {
   const navigate = useNavigate();
   const { loadingUser, userDetails } = useUser();
 
-  if (loadingUser) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <InfinitySpin color="#6366F1" />
-      </div>
-    );
-  }
-
   useEffect(() => {
     gsap.to(".first-page-image", {
       y: -100,
@@ -57,7 +49,15 @@ export const Header = () => {
         }
       );
     });
-  }, []);
+  }, [loadingUser]);
+
+  if (loadingUser) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <InfinitySpin color="#6366F1" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#1F2135]">
