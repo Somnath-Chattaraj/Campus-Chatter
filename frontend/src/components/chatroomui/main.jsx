@@ -5,7 +5,9 @@ import { chatRoomApi } from "../contexts/chatRoomApi";
 import axios from "axios";
 import { useUser } from "../../hook/useUser";
 import Loader from "../loading";
+import { InfinitySpin } from "react-loader-spinner";
 import { WEBSOCKET_URL } from "../../config";
+import { Flex } from "@chakra-ui/react";
 
 function Createroom() {
   //@ts-ignore
@@ -131,7 +133,11 @@ function Mainbuttons() {
     console.log("joining the rooms");
   };
   if (loadingUser) {
-    return <Loader />;
+    return (
+      <Flex justify="center" align="center" h="100vh">
+        <InfinitySpin />
+      </Flex>
+    );
   }
   if (!loadingUser && !userDetails) {
     console.log(userDetails);
