@@ -159,9 +159,13 @@ export const Header = () => {
             <p className="text-lg text-gray-600 mb-8">
               Campus Chatter can provide users with a wide range of benefits, from staying connected with loved ones to discovering new connections and engaging in creative expression and community building.
             </p>
-            <button className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+            <Link to="https://medium.com/@somnathchattaraj5/campus-chatter-a-space-for-students-to-share-chat-connect-anonymously-98cb43171148">
+            <button className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+            
+            >
               Learn more
             </button>
+              </Link>
           </div>
         </div>
       </section>
