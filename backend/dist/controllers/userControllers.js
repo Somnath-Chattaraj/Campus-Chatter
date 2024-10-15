@@ -68,7 +68,8 @@ const googleSignInOrSignUp = (0, express_async_handler_1.default)(
         sameSite: "lax",
     });
     const username = user.username;
-    res.status(200).json({ isCollegeEmail, username });
+    const userId = user.user_id;
+    res.status(200).json({ isCollegeEmail, username, userId });
 }));
 exports.googleSignInOrSignUp = googleSignInOrSignUp;
 const githubSignInOrSignUp = (0, express_async_handler_1.default)(
@@ -317,6 +318,7 @@ const getCurrentUserDetails = (0, express_async_handler_1.default)((req, res) =>
             user_id: true,
             email: true,
             username: true,
+            pic: true,
             userCourses: {
                 select: {
                     Course: {
@@ -596,6 +598,7 @@ const updateDetails = (0, express_async_handler_1.default)((req, res) => __await
         },
         data: {
             username,
+            // @ts-ignore
             pic,
         },
     });

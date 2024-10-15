@@ -19,6 +19,13 @@ const searchRoom = (0, express_async_handler_1.default)((req, res) => __awaiter(
     // @ts-ignore
     const user_id = req.user.user_id;
     const rooms = yield prisma_1.default.chatRoom.findMany({
+        where: {
+            users: {
+                some: {
+                    user_id
+                },
+            },
+        },
         select: {
             id: true,
             users: {

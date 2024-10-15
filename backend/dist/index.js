@@ -14,14 +14,16 @@ const reviewRoutes_1 = __importDefault(require("./routes/reviewRoutes"));
 const ratingRoute_1 = __importDefault(require("./routes/ratingRoute"));
 const postsRoutes_1 = __importDefault(require("./routes/postsRoutes"));
 const roomRoutes_1 = __importDefault(require("./routes/roomRoutes"));
+const otpRoute_1 = __importDefault(require("./routes/otpRoute"));
 // import { getCommunities } from "./controllers/postController";
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 const corsOptions = {
     origin: [
         "http://localhost:3001",
-        "https://app-statuscode1.wedevelopers.online",
         "http://localhost:5173",
+        "https://www.campusify.site/",
+        "https://app.campusify.site/",
     ],
     credentials: true,
 };
@@ -35,10 +37,11 @@ app.use("/api/review", reviewRoutes_1.default);
 app.use("/api/rating", ratingRoute_1.default);
 app.use("/api/chat", chatRoutes_1.default); // Use the chat routes
 app.use("/api/post", postsRoutes_1.default);
-app.use('/api/room', roomRoutes_1.default);
+app.use("/api/room", roomRoutes_1.default);
+app.use("/api/otp", otpRoute_1.default);
 // app.get("/api/post/communities", getCommunities);
-app.get('/api/logout', (req, res) => {
-    res.clearCookie('Authorization').json({ message: 'Logged out successfully' });
+app.get("/api/logout", (req, res) => {
+    res.clearCookie("Authorization").json({ message: "Logged out successfully" });
 });
 app.get("/", (req, res) => {
     res.send("Backend is running");

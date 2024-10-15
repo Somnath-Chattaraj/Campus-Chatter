@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllCommunities = exports.searchPosts = exports.unlikePost = exports.postLiked = exports.createComment = exports.fetchSinglePost = exports.likePost = exports.fetchPosts = exports.createPost = exports.getCommunities = void 0;
+exports.deleteComment = exports.deletePost = exports.getAllCommunities = exports.searchPosts = exports.unlikePost = exports.postLiked = exports.createComment = exports.fetchSinglePost = exports.likePost = exports.fetchPosts = exports.createPost = exports.getCommunities = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const fuse_js_1 = __importDefault(require("fuse.js"));
+const sendMail_1 = __importDefault(require("../mail/sendMail"));
 // @ts-ignore
 const searchPosts = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { query } = req.body;
@@ -30,6 +31,12 @@ const searchPosts = (0, express_async_handler_1.default)((req, res) => __awaiter
             College: {
                 select: {
                     name: true,
+                },
+            },
+            User: {
+                select: {
+                    username: true,
+                    pic: true,
                 },
             },
         },
@@ -135,6 +142,11 @@ const fetchPosts = (0, express_async_handler_1.default)((req, res) => __awaiter(
                     pic: true,
                 },
             },
+            _count: {
+                select: {
+                    Comments: true,
+                },
+            },
         },
         take: postsPerPage,
         skip: offset,
@@ -202,6 +214,7 @@ const fetchSinglePost = (0, express_async_handler_1.default)((req, res) => __awa
             User: {
                 select: {
                     username: true,
+                    pic: true,
                 },
             },
             Comments: {
@@ -212,6 +225,7 @@ const fetchSinglePost = (0, express_async_handler_1.default)((req, res) => __awa
                     User: {
                         select: {
                             username: true,
+                            pic: true,
                         },
                     },
                 },
@@ -224,6 +238,30 @@ const fetchSinglePost = (0, express_async_handler_1.default)((req, res) => __awa
     return res.status(200).json({ post });
 }));
 exports.fetchSinglePost = fetchSinglePost;
+// @ts-ignore
+const deletePost = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { postId } = req.body;
+    const post = yield prisma_1.default.post.findUnique({
+        select: {
+            User: {
+                select: {
+                    user_id: true,
+                },
+            },
+        },
+        where: { post_id: postId },
+    });
+    // @ts-ignore
+    const user_id = req.user.user_id;
+    if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+    }
+    if (post.User.user_id !== user_id) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+    return res.status(200).json({ message: "Post deleted" });
+}));
+exports.deletePost = deletePost;
 // @ts-ignore
 const createComment = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { postId, content } = req.body;
@@ -245,9 +283,78 @@ const createComment = (0, express_async_handler_1.default)((req, res) => __await
             post_id: postId,
         },
     });
+    const post = yield prisma_1.default.post.findUnique({
+        where: { post_id: postId },
+        select: {
+            title: true,
+            User: {
+                select: {
+                    email: true,
+                    user_id: true,
+                },
+            },
+        },
+    });
+    if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+    }
+    if (post.User.user_id === user_id) {
+        return res.status(201).json({ comment });
+    }
+    const email = post.User.email;
+    const postTitle = post.title;
+    const commentContent = comment.content;
+    const commentAuthor = user.username;
+    const htmlContent = `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f4; border-radius: 10px;">
+    <h2 style="color: #4CAF50; text-align: center;">New Comment on Your Post</h2>
+    
+    <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      <h3 style="color: #333;">Post Title: ${postTitle}</h3>
+      <p style="color: #666; font-size: 14px;">A new comment has been added to your post:</p>
+
+      <blockquote style="background-color: #f9f9f9; border-left: 4px solid #4CAF50; padding: 10px 20px; margin: 10px 0; color: #555;">
+        ${commentContent}
+      </blockquote>
+
+      <p style="color: #666; font-size: 14px;">Commented by: <strong>${commentAuthor}</strong></p>
+      <a href="https://campusify.site/posts/${postId}" style="display: inline-block; margin-top: 20px; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View Post</a>
+    </div>
+
+    <footer style="text-align: center; margin-top: 20px; color: #999; font-size: 12px;">
+      <p>Campusify</p>
+      <p><a href="https://campusify.site" style="color: #4CAF50;">Visit our website</a></p>
+    </footer>
+  </div>
+`;
+    (0, sendMail_1.default)(htmlContent, email, "New Comment on Your Post");
     return res.status(201).json({ comment });
 }));
 exports.createComment = createComment;
+// @ts-ignore
+const deleteComment = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { commentId } = req.body;
+    const comment = yield prisma_1.default.comment.findUnique({
+        select: {
+            User: {
+                select: {
+                    user_id: true,
+                },
+            },
+        },
+        where: { comment_id: commentId },
+    });
+    // @ts-ignore
+    const user_id = req.user.user_id;
+    if (!comment) {
+        return res.status(404).json({ message: "Comment not found" });
+    }
+    if (comment.User.user_id !== user_id) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+    return res.status(200).json({ message: "Comment deleted" });
+}));
+exports.deleteComment = deleteComment;
 // @ts-ignore
 const postLiked = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { postId } = req.body;

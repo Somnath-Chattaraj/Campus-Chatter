@@ -248,6 +248,32 @@ const fetchSinglePost = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // @ts-ignore
+const deletePost = asyncHandler(async (req: Request, res: Response) => {
+  const { postId } = req.body;
+  const post = await prisma.post.findUnique({
+    select: {
+      User: {
+        select: {
+          user_id: true,
+        },
+      },
+    },
+    where: { post_id: postId },
+  });
+  // @ts-ignore
+  const user_id = req.user.user_id;
+
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+  if (post.User.user_id !== user_id) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  return res.status(200).json({ message: "Post deleted" });
+});
+
+// @ts-ignore
 const createComment = asyncHandler(async (req: Request, res: Response) => {
   const { postId, content } = req.body;
   // @ts-ignore
@@ -323,6 +349,32 @@ const createComment = asyncHandler(async (req: Request, res: Response) => {
   sendMail(htmlContent, email, "New Comment on Your Post");
 
   return res.status(201).json({ comment });
+});
+
+// @ts-ignore
+const deleteComment = asyncHandler(async (req: Request, res: Response) => {
+  const { commentId } = req.body;
+  const comment = await prisma.comment.findUnique({
+    select: {
+      User: {
+        select: {
+          user_id: true,
+        },
+      },
+    },
+    where: { comment_id: commentId },
+  });
+  // @ts-ignore
+  const user_id = req.user.user_id;
+
+  if (!comment) {
+    return res.status(404).json({ message: "Comment not found" });
+  }
+  if (comment.User.user_id !== user_id) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  return res.status(200).json({ message: "Comment deleted" });
 });
 
 // @ts-ignore
@@ -414,4 +466,6 @@ export {
   unlikePost,
   searchPosts,
   getAllCommunities,
+  deletePost,
+  deleteComment,
 };

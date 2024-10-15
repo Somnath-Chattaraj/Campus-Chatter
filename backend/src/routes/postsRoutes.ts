@@ -10,6 +10,8 @@ import {
   unlikePost,
   searchPosts,
   getAllCommunities,
+  deleteComment,
+  deletePost,
 } from "../controllers/postController";
 import checkAuth from "../middleware/checkAuth";
 
@@ -25,5 +27,7 @@ postsRoutes.post("/liked", checkAuth, postLiked);
 postsRoutes.post("/unlike", checkAuth, unlikePost);
 postsRoutes.post("/search", checkAuth, searchPosts);
 postsRoutes.get("/allcommunities", checkAuth, getAllCommunities);
+postsRoutes.post("/deletecomment", checkAuth, deleteComment);
+postsRoutes.post("/deletepost", checkAuth, deletePost);
 
 export default postsRoutes;
