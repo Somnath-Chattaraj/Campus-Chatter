@@ -14,6 +14,20 @@ const Createroom1 = () => {
   const toast = useToast();
 
   useEffect(() => {
+    if (loadingUser) return;
+
+    if (!userDetails) {
+      toast({
+        title: "Error",
+        description: "You need to be logged in to access this page.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/login");
+    }
+  }, [userDetails, loadingUser, navigate, toast]);
+  useEffect(() => {
     localStorage.removeItem("roomId");
     localStorage.removeItem("userId");
 

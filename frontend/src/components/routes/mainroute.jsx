@@ -48,7 +48,7 @@ const Mainrouter = createBrowserRouter([
   { path: "/homepage", element: <Header /> },
   {
     path: "/",
-    element: <Navbar btnName="sign up" display={true} navigateUrl="/signup" />,
+    element: <Navbar btnName="Sign up" display={true} navigateUrl="/signup" />,
     children: [
       {
         path: "login",

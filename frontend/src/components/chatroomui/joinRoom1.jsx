@@ -2,8 +2,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useUser } from "../../hook/useUser";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
+import { Flex, useToast } from "@chakra-ui/react";
 import Loader from "../loading";
+import { InfinitySpin } from "react-loader-spinner";
 
 const JoinRoom1 = () => {
   const { loadingUser, userDetails } = useUser();
@@ -11,6 +12,24 @@ const JoinRoom1 = () => {
   const toast = useToast();
   const [room_id, setRoomId] = useState("");
   const [updateArray, setUpdateArray] = useState([]);
+
+  useEffect(() => {
+    if (loadingUser) return;
+
+    if (!userDetails) {
+      toast({
+        title: "Error",
+        description: "You need to be logged in to access this page.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/login");
+    } else if (userDetails.username === null) {
+      navigate(`/addusername/${userDetails.user_id}`);
+    }
+  }, [userDetails, loadingUser, navigate, toast]);
+
 
   useEffect(() => {
     const fetchChatRooms = async () => {
@@ -29,7 +48,11 @@ const JoinRoom1 = () => {
   }, []); // Adding dependency array to avoid infinite re-rendering
 
   if (loadingUser) {
-    return <Loader />;
+    return (
+      <Flex minH="100vh" align="center" justify="center" bg="black">
+        <InfinitySpin color="#3182CE" size={80} />
+      </Flex>
+    );
   }
 
   if (!userDetails || !Array.isArray(userDetails.chatRooms)) {
