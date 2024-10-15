@@ -80,7 +80,7 @@ export const Header = () => {
         <meta name="twitter:description" content="Offering the best services in XYZ." />
         <meta name="twitter:image" content="https://capusify.site/og-image.jpg" />
       </Helmet>
-      {loadingUser ? <Navbar display={true} loadingUsr={true} /> : <Navbar display={true} loadingUsr={false} btnName="Login" />}
+      {loadingUser ? <Navbar display={true} loadingUsr={true} /> : <Navbar display={true} loadingUsr={false} btnName="Login" navigateUrl="/login" />}
       
       <div className="h-screen flex flex-col lg:flex-row items-center justify-center px-6 lg:px-32 space-y-10 lg:space-y-0 lg:space-x-10">
   <div className="w-full lg:w-1/2 text-center lg:text-left">
