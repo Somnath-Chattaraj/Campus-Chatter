@@ -273,6 +273,7 @@ const deletePost = asyncHandler(async (req: Request, res: Response) => {
   if (post.User.user_id !== user_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
+  // @ts-ignore
   await prisma.$transaction(async (prisma) => {
     await prisma.comment.deleteMany({
       where: { post_id: postId },
