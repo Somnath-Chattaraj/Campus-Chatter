@@ -220,6 +220,7 @@ const fetchSinglePost = asyncHandler(async (req: Request, res: Response) => {
       },
       User: {
         select: {
+          user_id: true,
           username: true,
           pic: true,
         },
@@ -231,6 +232,7 @@ const fetchSinglePost = asyncHandler(async (req: Request, res: Response) => {
           user_id: true,
           User: {
             select: {
+              user_id: true,
               username: true,
               pic: true,
             },
@@ -260,17 +262,31 @@ const deletePost = asyncHandler(async (req: Request, res: Response) => {
     },
     where: { post_id: postId },
   });
+
   // @ts-ignore
   const user_id = req.user.user_id;
 
   if (!post) {
     return res.status(404).json({ message: "Post not found" });
   }
+
   if (post.User.user_id !== user_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
+  await prisma.$transaction(async (prisma) => {
+    await prisma.comment.deleteMany({
+      where: { post_id: postId },
+    });
+    await prisma.like.deleteMany({
+      where: { post_id: postId },
+    });
 
-  return res.status(200).json({ message: "Post deleted" });
+    await prisma.post.delete({
+      where: { post_id: postId },
+    });
+  });
+
+  return res.status(200).json({ message: "Post and comments deleted" });
 });
 
 // @ts-ignore
@@ -373,6 +389,10 @@ const deleteComment = asyncHandler(async (req: Request, res: Response) => {
   if (comment.User.user_id !== user_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
+
+  await prisma.comment.delete({
+    where: { comment_id: commentId },
+  });
 
   return res.status(200).json({ message: "Comment deleted" });
 });

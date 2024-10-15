@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GrLike } from "react-icons/gr";
+import { useNavigate } from "react-router-dom";
 import { AiFillLike } from "react-icons/ai";
 import { useParams, Navigate } from "react-router-dom";
 import {
@@ -13,12 +14,15 @@ import {
   Center,
   VStack,
   useToast,
+  Icon,
 } from "@chakra-ui/react";
 import { gsap } from "gsap";
 import axios from "axios";
 import CreateComment from "./CreateComment";
 import { useUser } from "../hook/useUser";
 import { InfinitySpin } from "react-loader-spinner";
+import DeleteConfirmation from "./DeleteConfirmation";
+import { FaTrash } from "react-icons/fa";
 
 const SinglePost = () => {
   const { id } = useParams();
@@ -26,11 +30,15 @@ const SinglePost = () => {
   const [loading, setLoading] = useState(true);
   const [postLiked, setPostLiked] = useState(false);
   const { userDetails, loadingUser } = useUser();
+  const [isDeletePostOpen, setIsDeletePostOpen] = useState(false);
+  const [isDeleteCommentOpen, setIsDeleteCommentOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
 
   // Refs for the animations
   const likeButtonRef = React.useRef(null);
   const likeFloodRef = React.useRef(null);
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -43,6 +51,7 @@ const SinglePost = () => {
       } catch (err) {
         setLoading(false);
         alert("Error fetching post");
+        console.error("Error fetching post:", err);
       }
     };
 
@@ -163,6 +172,47 @@ const SinglePost = () => {
       </Center>
     );
 
+  const handleDeleteComment = async (comment) => {
+    try {
+      await axios.post(
+        "/api/post/deletecomment",
+        { commentId: comment.comment_id },
+        { withCredentials: true }
+      );
+      setPost((prevPost) => ({
+        ...prevPost,
+        Comments: prevPost.Comments.filter(
+          (c) => c.comment_id !== comment.comment_id
+        ),
+      }));
+      setIsDeleteCommentOpen(false);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      setLoading(true);
+      await axios.post(
+        "/api/post/deletepost",
+        { postId: post.post_id },
+        { withCredentials: true }
+      );
+      setIsDeletePostOpen(false);
+      setLoading(false);
+      toast({
+        title: "Post deleted successfully",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      navigate("/posts");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
   return (
     <Box
       p={6}
@@ -210,9 +260,29 @@ const SinglePost = () => {
               {post.likes} {post.likes === 1 ? "like" : "likes"}
             </Text>
           </Flex>
-          <Button size="sm" colorScheme="teal" variant="solid">
-            Comments
-          </Button>
+          <Flex>
+            {post.User.user_id === userDetails.user_id && (
+              <Button
+                size="sm"
+                colorScheme="red"
+                variant="ghost"
+                onClick={() => {
+                  setIsDeletePostOpen(true);
+                }}
+                leftIcon={<Icon as={FaTrash} />}
+                color="white"
+                _hover={{ bg: "red.600" }}
+              >
+                Delete
+              </Button>
+            )}
+          </Flex>
+          <DeleteConfirmation
+            isOpen={isDeletePostOpen}
+            onClose={() => setIsDeletePostOpen(false)}
+            onConfirm={handleDeletePost}
+            message="Are you sure you want to delete this post?"
+          />
         </Flex>
         <Box
           ref={likeFloodRef}
@@ -236,8 +306,6 @@ const SinglePost = () => {
           <Box w="full" mt={4}>
             <CreateComment postId={post.post_id} />
           </Box>
-
-          {/* Displaying Comments */}
           {post.Comments.length > 0 ? (
             post.Comments.map((comment) => (
               <Box
@@ -256,9 +324,33 @@ const SinglePost = () => {
                     {comment.User.username}
                   </Text>
                 </Flex>
-                <Text fontSize="large" color="gray.300">
+                <Text fontSize="large" color="gray.300" mb={2} paddingTop={2.5}>
                   {comment.content}
                 </Text>
+                {comment.User.user_id === userDetails.user_id && (
+                  <Flex justify="flex-end" mt={2}>
+                    <Button
+                      size="sm"
+                      colorScheme="red"
+                      variant="ghost"
+                      onClick={() => {
+                        setCommentToDelete(comment);
+                        setIsDeleteCommentOpen(true);
+                      }}
+                      leftIcon={<Icon as={FaTrash} />}
+                      color="white"
+                      _hover={{ bg: "red.600" }}
+                    >
+                      Delete
+                    </Button>
+                    <DeleteConfirmation
+                      isOpen={isDeleteCommentOpen}
+                      onClose={() => setIsDeleteCommentOpen(false)}
+                      onConfirm={() => handleDeleteComment(commentToDelete)}
+                      message="Are you sure you want to delete this comment?"
+                    />
+                  </Flex>
+                )}
               </Box>
             ))
           ) : (
