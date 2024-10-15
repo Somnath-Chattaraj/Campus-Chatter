@@ -62,7 +62,7 @@ const Mainrouter = createBrowserRouter([
   },
   {
     path: "/",
-    element: <Navbar btnName="sign up" display={true} navigateUrl="/signup" />,
+    element: <Navbar btnName="Sign up" display={true} navigateUrl="/signup" />,
     children: [
       {
         path: "logout",
@@ -72,7 +72,7 @@ const Mainrouter = createBrowserRouter([
   },
   {
     path: "/",
-    element: <Navbar btnName="login" display={true} navigateUrl="/login" />,
+    element: <Navbar btnName="Login" display={true} navigateUrl="/login" />,
     children: [
       {
         path: "signup",
