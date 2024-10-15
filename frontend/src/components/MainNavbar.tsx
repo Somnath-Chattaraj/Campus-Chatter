@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { Outlet, useNavigate, Link } from "react-router-dom";
+import { gsap } from "gsap";
 
 interface NavbarProps {
   btnName: string;
@@ -11,12 +10,32 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement | null>(null); // Ref for the sidebar
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      gsap.fromTo(
+        sidebarRef.current,
+        { x: -250, opacity: 0 }, // Start position and opacity
+        { x: 0, opacity: 1, duration: 0.3 } // End position and opacity
+      );
+    }
+  }, [isSidebarOpen]);
 
   useEffect(() => {
     if (location.pathname === "/") navigate("/homepage");
   }, [location, navigate]);
+
+  // Close sidebar function with GSAP animation
+  const closeSidebar = () => {
+    gsap.to(sidebarRef.current, {
+      x: -250,
+      opacity: 0,
+      duration: 0.3,
+      onComplete: () => setIsSidebarOpen(false), // Set sidebar state after animation
+    });
+  };
 
   return (
     <>
@@ -48,7 +67,7 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
             Room
           </Link>
           <Link to="/" className="hover:text-purple-500">
-            contact
+            Contact
           </Link>
         </div>
 
@@ -87,40 +106,69 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
 
       {/* Sidebar for Small Screens */}
       {isSidebarOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
-          <div className="fixed top-0 left-0 w-64 h-full bg-[#1F2135] z-50 p-5">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50"
+          onClick={closeSidebar} // Close sidebar when clicking outside
+        >
+          <div
+            ref={sidebarRef}
+            className="fixed top-0 left-0 w-64 h-full bg-[#1F2135] z-50 p-5"
+            onClick={(e) => e.stopPropagation()} // Prevent closing on inner click
+          >
             <button
               className="text-white mb-5 focus:outline-none"
-              onClick={() => setIsSidebarOpen(false)}
+              onClick={closeSidebar} // Close sidebar with GSAP animation
             >
-              Close
+              {/* Cross Icon */}
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
             </button>
             <nav className="space-y-4">
+              {/* Synchronizing Navigation Links */}
               <Link
                 to="/homepage"
                 className="block hover:text-purple-500"
-                onClick={() => setIsSidebarOpen(false)}
+                onClick={closeSidebar}
               >
                 Home
               </Link>
               <Link
-                to="/about"
+                to="/posts"
                 className="block hover:text-purple-500"
-                onClick={() => setIsSidebarOpen(false)}
+                onClick={closeSidebar}
               >
-                About
+                Post
               </Link>
               <Link
-                to="/features"
+                to="/edit"
                 className="block hover:text-purple-500"
-                onClick={() => setIsSidebarOpen(false)}
+                onClick={closeSidebar}
               >
-                Features
+                Edit
               </Link>
               <Link
-                to="/contact"
+                to="/room/joinroom"
                 className="block hover:text-purple-500"
-                onClick={() => setIsSidebarOpen(false)}
+                onClick={closeSidebar}
+              >
+                Room
+              </Link>
+              <Link
+                to="/"
+                className="block hover:text-purple-500"
+                onClick={closeSidebar}
               >
                 Contact
               </Link>
@@ -128,7 +176,7 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display }) => {
                 <button
                   className="bg-purple-500 text-white rounded-full px-4 py-2 font-bold hover:bg-purple-600"
                   onClick={() => {
-                    setIsSidebarOpen(false);
+                    closeSidebar();
                     navigate(navigateUrl);
                   }}
                 >
