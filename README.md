@@ -57,3 +57,10 @@ npm run dev
 ## GitHub Repository
 
 Check out the project on GitHub: [Campus Chatter](https://github.com/tanish35/Campus-Chatter.git)
+
+## Learn More About Campus Chatter
+
+Read the full story behind Campus Chatter in our [Medium blog](https://medium.com/@somnathchattaraj5/campus-chatter-a-space-for-students-to-share-chat-connect-anonymously-98cb43171148).
+
+
+
