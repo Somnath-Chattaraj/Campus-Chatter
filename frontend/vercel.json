@@ -1,4 +1,18 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/ssr.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "src/entry-client.jsx",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:match*",

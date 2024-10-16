@@ -17,7 +17,7 @@ import Loader from "../loading";
 import AddUsername from "../AddUsername";
 import { Createroom1 } from "../chatroomui/createRoom1";
 import { JoinRoom1 } from "../chatroomui/joinRoom1";
-import { Header } from "../homePage/HomePage";
+import Header from "../homePage/HomePage";
 import Navbar from "../MainNavbar";
 import Logout from "../Logout";
 import ForgetPassword from "../forgotPassword/ForgetPassword";
