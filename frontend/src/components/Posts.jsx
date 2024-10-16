@@ -35,13 +35,13 @@ const Posts = () => {
   const toast = useToast();
   const fetchInitialized = useRef(false);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (pageParam = page) => {
     try {
       let collegeId = selectedCommunity === "all" ? null : selectedCommunity;
       const response = await axios.post(
         "/api/post/fetch",
         {
-          page: page,
+          page: pageParam, // Use the page parameter
           collegeId,
         },
         {
@@ -54,7 +54,7 @@ const Posts = () => {
       if (response.data.isOver) {
         setHasMore(false);
       }
-      setPage(page + 1);
+      setPage(pageParam + 1); // Increment the page parameter
     } catch (err) {
       if (err.response.status === 401) {
         toast({
@@ -78,15 +78,8 @@ const Posts = () => {
     setPosts([]);
     setPage(1);
     setHasMore(true);
-    fetchPosts();
+    fetchPosts(1); // Call fetchPosts with page 1 to reset
   }, [selectedCommunity]);
-
-  // useEffect(() => {
-  //   setPosts([]);
-  //   setPage(1);
-  //   setHasMore(true);
-  //   fetchPosts();
-  // }, [selectedCommunity]);
 
   useEffect(() => {
     const fetchCommunities = async () => {
