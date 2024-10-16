@@ -35,7 +35,6 @@ const Posts = () => {
   const toast = useToast();
 
   const fetchPosts = async () => {
-    setLoading(true);
     try {
       let collegeId = selectedCommunity === "all" ? null : selectedCommunity;
       const response = await axios.post(
@@ -48,13 +47,13 @@ const Posts = () => {
           withCredentials: true,
         }
       );
+      console.log(response.data);
       const posts = response.data.posts;
       setPosts((prevPosts) => [...prevPosts, ...posts]);
       if (response.data.isOver) {
         setHasMore(false);
       }
       setPage(page + 1);
-      setLoading(false);
     } catch (err) {
       if (err.response.status === 401) {
         toast({
@@ -70,12 +69,12 @@ const Posts = () => {
     }
   };
 
-  const handleCommunityChange = (e) => {
-    setSelectedCommunity(e.target.value);
+  useEffect(() => {
     setPosts([]);
     setPage(1);
     setHasMore(true);
-  };
+    fetchPosts();
+  }, [selectedCommunity]);
 
   useEffect(() => {
     const fetchCommunities = async () => {
@@ -152,8 +151,18 @@ const Posts = () => {
     return <Navigate to="/login" />;
   }
 
-  if (userDetails.username === null) {
+  if (
+    userDetails.username === null &&
+    userDetails.collegeEmailVerified == false
+  ) {
     return <Navigate to={`/addusername/${userDetails.user_id}`} />;
+  }
+
+  if (
+    userDetails.username === null &&
+    userDetails.collegeEmailVerified == true
+  ) {
+    return <Navigate to={`/addDetails/${userDetails.user_id}`} />;
   }
 
   return (
@@ -164,7 +173,10 @@ const Posts = () => {
       )}
 
       <Stack direction="row" spacing={4} mb={4} width="100%" paddingTop={5}>
-        <Select value={selectedCommunity} onChange={handleCommunityChange}>
+        <Select
+          value={selectedCommunity}
+          onChange={(e) => setSelectedCommunity(e.target.value)}
+        >
           <option value="all">All</option>
           {allCommunities.map((community) => (
             <option key={community.college_id} value={community.college_id}>
