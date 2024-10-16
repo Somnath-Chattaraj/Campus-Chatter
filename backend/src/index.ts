@@ -12,7 +12,7 @@ import reviewRoutes from "./routes/reviewRoutes";
 import ratingRoutes from "./routes/ratingRoute";
 import postsRoutes from "./routes/postsRoutes";
 import roomRouter from "./routes/roomRoutes";
-import Otprouter  from "./routes/otpRoute";
+import Otprouter from "./routes/otpRoute";
 
 // import { getCommunities } from "./controllers/postController";
 
