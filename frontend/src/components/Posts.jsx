@@ -41,7 +41,7 @@ const Posts = () => {
       const response = await axios.post(
         "/api/post/fetch",
         {
-          page: pageParam, // Use the page parameter
+          page: pageParam,
           collegeId,
         },
         {
@@ -54,7 +54,7 @@ const Posts = () => {
       if (response.data.isOver) {
         setHasMore(false);
       }
-      setPage(pageParam + 1); // Increment the page parameter
+      setPage(pageParam + 1);
     } catch (err) {
       if (err.response.status === 401) {
         toast({
@@ -78,7 +78,7 @@ const Posts = () => {
     setPosts([]);
     setPage(1);
     setHasMore(true);
-    fetchPosts(1); // Call fetchPosts with page 1 to reset
+    fetchPosts(1);
   }, [selectedCommunity]);
 
   useEffect(() => {
