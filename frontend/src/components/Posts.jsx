@@ -33,6 +33,7 @@ const Posts = () => {
   const { userDetails, loadingUser } = useUser();
   const navigate = useNavigate();
   const toast = useToast();
+  const fetchInitialized = useRef(false);
 
   const fetchPosts = async () => {
     try {
@@ -70,11 +71,22 @@ const Posts = () => {
   };
 
   useEffect(() => {
+    if (!fetchInitialized.current) {
+      fetchInitialized.current = true;
+      return;
+    }
     setPosts([]);
     setPage(1);
     setHasMore(true);
     fetchPosts();
   }, [selectedCommunity]);
+
+  // useEffect(() => {
+  //   setPosts([]);
+  //   setPage(1);
+  //   setHasMore(true);
+  //   fetchPosts();
+  // }, [selectedCommunity]);
 
   useEffect(() => {
     const fetchCommunities = async () => {
