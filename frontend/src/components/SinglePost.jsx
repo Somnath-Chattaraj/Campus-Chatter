@@ -3,6 +3,7 @@ import { GrLike } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
 import { AiFillLike } from "react-icons/ai";
 import { useParams, Navigate } from "react-router-dom";
+import parse from "html-react-parser";
 import {
   Box,
   Heading,
@@ -241,7 +242,7 @@ const SinglePost = () => {
           </Box>
         </Flex>
         <Text fontSize="md" mt={4} color="gray.300">
-          {post.content}
+          {parse(post.content)}
         </Text>
         <Flex w="full" justify="space-between" align="center" mt={4}>
           <Flex align="center">
