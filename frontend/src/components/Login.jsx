@@ -157,6 +157,15 @@ const LoginPage = () => {
         { withCredentials: true }
       );
       setLoading(false);
+      if (response.status == 201) {
+        toast({
+          title: "Email not verified.",
+          description: "Please check your email for verification.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
       toast({
         title: "Login successful.",
         description: "You are being redirected to the posts page.",
@@ -165,6 +174,7 @@ const LoginPage = () => {
         isClosable: true,
       });
       navigate("/posts");
+    }
     } catch (error) {
       setLoading(false);
       toast({

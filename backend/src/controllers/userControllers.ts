@@ -229,7 +229,27 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     res.status(201).json({ message: "User created" });
   }
 });
-
+const resendURL = asyncHandler(async (req: Request, res: Response) => {
+  const {email, password} = req.body;
+  if (!email || !password) {
+    res.status(400).json({ message: "Please provide all fields" });
+    return;
+  }
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+  if (!user.password) {
+    res.status(401).json({ message: "Logged in with Google Or Github" });
+    return;
+  }
+  
+})
 const verifyUser = asyncHandler(async (req: Request, res: Response) => {
   const token = req.params.token;
   if (!token) {
@@ -240,7 +260,7 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
   const { sub, exp } = jwt.verify(token, process.env.SECRET);
   // @ts-ignore
   if (exp < Date.now()) {
-    res.status(400).json({ message: "Token expired" });
+    res.status(400).json({ message: "Token expired. Login to verify your email" });
     return;
   }
   const user = await prisma.user.findUnique({
@@ -252,6 +272,7 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
     res.status(404).json({ message: "User not found" });
     return;
   }
+  
   if (user.emailVerified) {
     res.status(400).json({ message: "User already verified" });
     return;
@@ -290,7 +311,13 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
   if (!user.emailVerified) {
-    res.status(401).json({ message: "Email not verified" });
+    const exp = Date.now() + 1000 * 60 * 5;
+    // @ts-ignore
+    const token = jwt.sign({ sub: user.user_id, exp }, process.env.SECRET);
+    const url = `${process.env.BACKEND_URL}/api/user/verify/${token}`;
+    const htmlContent = `<a href="${url}">Verify using this link</a>`;
+    sendMail(htmlContent, email);
+    res.status(201).json({ message: "Email Sent" })
     return;
   }
   const match = await bcrypt.compare(password, user.password);
