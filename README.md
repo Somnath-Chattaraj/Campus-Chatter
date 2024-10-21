@@ -1,5 +1,6 @@
 # Campus Chatter
 
+[![EC2 Deployment](https://github.com/tanish35/Campus-Chatter-backend/actions/workflows/deploy.yml/badge.svg)](https://github.com/tanish35/Campus-Chatter-backend/actions/workflows/deploy.yml)
 [![GitHub release](https://img.shields.io/github/v/release/Somnath-Chattaraj/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/releases)
 [![GitHub issues](https://img.shields.io/github/issues/Somnath-Chattaraj/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/issues)
 [![GitHub forks](https://img.shields.io/github/forks/Somnath-Chattaraj/Campus-Chatter)](https://github.com/Somnath-Chattaraj/Campus-Chatter/network)
