@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AiFillLike } from "react-icons/ai";
 import { useParams, Navigate } from "react-router-dom";
 import parse from "html-react-parser";
+import DOMPurify from "dompurify";
 import {
   Box,
   Heading,
@@ -242,7 +243,7 @@ const SinglePost = () => {
           </Box>
         </Flex>
         <Text fontSize="md" mt={4} color="gray.300">
-          {parse(post.content)}
+          {parse(DOMPurify.sanitize(post.content))}
         </Text>
         <Flex w="full" justify="space-between" align="center" mt={4}>
           <Flex align="center">

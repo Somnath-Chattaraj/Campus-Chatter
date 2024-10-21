@@ -22,6 +22,7 @@ import { InfinitySpin } from "react-loader-spinner";
 import { gsap } from "gsap";
 import { useRef } from "react";
 import parse from "html-react-parser";
+import DOMPurify from "dompurify";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -223,7 +224,7 @@ const Posts = () => {
               <Text fontSize="sm" color="gray.500">
                 {post.User.username}
               </Text>
-              <Text>{parse(post.content)}</Text>
+              <Text>{parse(DOMPurify.sanitize(post.content))}</Text>
 
               <Flex justify="space-between" align="center" mt={4}>
                 <Flex align="center">
