@@ -230,6 +230,26 @@ const registerUser = (0, express_async_handler_1.default)((req, res) => __awaite
     }
 }));
 exports.registerUser = registerUser;
+const resendURL = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        res.status(400).json({ message: "Please provide all fields" });
+        return;
+    }
+    const user = yield prisma_1.default.user.findUnique({
+        where: {
+            email,
+        },
+    });
+    if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+    }
+    if (!user.password) {
+        res.status(401).json({ message: "Logged in with Google Or Github" });
+        return;
+    }
+}));
 const verifyUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.params.token;
     if (!token) {
@@ -240,7 +260,7 @@ const verifyUser = (0, express_async_handler_1.default)((req, res) => __awaiter(
     const { sub, exp } = jsonwebtoken_1.default.verify(token, process.env.SECRET);
     // @ts-ignore
     if (exp < Date.now()) {
-        res.status(400).json({ message: "Token expired" });
+        res.status(400).json({ message: "Token expired. Login to verify your email" });
         return;
     }
     const user = yield prisma_1.default.user.findUnique({
@@ -290,7 +310,13 @@ const loginUser = (0, express_async_handler_1.default)((req, res) => __awaiter(v
         return;
     }
     if (!user.emailVerified) {
-        res.status(401).json({ message: "Email not verified" });
+        const exp = Date.now() + 1000 * 60 * 5;
+        // @ts-ignore
+        const token = jsonwebtoken_1.default.sign({ sub: user.user_id, exp }, process.env.SECRET);
+        const url = `${process.env.BACKEND_URL}/api/user/verify/${token}`;
+        const htmlContent = `<a href="${url}">Verify using this link</a>`;
+        (0, sendMail_1.default)(htmlContent, email);
+        res.status(201).json({ message: "Email Sent" });
         return;
     }
     const match = yield bcrypt_1.default.compare(password, user.password);
@@ -319,6 +345,7 @@ const getCurrentUserDetails = (0, express_async_handler_1.default)((req, res) =>
             email: true,
             username: true,
             pic: true,
+            collegeEmailVerified: true,
             userCourses: {
                 select: {
                     Course: {

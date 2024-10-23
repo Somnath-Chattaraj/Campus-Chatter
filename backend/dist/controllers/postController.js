@@ -17,11 +17,18 @@ const express_async_handler_1 = __importDefault(require("express-async-handler")
 const prisma_1 = __importDefault(require("../lib/prisma"));
 const fuse_js_1 = __importDefault(require("fuse.js"));
 const sendMail_1 = __importDefault(require("../mail/sendMail"));
+const html_to_text_1 = require("html-to-text");
+const redis_1 = require("../lib/redis");
 // @ts-ignore
 const searchPosts = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { query } = req.body;
     if (!query) {
         return res.status(400).json({ message: "Search query is required" });
+    }
+    const cacheKey = `search:${query}`;
+    const cachedResults = yield (0, redis_1.getCachedData)(cacheKey);
+    if (cachedResults) {
+        return res.status(200).json({ posts: JSON.parse(cachedResults) });
     }
     const posts = yield prisma_1.default.post.findMany({
         select: {
@@ -41,11 +48,16 @@ const searchPosts = (0, express_async_handler_1.default)((req, res) => __awaiter
             },
         },
     });
-    const fuse = new fuse_js_1.default(posts, {
+    const plainTextPosts = posts.map((post) => (Object.assign(Object.assign({}, post), { content: (0, html_to_text_1.htmlToText)(post.content, {
+            wordwrap: false,
+            preserveNewlines: true,
+        }) })));
+    const fuse = new fuse_js_1.default(plainTextPosts, {
         keys: ["title", "content", "College.name"],
         threshold: 0.6,
     });
     const searchResults = fuse.search(query).map((result) => result.item);
+    yield (0, redis_1.setCachedData)(cacheKey, JSON.stringify(searchResults), 300);
     return res.status(200).json({ posts: searchResults });
 }));
 exports.searchPosts = searchPosts;
@@ -213,6 +225,7 @@ const fetchSinglePost = (0, express_async_handler_1.default)((req, res) => __awa
             },
             User: {
                 select: {
+                    user_id: true,
                     username: true,
                     pic: true,
                 },
@@ -224,6 +237,7 @@ const fetchSinglePost = (0, express_async_handler_1.default)((req, res) => __awa
                     user_id: true,
                     User: {
                         select: {
+                            user_id: true,
                             username: true,
                             pic: true,
                         },
@@ -259,7 +273,19 @@ const deletePost = (0, express_async_handler_1.default)((req, res) => __awaiter(
     if (post.User.user_id !== user_id) {
         return res.status(401).json({ message: "Unauthorized" });
     }
-    return res.status(200).json({ message: "Post deleted" });
+    // @ts-ignore
+    yield prisma_1.default.$transaction((prisma) => __awaiter(void 0, void 0, void 0, function* () {
+        yield prisma.comment.deleteMany({
+            where: { post_id: postId },
+        });
+        yield prisma.like.deleteMany({
+            where: { post_id: postId },
+        });
+        yield prisma.post.delete({
+            where: { post_id: postId },
+        });
+    }));
+    return res.status(200).json({ message: "Post and comments deleted" });
 }));
 exports.deletePost = deletePost;
 // @ts-ignore
@@ -352,6 +378,9 @@ const deleteComment = (0, express_async_handler_1.default)((req, res) => __await
     if (comment.User.user_id !== user_id) {
         return res.status(401).json({ message: "Unauthorized" });
     }
+    yield prisma_1.default.comment.delete({
+        where: { comment_id: commentId },
+    });
     return res.status(200).json({ message: "Comment deleted" });
 }));
 exports.deleteComment = deleteComment;
