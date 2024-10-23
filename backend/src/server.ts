@@ -104,9 +104,9 @@ wss.on('connection', (ws) => {
                 client.send(JSON.stringify({ type: 'newMessage', data: { roomId: data.roomId, message: newMessage } }));
               }
             } else {
-              // Handle sending email to disconnected users
+
               chatRoom.users.forEach(user => {
-                // Check if user is disconnected
+
                 const isUserConnected = [...wss.clients].some(c => clientRoomMap.get(c)?.has(data.roomId) && c.readyState === WebSocket.OPEN);
           
                 if (!isUserConnected && user.user_id !== data.userId) {
