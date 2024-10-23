@@ -12,7 +12,6 @@ import {
   Flex,
   Text,
 } from "@chakra-ui/react";
-import { htmlToText } from "html-to-text";
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,11 +62,7 @@ const SearchBar = () => {
             {suggestion.title}
           </Text>
           <Text fontSize="sm" color="gray.400">
-            {htmlToText(suggestion.content, {
-              wordwrap: false,
-              preserveNewlines: true,
-            }).slice(0, 50)}
-            ...
+            {suggestion.content.slice(0, 50)}...
           </Text>
           <Text fontSize="xs" color="gray.500">
             Posted by {suggestion.User.username}
