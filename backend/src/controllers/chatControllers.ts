@@ -12,7 +12,7 @@ export const getChatHistory = async (req: Request, res: Response) => {
     const cacheKey = `search:${roomId}`;
   const cachedResults = await getCachedData(cacheKey);
   if (cachedResults) {
-    return res.status(200).json({ posts: JSON.parse(cachedResults) });
+    return res.status(200).json(JSON.parse(cachedResults));
   }
     const messages = await prisma.message.findMany({
       where: { chatRoomId: roomId },
