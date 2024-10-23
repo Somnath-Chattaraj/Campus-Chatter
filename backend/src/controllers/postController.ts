@@ -52,7 +52,7 @@ const searchPosts = asyncHandler(async (req: Request, res: Response) => {
   });
 
   const searchResults = fuse.search(query).map((result) => result.item);
-  await setCachedData(cacheKey, JSON.stringify(searchResults), 3600);
+  await setCachedData(cacheKey, JSON.stringify(searchResults), 300);
 
   return res.status(200).json({ posts: searchResults });
 });
