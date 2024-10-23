@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 
+
 const prisma = new PrismaClient();
 
 
@@ -8,6 +9,7 @@ export const getChatHistory = async (req: Request, res: Response) => {
   const { roomId } = req.params;
 
   try {
+    
     const messages = await prisma.message.findMany({
       where: { chatRoomId: roomId },
       include: {
@@ -22,8 +24,6 @@ export const getChatHistory = async (req: Request, res: Response) => {
       message: message.content,
       at: message.timestamp,
     }));
-    
-    // Send the formatted messages as a JSON response
     res.json(messageFormat);
     
   } catch (error) {
