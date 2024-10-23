@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { getCachedData, setCachedData } from '../lib/redis';
 
 const prisma = new PrismaClient();
 
@@ -8,6 +9,11 @@ export const getChatHistory = async (req: Request, res: Response) => {
   const { roomId } = req.params;
 
   try {
+    const cacheKey = `search:${roomId}`;
+  const cachedResults = await getCachedData(cacheKey);
+  if (cachedResults) {
+    return res.status(200).json({ posts: JSON.parse(cachedResults) });
+  }
     const messages = await prisma.message.findMany({
       where: { chatRoomId: roomId },
       include: {
@@ -22,8 +28,7 @@ export const getChatHistory = async (req: Request, res: Response) => {
       message: message.content,
       at: message.timestamp,
     }));
-    
-    // Send the formatted messages as a JSON response
+    await setCachedData(cacheKey, JSON.stringify(messageFormat), 3600);
     res.json(messageFormat);
     
   } catch (error) {
