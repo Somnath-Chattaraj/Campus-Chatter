@@ -105,62 +105,62 @@ wss.on('connection', (ws) => {
               }
             } else {
               // Handle sending email to disconnected users
-              const emailRecipients = chatRoom.users.filter(user => {
-                return !wss.clients.has(client) && user.user_id !== data.userId;
-              });
-
-              emailRecipients.forEach(recipient => {
-                const htmlContent = `
-  <html>
-    <head>
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f4f4f4;
-          margin: 0;
-          padding: 20px;
-        }
-        .container {
-          max-width: 600px;
-          margin: auto;
-          background: #ffffff;
-          border-radius: 8px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-          padding: 20px;
-        }
-        h1 {
-          color: #333;
-        }
-        p {
-          font-size: 16px;
-          line-height: 1.5;
-          color: #555;
-        }
-        a {
-          color: #007BFF;
-          text-decoration: none;
-          font-weight: bold;
-        }
-        .footer {
-          margin-top: 20px;
-          font-size: 12px;
-          color: #888;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1>New Message in Chat Room ${data.roomId}</h1>
-        <p>You've received a new message in chat room <strong>${data.roomId}</strong>.</p>
-        <p>Click the link below and enter the room id to view the message:</p>
-        <p><a href="https://www.campusify.site/room/joinroom">Join Room</a></p>
-        <p class="footer">Thank you for using our service!</p>
-      </div>
-    </body>
-  </html>
-`;
-
-                sendMail(htmlContent, recipient.email, "Message notification");
+              chatRoom.users.forEach(user => {
+                // Check if user is disconnected
+                const isUserConnected = [...wss.clients].some(c => clientRoomMap.get(c)?.has(data.roomId) && c.readyState === WebSocket.OPEN);
+          
+                if (!isUserConnected && user.user_id !== data.userId) {
+                  const htmlContent = `
+                    <html>
+                      <head>
+                        <style>
+                          body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f4f4f4;
+                            margin: 0;
+                            padding: 20px;
+                          }
+                          .container {
+                            max-width: 600px;
+                            margin: auto;
+                            background: #ffffff;
+                            border-radius: 8px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                            padding: 20px;
+                          }
+                          h1 {
+                            color: #333;
+                          }
+                          p {
+                            font-size: 16px;
+                            line-height: 1.5;
+                            color: #555;
+                          }
+                          a {
+                            color: #007BFF;
+                            text-decoration: none;
+                            font-weight: bold;
+                          }
+                          .footer {
+                            margin-top: 20px;
+                            font-size: 12px;
+                            color: #888;
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        <div class="container">
+                          <h1>New Message in Chat Room ${data.roomId}</h1>
+                          <p>You've received a new message in chat room <strong>${data.roomId}</strong>.</p>
+                          <p>Click the link below and enter the room id to view the message:</p>
+                          <p><a href="https://www.campusify.site/room/joinroom">Join Room</a></p>
+                          <p class="footer">Thank you for using our service!</p>
+                        </div>
+                      </body>
+                    </html>
+                  `;
+                  sendMail(htmlContent, user.email, "Message notification");
+                }
               });
             }
           });
