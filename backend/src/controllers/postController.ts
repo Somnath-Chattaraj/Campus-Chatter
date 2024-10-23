@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import Fuse from "fuse.js";
 import sendMail from "../mail/sendMail";
+import { htmlToText } from "html-to-text";
 
 // @ts-ignore
 const searchPosts = asyncHandler(async (req: Request, res: Response) => {
@@ -30,7 +31,15 @@ const searchPosts = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-  const fuse = new Fuse(posts, {
+  const plainTextPosts = posts.map((post) => ({
+    ...post,
+    content: htmlToText(post.content, {
+      wordwrap: false,
+      preserveNewlines: true,
+    }),
+  }));
+
+  const fuse = new Fuse(plainTextPosts, {
     keys: ["title", "content", "College.name"],
     threshold: 0.6,
   });

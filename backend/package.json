@@ -37,6 +37,7 @@
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
     "fuse.js": "^7.0.0",
+    "html-to-text": "^9.0.5",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.4",
@@ -47,6 +48,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/html-to-text": "^9.0.4",
     "prisma": "^5.20.0",
     "ts-node": "^10.9.2"
   }
