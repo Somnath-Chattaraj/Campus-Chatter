@@ -4,6 +4,7 @@ import prisma from "../lib/prisma";
 import Fuse from "fuse.js";
 import sendMail from "../mail/sendMail";
 import { htmlToText } from "html-to-text";
+import { setCachedData, getCachedData } from "../lib/redis";
 
 // @ts-ignore
 const searchPosts = asyncHandler(async (req: Request, res: Response) => {
@@ -12,6 +13,12 @@ const searchPosts = asyncHandler(async (req: Request, res: Response) => {
   if (!query) {
     return res.status(400).json({ message: "Search query is required" });
   }
+  const cacheKey = `search:${query}`;
+  const cachedResults = await getCachedData(cacheKey);
+  if (cachedResults) {
+    return res.status(200).json({ posts: JSON.parse(cachedResults) });
+  }
+
   const posts = await prisma.post.findMany({
     select: {
       post_id: true,
@@ -45,6 +52,7 @@ const searchPosts = asyncHandler(async (req: Request, res: Response) => {
   });
 
   const searchResults = fuse.search(query).map((result) => result.item);
+  await setCachedData(cacheKey, JSON.stringify(searchResults), 3600);
 
   return res.status(200).json({ posts: searchResults });
 });
