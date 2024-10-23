@@ -38,6 +38,7 @@
     "express-async-handler": "^1.2.0",
     "fuse.js": "^7.0.0",
     "html-to-text": "^9.0.5",
+    "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.4",
