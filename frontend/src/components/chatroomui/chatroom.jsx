@@ -13,7 +13,9 @@ const Chatroom = () => {
   const [prevMsg, setPrevMsg] = useState([]);
   const [myMsg, setMyMsg] = useState("");
   const messageEndRef = useRef(null);
+  const [userLookup, setUserLookup] = useState({});
   const { loadingUser, userDeatils } = useUser();
+  const {users,setUsers} = useState([]);
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WEBSOCKET_URL
@@ -26,7 +28,18 @@ const Chatroom = () => {
           withCredentials: true,
         });
         setPrevMsg(response.data);
-
+        const roomDetails = await axios.get(`/api/chat/rooms/${roomId}`, {
+          withCredentials: true,
+        });
+        const users = roomDetails.data.users; 
+        // Array of users with userId, username, email
+        console.log(users);
+        // Create a user lookup map: { userId: username }
+        const lookup = users.reduce((acc, user) => {
+          acc[user.user_id] = user.username;
+          return acc;
+        }, {});
+        setUserLookup(lookup);
         const tosend = {
           type: "joinRoom",
           data: {
@@ -151,25 +164,27 @@ const Chatroom = () => {
   
         {/* Messages */}
         <div className="flex-grow overflow-y-auto p-4 bg-gradient-to-b from-gray-800 via-gray-900 to-black rounded-xl shadow-inner space-y-6 scrollbar-thin scrollbar-thumb-gray-700">
-  {combinedMessages.length ? (
-    combinedMessages.map((data, index) => (
-      <div
-        key={index}
-        className={`relative p-5 rounded-2xl shadow-lg transition-transform duration-300 transform ${
-          data.senderId === "you" || data.senderId === userId
-            ? "bg-gradient-to-r from-emerald-500 to-emerald-600 ml-auto"
-            : "bg-gradient-to-r from-gray-700 to-gray-800 mr-auto"
-        } max-w-sm hover:scale-105 border border-gray-600`}
-      >
-        <div
-          className={`absolute top-1 right-1 px-2 py-1 rounded-full text-xs font-medium tracking-wider ${
-            data.senderId === "you" || data.senderId === userId
-              ? "bg-emerald-700 text-emerald-100"
-              : "bg-gray-600 text-gray-200"
-          }`}
-        >
-          {data.senderId === "you" || data.senderId === userId ? "You" : data.senderId || data.id}
-        </div>
+        {combinedMessages.length ? (
+            combinedMessages.map((data, index) => (
+              <div
+                key={index}
+                className={`relative p-5 rounded-2xl shadow-lg transition-transform duration-300 transform ${
+                  data.senderId === userId
+                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 ml-auto"
+                    : "bg-gradient-to-r from-gray-700 to-gray-800 mr-auto"
+                } max-w-sm hover:scale-105 border border-gray-600`}
+              >
+                <div
+                className={`absolute top-1 right-1 px-2 py-1 rounded-full text-xs font-medium tracking-wider ${
+                  data.senderId === userId
+                    ? "bg-emerald-700 text-emerald-100"
+                    : "bg-gray-600 text-gray-200"
+                }`}
+              >
+                {/* Show 'You' for the current user, else display the corresponding username */}
+                {data.senderId === userId ? "You" : userLookup[data.senderId] || data.senderId}
+              </div>
+
         <div className="text-lg mt-4 font-bold text-white mb-2">
           {data.message || data.content}
         </div>
