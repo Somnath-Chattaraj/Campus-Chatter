@@ -1,6 +1,7 @@
 import WebSocket, { Server } from 'ws';
 import { PrismaClient } from '@prisma/client';
 import sendMail from './mail/sendMail';
+import { any } from 'zod';
 
 const prisma = new PrismaClient();
 const wss = new Server({ port: 8080 });
@@ -103,12 +104,19 @@ wss.on('connection', (ws) => {
         client.send(JSON.stringify({ type: 'newMessage', data: { roomId: data.roomId, message: newMessage } }));
       }
     });
+    let username = "" as string;
+    chatRoom.users.forEach((user:any)=> {
+      if (user.user_id === data.userId) {
+        username = user.username as string;
+      }
+    })
 
     // Send email to disconnected users
-    chatRoom.users.forEach(user => {
+    chatRoom.users.forEach((user:any) => {
       const isUserConnected = [...wss.clients].some(
         client => clientRoomMap.get(client)?.has(data.roomId) && client.readyState === WebSocket.OPEN && user.user_id === data.userId
       );
+
 
       // Send email only to disconnected users and exclude the sender
       if (!isUserConnected && user.user_id !== data.userId) {
@@ -152,8 +160,8 @@ wss.on('connection', (ws) => {
             </head>
             <body>
               <div class="container">
-                <h1>New Message in Chat Room ${data.roomId}</h1>
-                <p>You've received a new message in chat room <strong>${data.roomId}</strong>.</p>
+                <h1>New Message from ${username}</h1>
+                <p>You've received a new message from <strong> ${username} </strong> in chat room ${data.roomId}.</p>
                 <p>Click the link below and enter the room id to view the message:</p>
                 <p><a href="https://www.campusify.site/room/joinroom">Join Room</a></p>
                 <p class="footer">Thank you for using our service!</p>

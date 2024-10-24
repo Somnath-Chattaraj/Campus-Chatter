@@ -38,7 +38,7 @@ const searchPosts = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-  const plainTextPosts = posts.map((post) => ({
+  const plainTextPosts = posts.map((post : any) => ({
     ...post,
     content: htmlToText(post.content, {
       wordwrap: false,

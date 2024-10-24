@@ -15,11 +15,6 @@ const prisma = new client_1.PrismaClient();
 const getChatHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { roomId } = req.params;
     try {
-        //   const cacheKey = `search:${roomId}`;
-        // const cachedResults = await getCachedData(cacheKey);
-        // if (cachedResults) {
-        //   return res.status(200).json(JSON.parse(cachedResults));
-        // }
         const messages = yield prisma.message.findMany({
             where: { chatRoomId: roomId },
             include: {
@@ -34,7 +29,6 @@ const getChatHistory = (req, res) => __awaiter(void 0, void 0, void 0, function*
             message: message.content,
             at: message.timestamp,
         }));
-        // await setCachedData(cacheKey, JSON.stringify(messageFormat), 3600);
         res.json(messageFormat);
     }
     catch (error) {
