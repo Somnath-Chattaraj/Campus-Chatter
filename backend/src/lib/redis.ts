@@ -36,4 +36,32 @@ export const disconnectRedis = async (): Promise<void> => {
   }
 };
 
+export const deleteCachedPosts = async (collegeId: string): Promise<void> => {
+  try {
+    const collegePattern = `posts:${collegeId}:page:*`;
+    const allPattern = `posts:all:page:*`;
+    const collegeStream = redis.scanStream({ match: collegePattern });
+    const allStream = redis.scanStream({ match: allPattern });
+    collegeStream.on("data", (keys) => {
+      if (keys.length) {
+        redis.del(...keys);
+      }
+    });
+    allStream.on("data", (keys) => {
+      if (keys.length) {
+        redis.del(...keys);
+      }
+    });
+    collegeStream.on("end", () => {
+      console.log(`Deleted cache for collegeId: ${collegeId}`);
+    });
+
+    allStream.on("end", () => {
+      console.log(`Deleted all cache entries.`);
+    });
+  } catch (error) {
+    console.error("Error deleting cached posts from Redis", error);
+  }
+};
+
 export default redis;

@@ -4,7 +4,7 @@ import prisma from "../lib/prisma";
 import Fuse from "fuse.js";
 import sendMail from "../mail/sendMail";
 import { htmlToText } from "html-to-text";
-import { setCachedData, getCachedData } from "../lib/redis";
+import { setCachedData, getCachedData, deleteCachedPosts } from "../lib/redis";
 
 // @ts-ignore
 const searchPosts = asyncHandler(async (req: Request, res: Response) => {
@@ -38,7 +38,7 @@ const searchPosts = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-  const plainTextPosts = posts.map((post : any) => ({
+  const plainTextPosts = posts.map((post: any) => ({
     ...post,
     content: htmlToText(post.content, {
       wordwrap: false,
@@ -124,7 +124,7 @@ const createPost = asyncHandler(async (req: Request, res: Response, next) => {
       college_id: collegeId,
     },
   });
-
+  await deleteCachedPosts(collegeId);
   return res.status(201).json({ post });
 });
 
@@ -286,6 +286,11 @@ const deletePost = asyncHandler(async (req: Request, res: Response) => {
           user_id: true,
         },
       },
+      College: {
+        select: {
+          college_id: true,
+        },
+      },
     },
     where: { post_id: postId },
   });
@@ -313,6 +318,7 @@ const deletePost = asyncHandler(async (req: Request, res: Response) => {
       where: { post_id: postId },
     });
   });
+  await deleteCachedPosts(post.College.college_id);
 
   return res.status(200).json({ message: "Post and comments deleted" });
 });
