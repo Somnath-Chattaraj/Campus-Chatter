@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import prisma from "../lib/prisma";
+import redis from "../lib/redis";
 // @ts-ignore
 async function requireAuth(req, res, next) {
   try {
@@ -9,6 +10,17 @@ async function requireAuth(req, res, next) {
     // @ts-ignore
     if (Date.now() >= decoded.exp) {
       res.sendStatus(410);
+      return;
+    }
+    const userId = decoded.sub;
+    if (!userId) {
+      res.sendStatus(401);
+      return;
+    }
+    const cachedUser = await redis.get(userId);
+    if (cachedUser) {
+      req.user = JSON.parse(cachedUser);
+      next();
       return;
     }
     const user = await prisma.user.findUnique({
@@ -21,7 +33,7 @@ async function requireAuth(req, res, next) {
       return;
     }
     req.user = user;
-
+    await redis.set(`user:${userId}`, JSON.stringify(user), "EX", 3600);
     next();
   } catch (err) {
     res.sendStatus(401);

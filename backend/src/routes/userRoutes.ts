@@ -16,6 +16,7 @@ import {
   updateDetails,
 } from "../controllers/userControllers";
 import checkAuth from "../middleware/checkAuth";
+import rateLimiter from "../middleware/rateLimit";
 
 const router = express.Router();
 
@@ -31,6 +32,6 @@ router.post("/addDetails", addDetailsToUser); // add details to the current user
 router.post("/addusername", addUsername); // change the username of the current user
 router.get("/all", getAllUser);
 router.get("/logout", logOut);
-router.post("/update", checkAuth, updateDetails);
+router.post("/update", checkAuth, rateLimiter, updateDetails);
 
 export default router;
