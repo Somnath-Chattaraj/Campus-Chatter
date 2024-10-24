@@ -136,6 +136,13 @@ const fetchPosts = asyncHandler(async (req: Request, res: Response) => {
   const postsPerPage = 4;
   const offset = (pageNumber - 1) * postsPerPage;
 
+  const cacheKey = `posts:${collegeId || "all"}:page:${pageNumber}`;
+
+  const cachedResults = await getCachedData(cacheKey);
+  if (cachedResults) {
+    return res.status(200).json(JSON.parse(cachedResults));
+  }
+
   const posts = await prisma.post.findMany({
     where: collegeId ? { college_id: collegeId } : {},
     orderBy: {
@@ -169,6 +176,9 @@ const fetchPosts = asyncHandler(async (req: Request, res: Response) => {
 
   const totalPosts = await prisma.post.count();
   const isOver = offset + postsPerPage >= totalPosts;
+
+  const result = { posts, isOver };
+  await setCachedData(cacheKey, JSON.stringify(result), 600);
 
   return res.status(200).json({ posts, isOver });
 });
