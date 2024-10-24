@@ -15,7 +15,6 @@ const Chatroom = () => {
   const messageEndRef = useRef(null);
   const [userLookup, setUserLookup] = useState({});
   const { loadingUser, userDeatils } = useUser();
-  const {users,setUsers} = useState([]);
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WEBSOCKET_URL
@@ -28,26 +27,22 @@ const Chatroom = () => {
           withCredentials: true,
         });
         setPrevMsg(response.data);
+
         const roomDetails = await axios.get(`/api/chat/rooms/${roomId}`, {
           withCredentials: true,
         });
-        const users = roomDetails.data.users; 
-        // Array of users with userId, username, email
-        console.log(users);
-        // Create a user lookup map: { userId: username }
+        const users = roomDetails.data.users;
+
         const lookup = users.reduce((acc, user) => {
           acc[user.user_id] = user.username;
           return acc;
         }, {});
         setUserLookup(lookup);
-        const tosend = {
+
+        sendJsonMessage({
           type: "joinRoom",
-          data: {
-            userId: userId,
-            roomId: roomId,
-          },
-        };
-        sendJsonMessage(tosend);
+          data: { userId, roomId },
+        });
       } catch (error) {
         console.error("Error fetching chat history:", error);
       }
@@ -55,6 +50,8 @@ const Chatroom = () => {
 
     fetchChatHistory();
   }, [roomId, userId, sendJsonMessage]);
+
+  // Handle incoming messages from WebSocket
   useEffect(() => {
     if (lastJsonMessage !== null) {
       if (lastJsonMessage.type === "error") {
@@ -65,6 +62,7 @@ const Chatroom = () => {
       ) {
         const data = lastJsonMessage.data.message;
 
+        // Only add message if it is from another user (to prevent duplicates)
         if (data.senderId !== userId) {
           setAllMsg((prev) => [
             ...prev,
@@ -79,7 +77,7 @@ const Chatroom = () => {
     }
   }, [lastJsonMessage, roomId, userId]);
 
-  // Auto-scroll to the bottom when messages are updated
+  // Auto-scroll to the bottom when messages update
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -89,26 +87,19 @@ const Chatroom = () => {
   if (loadingUser) {
     return <div>Loading...</div>;
   }
-  // if (!userDeatils) {
-  //   return <Navigate to="/login" />;
-  // }
 
-  // Submit message function
   const submit = () => {
-    const tosend = {
+    const messageData = {
       type: "sendMessage",
-      data: {
-        roomId: roomId,
-        userId: userId,
-        message: myMsg,
-      },
+      data: { roomId, userId, message: myMsg },
     };
-    sendJsonMessage(tosend);
+    sendJsonMessage(messageData);
 
+    // Add message to local state immediately without waiting for WebSocket confirmation
     setAllMsg((prev) => [
       ...prev,
       {
-        senderId: "you",
+        senderId: userId,
         message: myMsg,
         at: new Date().toISOString(),
       },
@@ -116,7 +107,6 @@ const Chatroom = () => {
     setMyMsg("");
   };
 
-  // Format date
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     return new Intl.DateTimeFormat("en-US", {
@@ -135,17 +125,13 @@ const Chatroom = () => {
     [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
 
-  // Combine and sort messages
   const combinedMessages = [...prevMsg, ...allMsg].sort(
     (a, b) => new Date(a.at) - new Date(b.at)
   );
 
-
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 to-black p-4 text-white">
       <div className="max-w-4xl mx-auto w-full flex-grow flex flex-col bg-slate-950/90 rounded-3xl shadow-2xl p-6 space-y-6 transition-all">
-        
-        {/* Header */}
         <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
           <h4 className="text-emerald-300 text-lg font-bold px-4">
             Connection Status:{" "}
@@ -161,45 +147,49 @@ const Chatroom = () => {
             Room ID: <span className="font-semibold">{roomId || "null"}</span>
           </div>
         </div>
-  
-        {/* Messages */}
+
         <div className="flex-grow overflow-y-auto p-4 bg-gradient-to-b from-gray-800 via-gray-900 to-black rounded-xl shadow-inner space-y-6 scrollbar-thin scrollbar-thumb-gray-700">
-        {combinedMessages.length ? (
+          {combinedMessages.length ? (
             combinedMessages.map((data, index) => (
               <div
                 key={index}
-                className={`relative p-5 rounded-2xl shadow-lg transition-transform duration-300 transform ${
-                  data.senderId === userId
-                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 ml-auto"
-                    : "bg-gradient-to-r from-gray-700 to-gray-800 mr-auto"
-                } max-w-sm hover:scale-105 border border-gray-600`}
-              >
-                <div
-                className={`absolute top-1 right-1 px-2 py-1 rounded-full text-xs font-medium tracking-wider ${
-                  data.senderId === userId
-                    ? "bg-emerald-700 text-emerald-100"
-                    : "bg-gray-600 text-gray-200"
+                className={`flex ${
+                  data.senderId === userId ? "justify-end" : "justify-start"
                 }`}
               >
-                {/* Show 'You' for the current user, else display the corresponding username */}
-                {data.senderId === userId ? "You" : userLookup[data.senderId] || data.senderId}
+                <div
+                  className={`relative p-5 rounded-2xl shadow-lg transition-transform duration-300 transform ${
+                    data.senderId === userId
+                      ? "bg-gradient-to-r from-emerald-500 to-emerald-600"
+                      : "bg-gradient-to-r from-gray-700 to-gray-800"
+                  } max-w-sm hover:scale-105 border border-gray-600`}
+                >
+                  <div
+                    className={`absolute top-1 right-1 px-2 py-1 rounded-full text-xs font-medium tracking-wider ${
+                      data.senderId === userId
+                        ? "bg-emerald-700 text-emerald-100"
+                        : "bg-gray-600 text-gray-200"
+                    }`}
+                  >
+                    {data.senderId === userId ? "You" : userLookup[data.senderId] || data.senderId}
+                  </div>
+
+                  <div className="text-lg mt-4 font-bold text-white mb-2">
+                    {data.message}
+                  </div>
+
+                  <div className="text-sm text-slate-300 italic">
+                    Sent at: {formatDate(data.at)}
+                  </div>
+                </div>
               </div>
-
-        <div className="text-lg mt-4 font-bold text-white mb-2">
-          {data.message || data.content}
+            ))
+          ) : (
+            <div className="text-gray-500 text-center">No messages yet</div>
+          )}
+          <div ref={messageEndRef}></div>
         </div>
-        <div className="text-sm text-slate-300 italic">
-          Sent at: {formatDate(data.at) || formatDate(data.timestamp)}
-        </div>
-      </div>
-    ))
-  ) : (
-    <div className="text-gray-500 text-center">No messages yet</div>
-  )}
-  <div ref={messageEndRef}></div>
-</div>
 
-        {/* Input Section */}
         <div className="mt-4 flex space-x-3 items-center">
           <input
             type="text"
@@ -219,8 +209,6 @@ const Chatroom = () => {
       </div>
     </div>
   );
-  
-  
 };
 
 export default Chatroom;
