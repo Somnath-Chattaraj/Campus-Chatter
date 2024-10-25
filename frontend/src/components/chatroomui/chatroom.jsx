@@ -5,6 +5,7 @@ import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { useUser } from "../../hook/useUser";
 import { WEBSOCKET_URL } from "../../config";
+import {useToast} from "@chakra-ui/react";
 
 const Chatroom = () => {
   const userId = localStorage.getItem("userId");
@@ -19,6 +20,7 @@ const Chatroom = () => {
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WEBSOCKET_URL
   );
+  const toast = useToast();
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -83,6 +85,19 @@ const Chatroom = () => {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [allMsg]);
+
+  useEffect(() => {
+    if (readyState === ReadyState.CLOSED) {
+      toast({
+        title: "Connection Lost",
+        description: "WebSocket connection has been closed. Please refresh the page.",
+        status: "error",
+        duration: null,
+        isClosable: true,
+      });
+      // alert("WebSocket connection has been closed. Please refresh the page.");
+    }
+  }, [readyState, toast]);
 
   if (loadingUser) {
     return <div>Loading...</div>;

@@ -63,36 +63,45 @@ const CreatePost = ({ communities, onSubmit }) => {
   };
 
   const handlePaste = async (e) => {
-    e.preventDefault();
-    const items = e.clipboardData.items;
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (item.type.startsWith("image/")) {
-        const file = item.getAsFile();
-        if (file) {
-          setLoading(true);
-          try {
-            const imageUrl = await handleImageUpload(file);
-            const quill = quillRef.current.getEditor();
-            const range = quill.getSelection();
-            quill.insertEmbed(range.index, "image", imageUrl);
-          } catch (error) {
-            console.error("Error uploading image: ", error);
-          } finally {
-            setLoading(false);
-          }
+  e.preventDefault();
+  const items = e.clipboardData.items;
+  const quill = quillRef.current.getEditor();
+  let range = quill.getSelection();
+  if (!range) {
+    range = { index: quill.getLength() };
+  }
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+
+    if (item.type.startsWith("image/")) {
+      const file = item.getAsFile();
+      if (file) {
+        setLoading(true);
+        try {
+          const imageUrl = await handleImageUpload(file);
+          quill.insertEmbed(range.index, "image", imageUrl);
+        } catch (error) {
+          console.error("Error uploading image: ", error);
+        } finally {
+          setLoading(false);
         }
       }
+    } else if (item.type === "text/plain") {
+      const text = e.clipboardData.getData("Text");
+      quill.insertText(range.index, text);
     }
-  };
+  }
+};
 
-  useEffect(() => {
-    const quill = quillRef.current.getEditor();
-    quill.root.addEventListener("paste", handlePaste);
-    return () => {
-      quill.root.removeEventListener("paste", handlePaste);
-    };
-  }, []);
+useEffect(() => {
+  const quill = quillRef.current.getEditor();
+  quill.root.addEventListener("paste", handlePaste);
+  return () => {
+    quill.root.removeEventListener("paste", handlePaste);
+  };
+}, []);
+
   const handleSubmit = () => {
     if (postTitle && postContent && selectedCommunity) {
       onSubmit({
