@@ -8,6 +8,7 @@ import { Verifier } from "academic-email-verifier";
 import checkCollegeEmail from "../mail/checkAcademic";
 import { registerSchema } from "../validation/registerSchema";
 import redis from "../lib/redis";
+import { deleteCachedPosts } from "../lib/redis";
 
 const googleSignInOrSignUp = asyncHandler(
   //@ts-ignore
@@ -640,7 +641,19 @@ const updateDetails = asyncHandler(async (req: Request, res: Response) => {
       pic,
     },
   });
+  const college=await prisma.userCourse.findFirst({
+    where:{
+      user_id:userId
+    },
+    select:{
+      college_id:true
+    }
+  });
+  if(!college){
+    return res.status(404).json({ message: "User not found" });
+  }
   await redis.del(`user:${userId}`);
+  await deleteCachedPosts(college.college_id);
   return res.status(200).json({ message: "Details updated" });
 });
 
