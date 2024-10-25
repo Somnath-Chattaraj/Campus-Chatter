@@ -134,7 +134,7 @@ const JoinRoom1 = () => {
             placeholder="Enter Room ID"
             value={room_id}
             onChange={(e) => setRoomId(e.target.value)}
-            className="w-full border border-gray-300 text-black rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             onClick={() => handleClick(room_id)}
