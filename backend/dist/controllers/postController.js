@@ -124,6 +124,7 @@ const createPost = (0, express_async_handler_1.default)((req, res, next) => __aw
             college_id: collegeId,
         },
     });
+    yield (0, redis_1.deleteCachedPosts)(collegeId);
     return res.status(201).json({ post });
 }));
 exports.createPost = createPost;
@@ -133,6 +134,11 @@ const fetchPosts = (0, express_async_handler_1.default)((req, res) => __awaiter(
     const pageNumber = page;
     const postsPerPage = 4;
     const offset = (pageNumber - 1) * postsPerPage;
+    const cacheKey = `posts:${collegeId || "all"}:page:${pageNumber}`;
+    const cachedResults = yield (0, redis_1.getCachedData)(cacheKey);
+    if (cachedResults) {
+        return res.status(200).json(JSON.parse(cachedResults));
+    }
     const posts = yield prisma_1.default.post.findMany({
         where: collegeId ? { college_id: collegeId } : {},
         orderBy: {
@@ -165,6 +171,8 @@ const fetchPosts = (0, express_async_handler_1.default)((req, res) => __awaiter(
     });
     const totalPosts = yield prisma_1.default.post.count();
     const isOver = offset + postsPerPage >= totalPosts;
+    const result = { posts, isOver };
+    yield (0, redis_1.setCachedData)(cacheKey, JSON.stringify(result), 600);
     return res.status(200).json({ posts, isOver });
 }));
 exports.fetchPosts = fetchPosts;
@@ -176,6 +184,11 @@ const likePost = (0, express_async_handler_1.default)((req, res) => __awaiter(vo
         where: { post_id: postId },
         select: {
             likes: true,
+            College: {
+                select: {
+                    college_id: true,
+                },
+            },
         },
     });
     // @ts-ignore
@@ -205,6 +218,7 @@ const likePost = (0, express_async_handler_1.default)((req, res) => __awaiter(vo
             user_id,
         },
     });
+    yield (0, redis_1.deleteCachedPosts)(post.College.college_id);
     return res.status(200).json({ updatedPost });
 }));
 exports.likePost = likePost;
@@ -262,6 +276,11 @@ const deletePost = (0, express_async_handler_1.default)((req, res) => __awaiter(
                     user_id: true,
                 },
             },
+            College: {
+                select: {
+                    college_id: true,
+                },
+            },
         },
         where: { post_id: postId },
     });
@@ -285,6 +304,7 @@ const deletePost = (0, express_async_handler_1.default)((req, res) => __awaiter(
             where: { post_id: postId },
         });
     }));
+    yield (0, redis_1.deleteCachedPosts)(post.College.college_id);
     return res.status(200).json({ message: "Post and comments deleted" });
 }));
 exports.deletePost = deletePost;
@@ -317,6 +337,11 @@ const createComment = (0, express_async_handler_1.default)((req, res) => __await
                 select: {
                     email: true,
                     user_id: true,
+                },
+            },
+            College: {
+                select: {
+                    college_id: true,
                 },
             },
         },
@@ -354,6 +379,7 @@ const createComment = (0, express_async_handler_1.default)((req, res) => __await
   </div>
 `;
     (0, sendMail_1.default)(htmlContent, email, "New Comment on Your Post");
+    yield (0, redis_1.deleteCachedPosts)(post.College.college_id);
     return res.status(201).json({ comment });
 }));
 exports.createComment = createComment;
@@ -367,6 +393,7 @@ const deleteComment = (0, express_async_handler_1.default)((req, res) => __await
                     user_id: true,
                 },
             },
+            post_id: true,
         },
         where: { comment_id: commentId },
     });
@@ -381,6 +408,20 @@ const deleteComment = (0, express_async_handler_1.default)((req, res) => __await
     yield prisma_1.default.comment.delete({
         where: { comment_id: commentId },
     });
+    const collegeId = yield prisma_1.default.post.findUnique({
+        select: {
+            College: {
+                select: {
+                    college_id: true,
+                },
+            },
+        },
+        where: { post_id: comment.post_id },
+    });
+    if (!collegeId) {
+        return res.status(404).json({ message: "College not found" });
+    }
+    yield (0, redis_1.deleteCachedPosts)(collegeId.College.college_id);
     return res.status(200).json({ message: "Comment deleted" });
 }));
 exports.deleteComment = deleteComment;
@@ -416,6 +457,11 @@ const unlikePost = (0, express_async_handler_1.default)((req, res) => __awaiter(
         where: { post_id: postId },
         select: {
             likes: true,
+            College: {
+                select: {
+                    college_id: true,
+                },
+            },
         },
     });
     if (!like) {
@@ -436,6 +482,7 @@ const unlikePost = (0, express_async_handler_1.default)((req, res) => __awaiter(
             like_id: like.like_id,
         },
     });
+    yield (0, redis_1.deleteCachedPosts)(post.College.college_id);
     return res.status(200).json({ updatedPost });
 }));
 exports.unlikePost = unlikePost;

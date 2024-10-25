@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const prisma_1 = __importDefault(require("../lib/prisma"));
+const redis_1 = __importDefault(require("../lib/redis"));
 // @ts-ignore
 function requireAuth(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -26,6 +27,17 @@ function requireAuth(req, res, next) {
                 res.sendStatus(410);
                 return;
             }
+            const userId = decoded.sub;
+            if (!userId) {
+                res.sendStatus(401);
+                return;
+            }
+            const cachedUser = yield redis_1.default.get(userId);
+            if (cachedUser) {
+                req.user = JSON.parse(cachedUser);
+                next();
+                return;
+            }
             const user = yield prisma_1.default.user.findUnique({
                 where: {
                     user_id: decoded.sub,
@@ -36,6 +48,7 @@ function requireAuth(req, res, next) {
                 return;
             }
             req.user = user;
+            yield redis_1.default.set(`user:${userId}`, JSON.stringify(user), "EX", 3600);
             next();
         }
         catch (err) {

@@ -191,6 +191,11 @@ const likePost = asyncHandler(async (req: Request, res: Response) => {
     where: { post_id: postId },
     select: {
       likes: true,
+      College: {
+        select: {
+          college_id: true,
+        },
+      },
     },
   });
   // @ts-ignore
@@ -226,6 +231,7 @@ const likePost = asyncHandler(async (req: Request, res: Response) => {
       user_id,
     },
   });
+  await deleteCachedPosts(post.College.college_id);
 
   return res.status(200).json({ updatedPost });
 });
@@ -359,6 +365,11 @@ const createComment = asyncHandler(async (req: Request, res: Response) => {
           user_id: true,
         },
       },
+      College: {
+        select: {
+          college_id: true,
+        },
+      },
     },
   });
   if (!post) {
@@ -397,6 +408,7 @@ const createComment = asyncHandler(async (req: Request, res: Response) => {
 `;
 
   sendMail(htmlContent, email, "New Comment on Your Post");
+  await deleteCachedPosts(post.College.college_id);
 
   return res.status(201).json({ comment });
 });
@@ -411,6 +423,7 @@ const deleteComment = asyncHandler(async (req: Request, res: Response) => {
           user_id: true,
         },
       },
+      post_id: true, 
     },
     where: { comment_id: commentId },
   });
@@ -427,6 +440,20 @@ const deleteComment = asyncHandler(async (req: Request, res: Response) => {
   await prisma.comment.delete({
     where: { comment_id: commentId },
   });
+  const collegeId = await prisma.post.findUnique({
+    select: {
+      College: {
+        select: {
+          college_id: true,
+        },
+      },
+    },
+    where: { post_id: comment.post_id },
+  });
+  if(!collegeId) {
+    return res.status(404).json({ message: "College not found" });
+  }
+  await deleteCachedPosts(collegeId.College.college_id);
 
   return res.status(200).json({ message: "Comment deleted" });
 });
@@ -465,6 +492,11 @@ const unlikePost = asyncHandler(async (req: Request, res: Response) => {
     where: { post_id: postId },
     select: {
       likes: true,
+      College: {
+        select: {
+          college_id: true,
+        },
+      },
     },
   });
 
@@ -490,6 +522,7 @@ const unlikePost = asyncHandler(async (req: Request, res: Response) => {
       like_id: like.like_id,
     },
   });
+  await deleteCachedPosts(post.College.college_id);
 
   return res.status(200).json({ updatedPost });
 });

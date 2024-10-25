@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.disconnectRedis = exports.setCachedData = exports.getCachedData = void 0;
+exports.deleteCachedPosts = exports.disconnectRedis = exports.setCachedData = exports.getCachedData = void 0;
 const ioredis_1 = __importDefault(require("ioredis"));
 const redisURL = process.env.REDIS_URL;
 if (!redisURL) {
@@ -47,4 +47,32 @@ const disconnectRedis = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.disconnectRedis = disconnectRedis;
+const deleteCachedPosts = (collegeId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const collegePattern = `posts:${collegeId}:page:*`;
+        const allPattern = `posts:all:page:*`;
+        const collegeStream = redis.scanStream({ match: collegePattern });
+        const allStream = redis.scanStream({ match: allPattern });
+        collegeStream.on("data", (keys) => {
+            if (keys.length) {
+                redis.del(...keys);
+            }
+        });
+        allStream.on("data", (keys) => {
+            if (keys.length) {
+                redis.del(...keys);
+            }
+        });
+        collegeStream.on("end", () => {
+            console.log(`Deleted cache for collegeId: ${collegeId}`);
+        });
+        allStream.on("end", () => {
+            console.log(`Deleted all cache entries.`);
+        });
+    }
+    catch (error) {
+        console.error("Error deleting cached posts from Redis", error);
+    }
+});
+exports.deleteCachedPosts = deleteCachedPosts;
 exports.default = redis;

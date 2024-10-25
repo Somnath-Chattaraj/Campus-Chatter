@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const userControllers_1 = require("../controllers/userControllers");
 const checkAuth_1 = __importDefault(require("../middleware/checkAuth"));
+const rateLimit_1 = __importDefault(require("../middleware/rateLimit"));
 const router = express_1.default.Router();
 router.route("/register").post(userControllers_1.registerUser);
 router.route("/login").post(userControllers_1.loginUser);
@@ -19,5 +20,5 @@ router.post("/addDetails", userControllers_1.addDetailsToUser); // add details t
 router.post("/addusername", userControllers_1.addUsername); // change the username of the current user
 router.get("/all", userControllers_1.getAllUser);
 router.get("/logout", userControllers_1.logOut);
-router.post("/update", checkAuth_1.default, userControllers_1.updateDetails);
+router.post("/update", checkAuth_1.default, rateLimit_1.default, userControllers_1.updateDetails);
 exports.default = router;

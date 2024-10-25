@@ -21,6 +21,7 @@ const sendMail_1 = __importDefault(require("../mail/sendMail"));
 const academic_email_verifier_1 = require("academic-email-verifier");
 const checkAcademic_1 = __importDefault(require("../mail/checkAcademic"));
 const registerSchema_1 = require("../validation/registerSchema");
+const redis_1 = __importDefault(require("../lib/redis"));
 const googleSignInOrSignUp = (0, express_async_handler_1.default)(
 //@ts-ignore
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -260,7 +261,9 @@ const verifyUser = (0, express_async_handler_1.default)((req, res) => __awaiter(
     const { sub, exp } = jsonwebtoken_1.default.verify(token, process.env.SECRET);
     // @ts-ignore
     if (exp < Date.now()) {
-        res.status(400).json({ message: "Token expired. Login to verify your email" });
+        res
+            .status(400)
+            .json({ message: "Token expired. Login to verify your email" });
         return;
     }
     const user = yield prisma_1.default.user.findUnique({
@@ -629,6 +632,7 @@ const updateDetails = (0, express_async_handler_1.default)((req, res) => __await
             pic,
         },
     });
+    yield redis_1.default.del(`user:${userId}`);
     return res.status(200).json({ message: "Details updated" });
 }));
 exports.updateDetails = updateDetails;
