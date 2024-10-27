@@ -79,7 +79,7 @@ const SinglePost = () => {
   if (loadingUser) {
     return (
       <Center h="100vh">
-        <InfinitySpin />
+        <div class="loader"></div>
       </Center>
     );
   }

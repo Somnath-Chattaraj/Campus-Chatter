@@ -1,0 +1,102 @@
+.form {
+    --background: #d3d3d3;
+    --input-focus: #2d8cf0;
+    --font-color: #323232;
+    --font-color-sub: #666;
+    --bg-color: #fff;
+    --main-color: #323232;
+    padding: 60px;
+    background: var(--background);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    border-radius: 5px;
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+    max-width: 800px;
+}
+
+.form>p {
+    font-family: Arial, sans-serif;
+    color: var(--font-color);
+    font-weight: 700;
+    font-size: 24px;
+    /* Increased font size */
+}
+
+.form>p>span {
+    font-family: Arial, sans-serif;
+    color: var(--font-color-sub);
+    font-weight: 600;
+    font-size: 20px;
+    /* Increased font size */
+}
+
+.separator {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.separator>div {
+    width: 100px;
+    height: 3px;
+    border-radius: 5px;
+    background-color: var(--font-color-sub);
+}
+
+.separator>span {
+    color: var(--font-color);
+    font-weight: 600;
+}
+
+.oauthButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 300px;
+    /* Increased width */
+    height: 50px;
+    /* Increased height */
+    border-radius: 5px;
+    border: 2px solid var(--main-color);
+    background-color: var(--bg-color);
+    box-shadow: 4px 4px var(--main-color);
+    font-size: 18px;
+    /* Adjusted font size */
+    font-weight: 600;
+    color: var(--font-color);
+    cursor: pointer;
+    transition: all 250ms;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.oauthButton:hover {
+    color: #e8e8e8;
+    background-color: #212121;
+}
+
+.input {
+    width: 300px;
+    /* Increased width */
+    height: 50px;
+    /* Increased height */
+    border-radius: 5px;
+    border: 2px solid var(--main-color);
+    background-color: var(--bg-color);
+    box-shadow: 4px 4px var(--main-color);
+    font-size: 16px;
+    /* Adjusted font size */
+    font-weight: 600;
+    color: var(--font-color);
+    padding: 10px;
+    /* Increased padding */
+    outline: none;
+}

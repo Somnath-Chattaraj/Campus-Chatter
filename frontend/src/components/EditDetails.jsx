@@ -16,6 +16,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../hook/useUser";
 import { InfinitySpin } from "react-loader-spinner";
+import "../styles/loader.css";
 
 const EditDetailsSchema = z.object({
   username: z
@@ -135,7 +136,7 @@ const EditDetails = () => {
   if (loadingUser) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg="black">
-        <InfinitySpin color="#3182CE" size={80} />
+        <div class="loader"></div>
       </Flex>
     );
   }

@@ -19,6 +19,8 @@ import { auth, googleProvider, githubProvider } from "../firebase.js";
 import { signInWithPopup } from "firebase/auth";
 import { InfinitySpin } from "react-loader-spinner";
 import { set } from "zod";
+import "../styles/login.css";
+import "../styles/loader.css"
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -143,7 +145,7 @@ const LoginPage = () => {
   if (loading) {
     return (
       <Flex minH="100vh" align="center" justify="center" bg="black">
-        <InfinitySpin color="#3182CE" size={80} />
+        <div class="loader"></div>
       </Flex>
     );
   }
@@ -189,73 +191,53 @@ const LoginPage = () => {
 
   return (
     <Flex minH="100vh" align="center" justify="center" bg="black">
-      <Container
-        maxW="md"
-        bg="gray.800"
-        boxShadow="md"
-        p={6}
-        rounded="md"
-        color="white"
-      >
-        <Stack spacing={4}>
-          <Heading as="h1" size="lg" textAlign="center" color="white">
-            Login
-          </Heading>
-          <FormControl id="email">
-            <FormLabel>Email address</FormLabel>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              bg="gray.700"
-              color="white"
-            />
-          </FormControl>
-          <FormControl id="password">
-            <FormLabel>Password</FormLabel>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              bg="gray.700"
-              color="white"
-            />
-          </FormControl>
-          <Button
-            colorScheme="teal"
-            isLoading={loading}
-            onClick={handleLogin}
-            _hover={{ bg: "teal.500" }}
-          >
-            Login
-          </Button>
-          <Link className="text-center" to='/forgetPassword'>Forgot Password?</Link>
-          <Button
-            leftIcon={<FcGoogle />}
-            colorScheme="gray"
-            onClick={handleGoogleLogin}
-            bg="white"
-            color="black"
-            _hover={{ bg: "gray.200" }}
-          >
-            Login with Google
-          </Button>
-          <Button
-            leftIcon={<FaGithub />}
-            colorScheme="gray"
-            onClick={handleGithubLogin}
-            bg="white"
-            color="black"
-            _hover={{ bg: "gray.200" }}
-          >
-            Login with Github
-          </Button>
-        </Stack>
-      </Container>
+      {loading ? (
+        <Flex align="center" justify="center">
+          <div class="loader"></div>
+        </Flex>
+      ) : (
+        <form className="form">
+          <p>
+            Welcome,<span>sign in to continue</span>
+          </p>
+          <button type="button" className="oauthButton" onClick={handleGoogleLogin}>
+            <FcGoogle className="icon" />
+            Continue with Google
+          </button>
+          <button type="button" className="oauthButton" onClick={handleGithubLogin}>
+            <FaGithub className="icon" />
+            Continue with Github
+          </button>
+          <div className="separator">
+            <div></div>
+            <span>OR</span>
+            <div></div>
+          </div>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="input"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input"
+          />
+          <button type="button" className="oauthButton" onClick={handleLogin}>
+            Continue
+          </button>
+          <Link to="/forgetPassword" className="forgot-password">
+            Forgot Password?
+          </Link>
+        </form>
+      )}
     </Flex>
   );
 };
+
 
 export default LoginPage;

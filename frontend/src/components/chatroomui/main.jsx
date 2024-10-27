@@ -135,7 +135,7 @@ function Mainbuttons() {
   if (loadingUser) {
     return (
       <Flex justify="center" align="center" h="100vh">
-        <InfinitySpin />
+        <div class="loader"></div>
       </Flex>
     );
   }
