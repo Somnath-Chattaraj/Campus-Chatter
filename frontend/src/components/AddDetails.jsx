@@ -21,7 +21,7 @@ import { z } from "zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import { collegeNames } from "./data/collegeNames";
+import collegeNames from "./data/collegeNames";
 import { courseNames } from "./data/courseName";
 import { location } from "./data/location";
 

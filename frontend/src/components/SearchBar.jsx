@@ -112,21 +112,26 @@ const SearchBar = () => {
             }}
           />
         )}
-        renderSuggestionsContainer={({ containerProps, children }) => (
-          <Box
-            {...containerProps}
-            bg="white"
-            boxShadow="md"
-            borderRadius="md"
-            mt={2}
-            maxHeight="300px"
-            overflowY="auto"
-            border="1px solid"
-            borderColor="gray.200"
-          >
-            <List>{children}</List>
-          </Box>
-        )}
+        renderSuggestionsContainer={({ containerProps, children }) => {
+          const hasSuggestions = React.Children.count(children) > 0;
+
+          return hasSuggestions ? (
+            <Box
+              {...containerProps}
+              bg="white"
+              boxShadow="md"
+              borderRadius="md"
+              mt={2}
+              maxHeight="300px"
+              overflowY="auto"
+              border="1px solid"
+              borderColor="gray.200"
+              className="autosuggest_list"
+            >
+              <List>{children}</List>
+            </Box>
+          ) : null;
+        }}
       />
       {/* <Button onClick={handleSearchSubmit} colorScheme="blue" width="100%">
         Search

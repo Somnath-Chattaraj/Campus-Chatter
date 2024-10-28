@@ -16,11 +16,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { set, z } from "zod";
+import "../styles/register.css";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import { collegeNames } from "./data/collegeNames";
+import collegeNames from "./data/collegeNames";
 import { courseNames } from "./data/courseName";
 import { location } from "./data/location";
 
@@ -182,202 +183,238 @@ const RegisterForm = () => {
   };
 
   return (
-    <Box w="100%" maxW="500px" mx="auto" mt="5">
-      <FormLabel fontSize="5xl" textAlign="center">
-        Register
-      </FormLabel>
+    <Box className="container">
       {/* <Navbar btnName="Login"/> */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="form_area">
+        <FormLabel className="title" textAlign="center">
+          Register
+        </FormLabel>
         <VStack spacing={4}>
-          <FormControl id="email" isRequired>
-            <FormLabel>Email</FormLabel>
+          <FormControl id="email" isRequired className="form_group">
+            <FormLabel className="input-label">Email</FormLabel>
             <Input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
+              className="form_style"
             />
             {errors.email && <Box color="red">{errors.email}</Box>}
           </FormControl>
 
-          <FormControl id="username" isRequired>
-            <FormLabel>Username</FormLabel>
+          <FormControl id="username" isRequired className="form_group">
+            <FormLabel className="input-label">Username</FormLabel>
             <Input
               type="text"
               name="username"
               value={formData.username}
               onChange={handleChange}
               placeholder="Enter your username"
+              className="form_style"
             />
             {errors.username && <Box color="red">{errors.username}</Box>}
           </FormControl>
 
-          <FormControl id="password" isRequired>
-            <FormLabel>Password</FormLabel>
+          <FormControl id="password" isRequired className="form_group">
+            <FormLabel className="input-label"> Password</FormLabel>
             <Input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
+              className="form_style"
             />
             {errors.password && <Box color="red">{errors.password}</Box>}
           </FormControl>
 
-          <FormControl id="collegeName">
-            <FormLabel>College Name</FormLabel>
-            <Autosuggest
-              suggestions={suggestionsCollege}
-              onSuggestionsFetchRequested={onSuggestionsFetchRequestedCollege}
-              onSuggestionsClearRequested={onSuggestionsClearRequestedCollege}
-              getSuggestionValue={getSuggestionValue}
-              renderSuggestion={renderSuggestion}
-              inputProps={{
-                placeholder: "Search colleges...",
-                value: formData.collegeName,
-                onChange: (_, { newValue }) =>
-                  setFormData({ ...formData, collegeName: newValue }),
-              }}
-              renderInputComponent={(inputProps) => (
-                <Input
-                  {...inputProps}
-                  border="2px solid"
-                  borderColor="gray.300"
-                  padding={4}
-                  borderRadius="md"
-                  mb={3}
-                  _focus={{
-                    borderColor: "blue.500",
-                    boxShadow: "0 0 0 1px #3182CE",
-                  }}
-                />
-              )}
-              renderSuggestionsContainer={({ containerProps, children }) => (
-                <Box
-                  {...containerProps}
-                  bg="white"
-                  boxShadow="md"
-                  borderRadius="md"
-                  mt={2}
-                  maxHeight="300px"
-                  overflowY="auto"
-                  border="1px solid"
-                  borderColor="gray.200"
-                >
-                  <List>{children}</List>
-                </Box>
-              )}
-            />
+          <FormControl id="collegeName" className="form_group">
+            <FormLabel className="input-label">College Name</FormLabel>
+            <Box className="autosuggest_container">
+              <Autosuggest
+                suggestions={suggestionsCollege}
+                onSuggestionsFetchRequested={onSuggestionsFetchRequestedCollege}
+                onSuggestionsClearRequested={onSuggestionsClearRequestedCollege}
+                getSuggestionValue={getSuggestionValue}
+                renderSuggestion={renderSuggestion}
+                inputProps={{
+                  placeholder: "Search colleges...",
+                  value: formData.collegeName,
+                  onChange: (_, { newValue }) =>
+                    setFormData({ ...formData, collegeName: newValue }),
+                }}
+                renderInputComponent={(inputProps) => (
+                  <Input
+                    {...inputProps}
+                    border="2px solid"
+                    borderColor="gray.300"
+                    padding={4}
+                    borderRadius="md"
+                    mb={3}
+                    _focus={{
+                      borderColor: "blue.500",
+                      boxShadow: "0 0 0 1px #3182CE",
+                    }}
+                    className="autosuggest_input"
+                  />
+                )}
+                renderSuggestionsContainer={({ containerProps, children }) => {
+                  const hasSuggestions = React.Children.count(children) > 0;
+
+                  return hasSuggestions ? (
+                    <Box
+                      {...containerProps}
+                      bg="white"
+                      boxShadow="md"
+                      borderRadius="md"
+                      mt={2}
+                      maxHeight="300px"
+                      overflowY="auto"
+                      border="1px solid"
+                      borderColor="gray.200"
+                      className="autosuggest_list"
+                    >
+                      <List>{children}</List>
+                    </Box>
+                  ) : null;
+                }}
+              />
+            </Box>
           </FormControl>
 
-          <FormControl id="courseName">
-            <FormLabel>Course Name</FormLabel>
-            <Autosuggest
-              suggestions={suggestionsCourse}
-              onSuggestionsFetchRequested={onSuggestionsFetchRequestedCourse}
-              onSuggestionsClearRequested={onSuggestionsClearRequestedCourse}
-              getSuggestionValue={getSuggestionValue}
-              renderSuggestion={renderSuggestion}
-              inputProps={{
-                placeholder: "Search courses...",
-                value: formData.courseName,
-                onChange: (_, { newValue }) =>
-                  setFormData({ ...formData, courseName: newValue }),
-              }}
-              renderInputComponent={(inputProps) => (
-                <Input
-                  {...inputProps}
-                  border="2px solid"
-                  borderColor="gray.300"
-                  padding={4}
-                  borderRadius="md"
-                  mb={3}
-                  _focus={{
-                    borderColor: "blue.500",
-                    boxShadow: "0 0 0 1px #3182CE",
-                  }}
-                />
-              )}
-              renderSuggestionsContainer={({ containerProps, children }) => (
-                <Box
-                  {...containerProps}
-                  bg="white"
-                  boxShadow="md"
-                  borderRadius="md"
-                  mt={2}
-                  maxHeight="300px"
-                  overflowY="auto"
-                  border="1px solid"
-                  borderColor="gray.200"
-                >
-                  <List>{children}</List>
-                </Box>
-              )}
-            />
+          <FormControl id="courseName" className="form_group">
+            <FormLabel className="input-label">Course Name</FormLabel>
+            <Box className="autosuggest_container">
+              <Autosuggest
+                suggestions={suggestionsCourse}
+                onSuggestionsFetchRequested={onSuggestionsFetchRequestedCourse}
+                onSuggestionsClearRequested={onSuggestionsClearRequestedCourse}
+                getSuggestionValue={getSuggestionValue}
+                renderSuggestion={renderSuggestion}
+                inputProps={{
+                  placeholder: "Search courses...",
+                  value: formData.courseName,
+                  onChange: (_, { newValue }) =>
+                    setFormData({ ...formData, courseName: newValue }),
+                }}
+                renderInputComponent={(inputProps) => (
+                  <Input
+                    {...inputProps}
+                    borderColor="gray.300"
+                    padding={4}
+                    borderRadius="md"
+                    mb={3}
+                    _focus={{
+                      borderColor: "blue.500",
+                      boxShadow: "0 0 0 1px #3182CE",
+                    }}
+                    className="autosuggest_input"
+                  />
+                )}
+                renderSuggestionsContainer={({ containerProps, children }) => {
+                  const hasSuggestions = React.Children.count(children) > 0;
+
+                  return hasSuggestions ? (
+                    <Box
+                      {...containerProps}
+                      bg="white"
+                      boxShadow="md"
+                      borderRadius="md"
+                      mt={2}
+                      maxHeight="300px"
+                      overflowY="auto"
+                      border="1px solid"
+                      borderColor="gray.200"
+                      className="autosuggest_list"
+                    >
+                      <List>{children}</List>
+                    </Box>
+                  ) : null;
+                }}
+              />
+            </Box>
           </FormControl>
 
-          <FormControl id="location">
-            <FormLabel>Location</FormLabel>
-            <Autosuggest
-              suggestions={suggestionsLocation}
-              onSuggestionsFetchRequested={onSuggestionsFetchRequestedLocation}
-              onSuggestionsClearRequested={onSuggestionsClearRequestedLocation}
-              getSuggestionValue={getSuggestionValue}
-              renderSuggestion={renderSuggestion}
-              inputProps={{
-                placeholder: "Search location...",
-                value: formData.location,
-                onChange: (_, { newValue }) =>
-                  setFormData({ ...formData, location: newValue }),
-              }}
-              renderInputComponent={(inputProps) => (
-                <Input
-                  {...inputProps}
-                  border="2px solid"
-                  borderColor="gray.300"
-                  padding={4}
-                  borderRadius="md"
-                  mb={3}
-                  _focus={{
-                    borderColor: "blue.500",
-                    boxShadow: "0 0 0 1px #3182CE",
-                  }}
-                />
-              )}
-              renderSuggestionsContainer={({ containerProps, children }) => (
-                <Box
-                  {...containerProps}
-                  bg="white"
-                  boxShadow="md"
-                  borderRadius="md"
-                  mt={2}
-                  maxHeight="300px"
-                  overflowY="auto"
-                  border="1px solid"
-                  borderColor="gray.200"
-                >
-                  <List>{children}</List>
-                </Box>
-              )}
-            />
+          <FormControl id="location" className="form_group">
+            <FormLabel className="input-label">Location</FormLabel>
+            <Box className="autosuggest_container">
+              <Autosuggest
+                suggestions={suggestionsLocation}
+                onSuggestionsFetchRequested={
+                  onSuggestionsFetchRequestedLocation
+                }
+                onSuggestionsClearRequested={
+                  onSuggestionsClearRequestedLocation
+                }
+                getSuggestionValue={getSuggestionValue}
+                renderSuggestion={renderSuggestion}
+                inputProps={{
+                  placeholder: "Search location...",
+                  value: formData.location,
+                  onChange: (_, { newValue }) =>
+                    setFormData({ ...formData, location: newValue }),
+                }}
+                renderInputComponent={(inputProps) => (
+                  <Input
+                    {...inputProps}
+                    border="2px solid"
+                    borderColor="gray.300"
+                    padding={4}
+                    borderRadius="md"
+                    mb={3}
+                    _focus={{
+                      borderColor: "blue.500",
+                      boxShadow: "0 0 0 1px #3182CE",
+                    }}
+                    className="autosuggest_input"
+                  />
+                )}
+                renderSuggestionsContainer={({ containerProps, children }) => {
+                  const hasSuggestions = React.Children.count(children) > 0;
+
+                  return hasSuggestions ? (
+                    <Box
+                      {...containerProps}
+                      bg="white"
+                      boxShadow="md"
+                      borderRadius="md"
+                      mt={2}
+                      maxHeight="300px"
+                      overflowY="auto"
+                      border="1px solid"
+                      borderColor="gray.200"
+                      className="autosuggest_list"
+                    >
+                      <List>{children}</List>
+                    </Box>
+                  ) : null;
+                }}
+              />
+            </Box>
           </FormControl>
 
-          <FormControl as="fieldset" id="isOnline">
-            <FormLabel as="legend">Is Online?</FormLabel>
+          <FormControl as="fieldset" id="isOnline" className="radio_group">
+            <FormLabel as="legend" className="radio_label">
+              Is Online?
+            </FormLabel>
             <RadioGroup
               name="isOnline"
               value={formData.isOnline.toString()}
               onChange={handleRadioChange}
             >
               <Stack direction="row">
-                <Radio value="true">Yes</Radio>
-                <Radio value="false">No</Radio>
+                <Radio value="true" className="radio_button">
+                  Yes
+                </Radio>
+                <Radio value="false" className="radio_button">
+                  No
+                </Radio>
               </Stack>
             </RadioGroup>
           </FormControl>
 
-          <Button type="submit" colorScheme="blue" width="full">
+          <Button type="submit" colorScheme="blue" width="full" className="btn">
             Register
           </Button>
         </VStack>

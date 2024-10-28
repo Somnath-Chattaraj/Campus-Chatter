@@ -1,0 +1,202 @@
+/* General container and form styles */
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+}
+
+.form_area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: linear-gradient(135deg, #eddcd9, #f6c3b6) !important;
+  height: auto;
+  width: auto;
+  border: 2px solid #264143;
+  border-radius: 20px;
+  box-shadow: 3px 4px 0px 1px #e99f4c;
+  padding: 4em;
+}
+
+.title {
+  color: #264143;
+  font-weight: 900;
+  font-size: 3em !important;
+  margin-top: 5px !important;
+}
+
+/* Keyframes for the fade-in effect */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    /* Slight upward movement */
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.input-label {
+  font-weight: 600;
+  color: #264143;
+  margin: 5px 0;
+}
+
+.form_group {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  margin: 10px;
+  width: 100%;
+}
+
+.form_style {
+  outline: none;
+  border: 2px solid #264143;
+  box-shadow: 3px 4px 0px 1px #e99f4c;
+  width: 35vw !important;
+  padding: 15px;
+  border-radius: 4px;
+  font-size: 16px;
+  min-width: 300px;
+  color: #264143;
+  /* Change this to a contrasting color */
+  background-color: #eddcd9;
+  /* Ensure the background matches */
+}
+
+@media (max-width: 600px) {
+  .form_style {
+    width: 60vw !important;
+  }
+}
+
+.form_style:focus {
+  transform: translateY(4px);
+  box-shadow: 1px 2px 0px 0px #e99f4c;
+}
+
+.autosuggest_container {
+  position: relative;
+  width: 100%;
+}
+
+.autosuggest_input {
+  width: 35vw !important;
+  /* border: 2px solid #264143; */
+  box-shadow: 3px 4px 0px 1px #e99f4c;
+  color: #264143;
+  padding: 15px;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+}
+
+@media (max-width: 600px) {
+  .autosuggest_input {
+    width: 60vw !important;
+  }
+}
+
+.autosuggest_list {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 2px solid #264143;
+  box-shadow: 3px 4px 0px 1px #e99f4c;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.autosuggest_item {
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.autosuggest_item:hover {
+  background-color: #e99f4c;
+}
+
+/* Radio buttons */
+.radio_group {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.radio_label {
+  font-weight: 600;
+  color: #264143;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+.radio_label:hover {
+  color: #e99f4c;
+}
+
+.radio_button {
+  appearance: none;
+  margin: 0;
+  font: inherit;
+  color: #264143;
+  width: 1.15em;
+  height: 1.15em;
+  border: 2px solid #264143;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 3px 4px 0px 1px #e99f4c;
+}
+
+.radio_button:checked::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: 50%;
+  position: absolute;
+  top: 0.25em;
+  left: 0.25em;
+  background-color: #264143;
+}
+
+.radio_button:focus {
+  transform: translateY(2px);
+  box-shadow: 1px 2px 0px 0px #e99f4c;
+}
+
+.btn {
+  padding: 15px;
+  margin: 25px 0px;
+  width: 100%;
+  font-size: 16px;
+  background: #de5499;
+  border-radius: 10px;
+  font-weight: 800;
+  box-shadow: 3px 3px 0px 0px #e99f4c;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.input-label:hover {
+  color: #e99f4c;
+}

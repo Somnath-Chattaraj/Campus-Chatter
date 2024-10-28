@@ -1,4 +1,4 @@
-export const collegeNames = [
+const collegeNames = [
   "Acharya N.G. Ranga Agricultural University	Hyderabad",
   "Acharya Nagarjuna University	Guntur",
   "Acharya Narendra Deva University of Agriculture & Technology	Faizabad",
@@ -335,7 +335,7 @@ export const collegeNames = [
 "ITM University Raipur	Raipur",
 "ITM Vocational University	Waghodia",
 "J.C. Bose University of Science and Technology	Faridabad",
-"Jadavpur University	Kolkata",
+"Jadavpur University Kolkata",
 "Jagadguru Ramanandacharya Rajasthan Sanskrit University	Jaipur",
 "Jagadguru Rambhadracharya Handicapped University	Chitrakoot",
 "Jagan Nath University	Jhajjar",
@@ -889,3 +889,13 @@ export const collegeNames = [
     "Yenepoya University, Mangalore",
     "Yogi Vemana University, Kadapa"
   ]  
+
+const cleanCollegeNames = (names) => {
+  return names.map(name => name.trim().replace(/\s+/g, ' '));
+};
+
+// Cleaned up college names
+const cleanedCollegeNames = cleanCollegeNames(collegeNames);
+
+// Export the cleaned array
+export default cleanedCollegeNames;
