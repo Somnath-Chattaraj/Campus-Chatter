@@ -23,6 +23,7 @@ import { gsap } from "gsap";
 import { useRef } from "react";
 import parse from "html-react-parser";
 import DOMPurify from "dompurify";
+import Linkify from "linkify-react";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -224,7 +225,9 @@ const Posts = () => {
               <Text fontSize="sm" color="gray.500">
                 {post.User.username}
               </Text>
-              <Text>{parse(DOMPurify.sanitize(post.content))}</Text>
+              <Text>
+                <Linkify>{parse(DOMPurify.sanitize(post.content))}</Linkify>
+              </Text>
 
               <Flex justify="space-between" align="center" mt={4}>
                 <Flex align="center">
