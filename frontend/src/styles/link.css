@@ -1,0 +1,8 @@
+.custom-link {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.custom-link:hover {
+  text-decoration: underline;
+}

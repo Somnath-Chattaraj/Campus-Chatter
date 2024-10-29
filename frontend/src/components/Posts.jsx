@@ -17,13 +17,12 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Navigate, useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { useUser } from "../hook/useUser";
-import Loader from "./loading";
-import { InfinitySpin } from "react-loader-spinner";
 import { gsap } from "gsap";
 import { useRef } from "react";
 import parse from "html-react-parser";
 import DOMPurify from "dompurify";
 import Linkify from "linkify-react";
+import "../styles/link.css";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -37,6 +36,19 @@ const Posts = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const fetchInitialized = useRef(false);
+
+  const options = {
+    attributes: {
+      target: "_blank",
+      rel: "noopener noreferrer",
+    },
+    className: "custom-link",
+    defaultProtocol: "https",
+    format: (value) => value,
+    formatHref: (href) => href,
+    tagName: "a",
+    validate: true,
+  };
 
   const fetchPosts = async (pageParam = page) => {
     try {
@@ -226,7 +238,9 @@ const Posts = () => {
                 {post.User.username}
               </Text>
               <Text>
-                <Linkify>{parse(DOMPurify.sanitize(post.content))}</Linkify>
+                <Linkify options={options}>
+                  {parse(DOMPurify.sanitize(post.content))}
+                </Linkify>
               </Text>
 
               <Flex justify="space-between" align="center" mt={4}>

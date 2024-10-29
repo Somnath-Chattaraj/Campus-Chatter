@@ -23,9 +23,9 @@ import { gsap } from "gsap";
 import axios from "axios";
 import CreateComment from "./CreateComment";
 import { useUser } from "../hook/useUser";
-import { InfinitySpin } from "react-loader-spinner";
 import DeleteConfirmation from "./DeleteConfirmation";
 import { FaTrash } from "react-icons/fa";
+import "../styles/link.css";
 
 const SinglePost = () => {
   const { id } = useParams();
@@ -42,6 +42,19 @@ const SinglePost = () => {
   const likeFloodRef = React.useRef(null);
   const toast = useToast();
   const navigate = useNavigate();
+
+  const options = {
+    attributes: {
+      target: "_blank",
+      rel: "noopener noreferrer",
+    },
+    className: "custom-link",
+    defaultProtocol: "https",
+    format: (value) => value,
+    formatHref: (href) => href,
+    tagName: "a",
+    validate: true,
+  };
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -244,7 +257,9 @@ const SinglePost = () => {
           </Box>
         </Flex>
         <Text fontSize="md" mt={4} color="gray.300">
-          <Linkify>{parse(DOMPurify.sanitize(post.content))}</Linkify>
+          <Linkify options={options}>
+            {parse(DOMPurify.sanitize(post.content))}
+          </Linkify>
         </Text>
         <Flex w="full" justify="space-between" align="center" mt={4}>
           <Flex align="center">
@@ -328,7 +343,7 @@ const SinglePost = () => {
                   </Text>
                 </Flex>
                 <Text fontSize="large" color="gray.300" mb={2} paddingTop={2.5}>
-                  <Linkify>{comment.content}</Linkify>
+                  <Linkify options={options}>{comment.content}</Linkify>
                 </Text>
                 {comment.User.user_id === userDetails.user_id && (
                   <Flex justify="flex-end" mt={2}>
