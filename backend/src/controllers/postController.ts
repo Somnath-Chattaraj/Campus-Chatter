@@ -376,6 +376,8 @@ const createComment = asyncHandler(async (req: Request, res: Response) => {
     return res.status(404).json({ message: "Post not found" });
   }
 
+  await deleteCachedPosts(post.College.college_id);
+
   if (post.User.user_id === user_id) {
     return res.status(201).json({ comment });
   }
@@ -408,7 +410,7 @@ const createComment = asyncHandler(async (req: Request, res: Response) => {
 `;
 
   sendMail(htmlContent, email, "New Comment on Your Post");
-  await deleteCachedPosts(post.College.college_id);
+  // await deleteCachedPosts(post.College.college_id);
 
   return res.status(201).json({ comment });
 });
@@ -423,7 +425,7 @@ const deleteComment = asyncHandler(async (req: Request, res: Response) => {
           user_id: true,
         },
       },
-      post_id: true, 
+      post_id: true,
     },
     where: { comment_id: commentId },
   });
@@ -450,7 +452,7 @@ const deleteComment = asyncHandler(async (req: Request, res: Response) => {
     },
     where: { post_id: comment.post_id },
   });
-  if(!collegeId) {
+  if (!collegeId) {
     return res.status(404).json({ message: "College not found" });
   }
   await deleteCachedPosts(collegeId.College.college_id);
