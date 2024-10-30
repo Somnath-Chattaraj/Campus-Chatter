@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { set, z } from "zod";
 import "../styles/register.css";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +39,10 @@ const RegisterForm = () => {
     isOnline: false, // Default value as boolean
     location: "",
   });
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const handleCaptchaChange = (token) => {
+    setCaptchaToken(token);
+  };
 
   const registerSchema = z.object({
     email: z.string().email({ message: "Invalid email address " }),
@@ -161,9 +166,24 @@ const RegisterForm = () => {
     try {
       registerSchema.parse(formData);
       setErrors({});
-      const response = await axios.post("/api/user/register", formData, {
-        withCredentials: true,
-      });
+      if (!captchaToken) {
+        toast({
+          title: "Captcha validation failed.",
+          description: "Please complete the captcha.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
+      const response = await axios.post(
+        "/api/user/register",
+        { ...formData, captchaToken },
+        {
+          withCredentials: true,
+        }
+      );
       toast({
         title: "Account created.",
         description: "Please check your email to verify your account.",
@@ -413,6 +433,11 @@ const RegisterForm = () => {
               </Stack>
             </RadioGroup>
           </FormControl>
+
+          <ReCAPTCHA
+            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+            onChange={handleCaptchaChange}
+          />
 
           <Button type="submit" colorScheme="blue" width="full" className="btn">
             Register

@@ -9,6 +9,7 @@ import checkCollegeEmail from "../mail/checkAcademic";
 import { registerSchema } from "../validation/registerSchema";
 import redis from "../lib/redis";
 import { deleteCachedPosts } from "../lib/redis";
+import axios from "axios";
 
 const googleSignInOrSignUp = asyncHandler(
   //@ts-ignore
@@ -124,12 +125,29 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     courseName,
     isOnline,
     location,
+    captchaToken,
   } = req.body;
   if (!process.env.SECRET) {
     throw new Error("Secret not found");
   }
+
+  const response = await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify`,
+    {},
+    {
+      params: {
+        secret: process.env.RECAPTCHA_SECRET_KEY,
+        response: captchaToken,
+      },
+    }
+  );
+  const { success } = response.data;
+  if (!success) {
+    return res.status(400).json({ error: "Invalid captcha" });
+  }
+
   const hashedPassword = await bcrypt.hash(password, 8);
-  if (!email || !username || !password) {
+  if (!email || !username || !password || !captchaToken) {
     res.status(400).json({ message: "Please provide all fields" });
     return;
   }
@@ -641,15 +659,15 @@ const updateDetails = asyncHandler(async (req: Request, res: Response) => {
       pic,
     },
   });
-  const college=await prisma.userCourse.findFirst({
-    where:{
-      user_id:userId
+  const college = await prisma.userCourse.findFirst({
+    where: {
+      user_id: userId,
     },
-    select:{
-      college_id:true
-    }
+    select: {
+      college_id: true,
+    },
   });
-  if(!college){
+  if (!college) {
     return res.status(404).json({ message: "User not found" });
   }
   await redis.del(`user:${userId}`);
