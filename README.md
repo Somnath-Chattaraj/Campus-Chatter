@@ -22,10 +22,13 @@
 - **Real-time Chatting**: Engage in both group and personal chats using WebSockets, facilitating real-time communication among students.
 - **Fuzzy Searching**: Utilize Fuse.js for intelligent fuzzy searching, making it easy to find posts, users, and more.
 - **User-Friendly Search**: Leverage React Autocomplete for searching posts and users, enhancing the overall user experience.
+- **Blazing Fast Fetching and Searching**: Integrate Redis to efficiently fetch posts and search results, ensuring a responsive and smooth user experience.
+- **Rate Limiting**: Implement rate limiting to prevent abuse and maintain a healthy platform for all users.
 - **DDoS Protection**: Implement a proxy server to safeguard against DDoS attacks, ensuring stability and security.
 - **Google and GitHub Authentication**: Seamlessly authenticate using Google and GitHub, with verification of educational accounts to ensure valid college email addresses.
 - **Image Uploads**: Use the Cloudinary API to upload and display profile pictures, enhancing user profiles.
 - **Engagement Features**: Users can like posts and comment, fostering interaction and community building.
+- **Bot Prevention**: Integrate reCAPTCHA during the signup process to avoid bot signups, ensuring a genuine user base.
 - **Access Control**: Ensure that users without college email IDs can comment but are restricted from posting, maintaining the integrity of the platform.
 
 
