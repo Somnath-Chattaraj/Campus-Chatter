@@ -2,6 +2,10 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
+import {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider,
+} from "firebase/app-check";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,4 +25,11 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
 
-export { auth, googleProvider, githubProvider };
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaEnterpriseProvider(
+    import.meta.env.VITE_RECAPTCHA_SITE_KEY
+  ),
+  isTokenAutoRefreshEnabled: true,
+});
+
+export { auth, googleProvider, githubProvider, appCheck };
