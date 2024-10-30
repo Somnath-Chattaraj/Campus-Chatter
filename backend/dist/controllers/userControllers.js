@@ -22,6 +22,8 @@ const academic_email_verifier_1 = require("academic-email-verifier");
 const checkAcademic_1 = __importDefault(require("../mail/checkAcademic"));
 const registerSchema_1 = require("../validation/registerSchema");
 const redis_1 = __importDefault(require("../lib/redis"));
+const redis_2 = require("../lib/redis");
+const axios_1 = __importDefault(require("axios"));
 const googleSignInOrSignUp = (0, express_async_handler_1.default)(
 //@ts-ignore
 (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -125,12 +127,22 @@ const githubSignInOrSignUp = (0, express_async_handler_1.default)(
 exports.githubSignInOrSignUp = githubSignInOrSignUp;
 // @ts-ignore
 const registerUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, username, password, collegeName, courseName, isOnline, location, } = req.body;
+    const { email, username, password, collegeName, courseName, isOnline, location, captchaToken, } = req.body;
     if (!process.env.SECRET) {
         throw new Error("Secret not found");
     }
+    const response = yield axios_1.default.post(`https://www.google.com/recaptcha/api/siteverify`, {}, {
+        params: {
+            secret: process.env.RECAPTCHA_SECRET_KEY,
+            response: captchaToken,
+        },
+    });
+    const { success } = response.data;
+    if (!success) {
+        return res.status(400).json({ error: "Invalid captcha" });
+    }
     const hashedPassword = yield bcrypt_1.default.hash(password, 8);
-    if (!email || !username || !password) {
+    if (!email || !username || !password || !captchaToken) {
         res.status(400).json({ message: "Please provide all fields" });
         return;
     }
@@ -632,7 +644,19 @@ const updateDetails = (0, express_async_handler_1.default)((req, res) => __await
             pic,
         },
     });
+    const college = yield prisma_1.default.userCourse.findFirst({
+        where: {
+            user_id: userId,
+        },
+        select: {
+            college_id: true,
+        },
+    });
+    if (!college) {
+        return res.status(404).json({ message: "User not found" });
+    }
     yield redis_1.default.del(`user:${userId}`);
+    yield (0, redis_2.deleteCachedPosts)(college.college_id);
     return res.status(200).json({ message: "Details updated" });
 }));
 exports.updateDetails = updateDetails;

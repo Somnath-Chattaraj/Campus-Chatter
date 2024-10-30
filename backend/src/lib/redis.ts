@@ -53,14 +53,14 @@ export const deleteCachedPosts = async (collegeId: string): Promise<void> => {
       }
     });
     collegeStream.on("end", () => {
-      console.log(`Deleted cache for collegeId: ${collegeId}`);
+      // console.log(`Deleted cache for collegeId: ${collegeId}`);
     });
 
     allStream.on("end", () => {
-      console.log(`Deleted all cache entries.`);
+      // console.log(`Deleted all cache entries.`);
     });
   } catch (error) {
-    console.error("Error deleting cached posts from Redis", error);
+    // console.error("Error deleting cached posts from Redis", error);
   }
 };
 
