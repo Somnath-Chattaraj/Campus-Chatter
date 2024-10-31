@@ -44,12 +44,12 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display, loadingU
           </Link>
         </div>
 
-        <div className="hidden md:flex justify-center space-x-10 w-1/3 px-4">
+        <div className="hidden md:flex justify-center space-x-7 w-1/3 px-4">
           <Link to="/homepage" className="hover:text-purple-500">Home</Link>
           <Link to="/posts" className="hover:text-purple-500">Post</Link>
           <Link to="/edit" className="hover:text-purple-500">Edit</Link>
           <Link to="/room/joinroom" className="hover:text-purple-500">Room</Link>
-          <Link to="/call" className="hover:text-purple-500">Video Call</Link>
+          <Link to="/call" className="hover:text-purple-500 mx-2">Video Call</Link>
         </div>
 
         {display && (
