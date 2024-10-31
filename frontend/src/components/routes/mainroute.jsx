@@ -6,6 +6,8 @@ import { Outlet } from "react-router-dom";
 import { chatRoomApi } from "../contexts/chatRoomApi";
 import { useState } from "react";
 import Posts from "../../components/Posts";
+import StartVideoCall from "../StartVideoCall";
+import VideoCall from "../VideoCall";
 
 import Register from "../Register";
 import SinglePost from "../../components/SinglePost";
@@ -103,6 +105,14 @@ const Mainrouter = createBrowserRouter([
       {
         path: "/edit",
         element: <EditDetails />,
+      },
+      {
+        path: "/call",
+        element: <StartVideoCall />,
+      },
+      {
+        path: "/video/:id",
+        element: <VideoCall />,
       },
       {
         path: "room",

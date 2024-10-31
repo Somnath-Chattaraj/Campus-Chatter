@@ -24,6 +24,7 @@ model User {
   sentMessages         Message[]    @relation("SentMessages")
   Like                 Like[]
   Otp                  Otp[]
+  Video                Video[] 
 }
 
 model Otp {
@@ -130,4 +131,11 @@ model Like {
   post_id String
   User    User   @relation(fields: [user_id], references: [user_id])
   Post    Post   @relation(fields: [post_id], references: [post_id])
+}
+
+model Video{
+  video_id String @id @default(cuid())
+  url      String
+  user_id  String
+  User     User   @relation(fields: [user_id], references: [user_id])
 }
