@@ -12,7 +12,8 @@ import reviewRoutes from "./routes/reviewRoutes";
 import ratingRoutes from "./routes/ratingRoute";
 import postsRoutes from "./routes/postsRoutes";
 import roomRouter from "./routes/roomRoutes";
-import Otprouter  from "./routes/otpRoute";
+import Otprouter from "./routes/otpRoute";
+import videoRouter from "./routes/videoRoutes";
 
 // import { getCommunities } from "./controllers/postController";
 
@@ -41,6 +42,7 @@ app.use("/api/chat", chatRoutes); // Use the chat routes
 app.use("/api/post", postsRoutes);
 app.use("/api/room", roomRouter);
 app.use("/api/otp", Otprouter);
+app.use("/api/video", videoRouter);
 // app.get("/api/post/communities", getCommunities);
 app.get("/api/logout", (req: Request, res: Response) => {
   res.clearCookie("Authorization").json({ message: "Logged out successfully" });
