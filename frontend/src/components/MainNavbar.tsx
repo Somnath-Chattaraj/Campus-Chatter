@@ -49,7 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display, loadingU
           <Link to="/posts" className="hover:text-purple-500">Post</Link>
           <Link to="/edit" className="hover:text-purple-500">Edit</Link>
           <Link to="/room/joinroom" className="hover:text-purple-500">Room</Link>
-          <Link to="/" className="hover:text-purple-500">Contact</Link>
+          <Link to="/call" className="hover:text-purple-500">Video Call</Link>
         </div>
 
         {display && (
@@ -98,7 +98,7 @@ const Navbar: React.FC<NavbarProps> = ({ btnName, navigateUrl, display, loadingU
               <Link to="/posts" className="block hover:text-purple-500" onClick={closeSidebar}>Post</Link>
               <Link to="/edit" className="block hover:text-purple-500" onClick={closeSidebar}>Edit</Link>
               <Link to="/room/joinroom" className="block hover:text-purple-500" onClick={closeSidebar}>Room</Link>
-              <Link to="/" className="block hover:text-purple-500" onClick={closeSidebar}>Contact</Link>
+              <Link to="/call" className="block hover:text-purple-500" onClick={closeSidebar}>Video Call</Link>
               {display && (
                 <button
                   className="bg-purple-500 text-white rounded-full px-4 py-2 font-bold hover:bg-purple-600"
