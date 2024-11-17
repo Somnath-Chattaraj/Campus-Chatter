@@ -349,6 +349,7 @@ const createComment = (0, express_async_handler_1.default)((req, res) => __await
     if (!post) {
         return res.status(404).json({ message: "Post not found" });
     }
+    yield (0, redis_1.deleteCachedPosts)(post.College.college_id);
     if (post.User.user_id === user_id) {
         return res.status(201).json({ comment });
     }
@@ -379,7 +380,7 @@ const createComment = (0, express_async_handler_1.default)((req, res) => __await
   </div>
 `;
     (0, sendMail_1.default)(htmlContent, email, "New Comment on Your Post");
-    yield (0, redis_1.deleteCachedPosts)(post.College.college_id);
+    // await deleteCachedPosts(post.College.college_id);
     return res.status(201).json({ comment });
 }));
 exports.createComment = createComment;
