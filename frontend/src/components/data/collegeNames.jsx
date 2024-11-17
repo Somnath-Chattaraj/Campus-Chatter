@@ -865,6 +865,7 @@ const collegeNames = [
     "Vel Tech Rangarajan Dr. Sagunthala R&D Institute of Science and Technology, Chennai",
     "Vellore Institute of Technology, Vellore",
     "Vels University, Chennai",
+    "VES College, Mumbai",
     "Vidyasagar University, Midnapore",
     "Vignan University, Guntur",
     "Vijayanagara Sri Krishnadevaraya University, Bellary",

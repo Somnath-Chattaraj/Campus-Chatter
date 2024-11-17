@@ -14,6 +14,7 @@ import postsRoutes from "./routes/postsRoutes";
 import roomRouter from "./routes/roomRoutes";
 import Otprouter from "./routes/otpRoute";
 import videoRouter from "./routes/videoRoutes";
+// import checkCollegeEmail from "./mail/checkAcademic";
 
 // import { getCommunities } from "./controllers/postController";
 
@@ -51,6 +52,13 @@ app.get("/api/logout", (req: Request, res: Response) => {
 app.get("/", (req: Request, res: Response) => {
   res.send("Backend is running");
 });
+
+// app.post("/api/checkCollegeEmail", (req: Request, res: Response) => {
+//   const { email } = req.body;
+//   const isValid = checkCollegeEmail(email);
+//   res.json({ isValid });
+// });
+
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is listening on port ${process.env.PORT}`);

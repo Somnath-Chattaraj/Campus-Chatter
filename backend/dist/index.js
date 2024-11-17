@@ -15,6 +15,7 @@ const ratingRoute_1 = __importDefault(require("./routes/ratingRoute"));
 const postsRoutes_1 = __importDefault(require("./routes/postsRoutes"));
 const roomRoutes_1 = __importDefault(require("./routes/roomRoutes"));
 const otpRoute_1 = __importDefault(require("./routes/otpRoute"));
+const videoRoutes_1 = __importDefault(require("./routes/videoRoutes"));
 // import { getCommunities } from "./controllers/postController";
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -39,6 +40,7 @@ app.use("/api/chat", chatRoutes_1.default); // Use the chat routes
 app.use("/api/post", postsRoutes_1.default);
 app.use("/api/room", roomRoutes_1.default);
 app.use("/api/otp", otpRoute_1.default);
+app.use("/api/video", videoRoutes_1.default);
 // app.get("/api/post/communities", getCommunities);
 app.get("/api/logout", (req, res) => {
     res.clearCookie("Authorization").json({ message: "Logged out successfully" });
