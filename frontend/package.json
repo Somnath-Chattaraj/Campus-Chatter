@@ -40,7 +40,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
+    "@types/react": "^19.0.1",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.12.0",
