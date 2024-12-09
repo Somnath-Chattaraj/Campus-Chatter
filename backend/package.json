@@ -51,7 +51,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/html-to-text": "^9.0.4",
-    "prisma": "^5.20.0",
+    "prisma": "^6.0.1",
     "ts-node": "^10.9.2"
   }
 }
